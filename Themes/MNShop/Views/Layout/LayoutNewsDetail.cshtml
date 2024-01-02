@@ -1,0 +1,183 @@
+﻿@model Frontend.Models.LayoutContentDetailViewModel
+@using Frontend.Infrastructure.ExtensionMethod;
+@using Frontend.Infrastructure.Utility;
+@using Frontend.Infrastructure.Helpers;
+
+@{
+    ViewBag.Title = Model.Content.Headline;
+    var bannerUrl = Model.Content.BannerImages;
+    if(bannerUrl == null)
+    {
+        bannerUrl = Model.Group.BannerUrl;
+    }
+}
+
+<main class="page-detail">
+    <section class="banner-page" style="background-image: url('@bannerUrl')">
+    </section>
+    <div class="container">
+        <div class="breadcrumb">
+            @Html.Breadcrumb(Frontend.Infrastructure.Utility.BreadcrumbType.Group, Model.Group.GroupID, new { @class = "" })
+        </div>
+    </div>
+    <div class="page-detail--body container">
+        <div class="page-detail--item after">
+            <h3 class="page-detail--item_title">@Model.Content.Headline</h3>
+            <div class="page-detail--item_info">
+                <div class="write-by">
+                    <span>Viết bởi</span>
+                    <strong>@Model.Content.AuthorName</strong>
+                </div>
+                <div class="create-at">
+                    <span>Đăng lúc:</span>
+                    <strong>08:30 am - ngày 14/10/2023</strong>
+                </div>
+            </div>
+            <div class="page-detail--item_body">
+                @Html.Raw(Model.Content.Body)
+            </div>
+        </div>
+    </div>
+    <div class="page-detail--more">
+        <div class="container">
+            <div class="page-detail--more_header">
+                <h3>Khám phá thêm các dòng sản phẩm khác</h3>
+            </div>
+            <div class="swiper swiper-page--detail">
+                <div class="swiper-wrapper">
+                    <div class="swiper-slide page-more-item">
+                        <div class="page-more-thumbnail">
+                            <a href="#">
+                                <img src="./images/page-more.png" alt="">
+                            </a>
+                        </div>
+                        <div class="page-more-content">
+                            <a href="" class="page-more-title">
+                                <h4>Shape Puzzle Set</h4>
+                            </a>
+                            <div class="page-more-desc">
+                                <p>
+                                    Odio ut enim blandit volutpat. Sit amet venenatis urna cursus. Et egestas quis ipsum suspendisse.
+                                    In hendrerit gravida rutrum quisque non tellus. Congue eu consequat ac felis donec et.
+                                </p>
+                            </div>
+                            <a href="#" class="page-more-link">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                    <path d="M6.69111 16.9762C6.62156 17.0458 6.53898 17.101 6.44809 17.1386C6.3572 17.1763 6.25979 17.1957 6.16141 17.1957C6.06303 17.1957 5.96561 17.1763 5.87472 17.1386C5.78383 17.101 5.70125 17.0458 5.6317 16.9762L4.68651 16.031C4.61693 15.9615 4.56174 15.8789 4.52408 15.788C4.48642 15.6971 4.46704 15.5997 4.46704 15.5013C4.46704 15.4029 4.48642 15.3055 4.52408 15.2146C4.56174 15.1237 4.61693 15.0412 4.68651 14.9716L10.7722 8.88593L4.68651 2.80024C4.61693 2.73069 4.56174 2.64811 4.52408 2.55722C4.48642 2.46633 4.46704 2.36892 4.46704 2.27054C4.46704 2.17216 4.48642 2.07474 4.52408 1.98385C4.56174 1.89296 4.61693 1.81039 4.68651 1.74083L5.6317 0.795645C5.70125 0.726065 5.78383 0.67087 5.87472 0.633212C5.96561 0.595554 6.06303 0.576172 6.16141 0.576172C6.25979 0.576172 6.3572 0.595554 6.44809 0.633212C6.53898 0.67087 6.62156 0.726065 6.69111 0.795645L14.2478 8.35229C14.3882 8.49274 14.467 8.68321 14.467 8.88181C14.467 9.08041 14.3882 9.27087 14.2478 9.41132L6.69111 16.9762Z"
+                                          fill="#F55A5A" />
+                                </svg>
+                                <span>XEM TIẾP</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="swiper-slide page-more-item">
+                        <div class="page-more-thumbnail">
+                            <a href="#">
+                                <img src="./images/page-more.png" alt="">
+                            </a>
+                        </div>
+                        <div class="page-more-content">
+                            <a href="" class="page-more-title">
+                                <h4>Shape Puzzle Set</h4>
+                            </a>
+                            <div class="page-more-desc">
+                                <p>
+                                    Odio ut enim blandit volutpat. Sit amet venenatis urna cursus. Et egestas quis ipsum suspendisse.
+                                    In hendrerit gravida rutrum quisque non tellus. Congue eu consequat ac felis donec et.
+                                </p>
+                            </div>
+                            <a href="#" class="page-more-link">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                    <path d="M6.69111 16.9762C6.62156 17.0458 6.53898 17.101 6.44809 17.1386C6.3572 17.1763 6.25979 17.1957 6.16141 17.1957C6.06303 17.1957 5.96561 17.1763 5.87472 17.1386C5.78383 17.101 5.70125 17.0458 5.6317 16.9762L4.68651 16.031C4.61693 15.9615 4.56174 15.8789 4.52408 15.788C4.48642 15.6971 4.46704 15.5997 4.46704 15.5013C4.46704 15.4029 4.48642 15.3055 4.52408 15.2146C4.56174 15.1237 4.61693 15.0412 4.68651 14.9716L10.7722 8.88593L4.68651 2.80024C4.61693 2.73069 4.56174 2.64811 4.52408 2.55722C4.48642 2.46633 4.46704 2.36892 4.46704 2.27054C4.46704 2.17216 4.48642 2.07474 4.52408 1.98385C4.56174 1.89296 4.61693 1.81039 4.68651 1.74083L5.6317 0.795645C5.70125 0.726065 5.78383 0.67087 5.87472 0.633212C5.96561 0.595554 6.06303 0.576172 6.16141 0.576172C6.25979 0.576172 6.3572 0.595554 6.44809 0.633212C6.53898 0.67087 6.62156 0.726065 6.69111 0.795645L14.2478 8.35229C14.3882 8.49274 14.467 8.68321 14.467 8.88181C14.467 9.08041 14.3882 9.27087 14.2478 9.41132L6.69111 16.9762Z"
+                                          fill="#F55A5A" />
+                                </svg>
+                                <span>XEM TIẾP</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="swiper-slide page-more-item">
+                        <div class="page-more-thumbnail">
+                            <a href="#">
+                                <img src="./images/page-more.png" alt="">
+                            </a>
+                        </div>
+                        <div class="page-more-content">
+                            <a href="" class="page-more-title">
+                                <h4>Shape Puzzle Set</h4>
+                            </a>
+                            <div class="page-more-desc">
+                                <p>
+                                    Odio ut enim blandit volutpat. Sit amet venenatis urna cursus. Et egestas quis ipsum suspendisse.
+                                    In hendrerit gravida rutrum quisque non tellus. Congue eu consequat ac felis donec et.
+                                </p>
+                            </div>
+                            <a href="#" class="page-more-link">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                    <path d="M6.69111 16.9762C6.62156 17.0458 6.53898 17.101 6.44809 17.1386C6.3572 17.1763 6.25979 17.1957 6.16141 17.1957C6.06303 17.1957 5.96561 17.1763 5.87472 17.1386C5.78383 17.101 5.70125 17.0458 5.6317 16.9762L4.68651 16.031C4.61693 15.9615 4.56174 15.8789 4.52408 15.788C4.48642 15.6971 4.46704 15.5997 4.46704 15.5013C4.46704 15.4029 4.48642 15.3055 4.52408 15.2146C4.56174 15.1237 4.61693 15.0412 4.68651 14.9716L10.7722 8.88593L4.68651 2.80024C4.61693 2.73069 4.56174 2.64811 4.52408 2.55722C4.48642 2.46633 4.46704 2.36892 4.46704 2.27054C4.46704 2.17216 4.48642 2.07474 4.52408 1.98385C4.56174 1.89296 4.61693 1.81039 4.68651 1.74083L5.6317 0.795645C5.70125 0.726065 5.78383 0.67087 5.87472 0.633212C5.96561 0.595554 6.06303 0.576172 6.16141 0.576172C6.25979 0.576172 6.3572 0.595554 6.44809 0.633212C6.53898 0.67087 6.62156 0.726065 6.69111 0.795645L14.2478 8.35229C14.3882 8.49274 14.467 8.68321 14.467 8.88181C14.467 9.08041 14.3882 9.27087 14.2478 9.41132L6.69111 16.9762Z"
+                                          fill="#F55A5A" />
+                                </svg>
+                                <span>XEM TIẾP</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="swiper-slide page-more-item">
+                        <div class="page-more-thumbnail">
+                            <a href="#">
+                                <img src="./images/page-more.png" alt="">
+                            </a>
+                        </div>
+                        <div class="page-more-content">
+                            <a href="" class="page-more-title">
+                                <h4>Shape Puzzle Set</h4>
+                            </a>
+                            <div class="page-more-desc">
+                                <p>
+                                    Odio ut enim blandit volutpat. Sit amet venenatis urna cursus. Et egestas quis ipsum suspendisse.
+                                    In hendrerit gravida rutrum quisque non tellus. Congue eu consequat ac felis donec et.
+                                </p>
+                            </div>
+                            <a href="#" class="page-more-link">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                    <path d="M6.69111 16.9762C6.62156 17.0458 6.53898 17.101 6.44809 17.1386C6.3572 17.1763 6.25979 17.1957 6.16141 17.1957C6.06303 17.1957 5.96561 17.1763 5.87472 17.1386C5.78383 17.101 5.70125 17.0458 5.6317 16.9762L4.68651 16.031C4.61693 15.9615 4.56174 15.8789 4.52408 15.788C4.48642 15.6971 4.46704 15.5997 4.46704 15.5013C4.46704 15.4029 4.48642 15.3055 4.52408 15.2146C4.56174 15.1237 4.61693 15.0412 4.68651 14.9716L10.7722 8.88593L4.68651 2.80024C4.61693 2.73069 4.56174 2.64811 4.52408 2.55722C4.48642 2.46633 4.46704 2.36892 4.46704 2.27054C4.46704 2.17216 4.48642 2.07474 4.52408 1.98385C4.56174 1.89296 4.61693 1.81039 4.68651 1.74083L5.6317 0.795645C5.70125 0.726065 5.78383 0.67087 5.87472 0.633212C5.96561 0.595554 6.06303 0.576172 6.16141 0.576172C6.25979 0.576172 6.3572 0.595554 6.44809 0.633212C6.53898 0.67087 6.62156 0.726065 6.69111 0.795645L14.2478 8.35229C14.3882 8.49274 14.467 8.68321 14.467 8.88181C14.467 9.08041 14.3882 9.27087 14.2478 9.41132L6.69111 16.9762Z"
+                                          fill="#F55A5A" />
+                                </svg>
+                                <span>XEM TIẾP</span>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="swiper-slide page-more-item">
+                        <div class="page-more-thumbnail">
+                            <a href="#">
+                                <img src="./images/page-more.png" alt="">
+                            </a>
+                        </div>
+                        <div class="page-more-content">
+                            <a href="" class="page-more-title">
+                                <h4>Shape Puzzle Set</h4>
+                            </a>
+                            <div class="page-more-desc">
+                                <p>
+                                    Odio ut enim blandit volutpat. Sit amet venenatis urna cursus. Et egestas quis ipsum suspendisse.
+                                    In hendrerit gravida rutrum quisque non tellus. Congue eu consequat ac felis donec et.
+                                </p>
+                            </div>
+                            <a href="#" class="page-more-link">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                                    <path d="M6.69111 16.9762C6.62156 17.0458 6.53898 17.101 6.44809 17.1386C6.3572 17.1763 6.25979 17.1957 6.16141 17.1957C6.06303 17.1957 5.96561 17.1763 5.87472 17.1386C5.78383 17.101 5.70125 17.0458 5.6317 16.9762L4.68651 16.031C4.61693 15.9615 4.56174 15.8789 4.52408 15.788C4.48642 15.6971 4.46704 15.5997 4.46704 15.5013C4.46704 15.4029 4.48642 15.3055 4.52408 15.2146C4.56174 15.1237 4.61693 15.0412 4.68651 14.9716L10.7722 8.88593L4.68651 2.80024C4.61693 2.73069 4.56174 2.64811 4.52408 2.55722C4.48642 2.46633 4.46704 2.36892 4.46704 2.27054C4.46704 2.17216 4.48642 2.07474 4.52408 1.98385C4.56174 1.89296 4.61693 1.81039 4.68651 1.74083L5.6317 0.795645C5.70125 0.726065 5.78383 0.67087 5.87472 0.633212C5.96561 0.595554 6.06303 0.576172 6.16141 0.576172C6.25979 0.576172 6.3572 0.595554 6.44809 0.633212C6.53898 0.67087 6.62156 0.726065 6.69111 0.795645L14.2478 8.35229C14.3882 8.49274 14.467 8.68321 14.467 8.88181C14.467 9.08041 14.3882 9.27087 14.2478 9.41132L6.69111 16.9762Z"
+                                          fill="#F55A5A" />
+                                </svg>
+                                <span>XEM TIẾP</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                <!-- If we need pagination -->
+                <div class="swiper-pagination"></div>
+            </div>
+            <div class="read-more">
+                <a href="/" class="btn btn-outline">XEM SẢN PHẨM</a>
+            </div>
+        </div>
+    </div>
+
+</main>

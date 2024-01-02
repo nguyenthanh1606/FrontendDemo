@@ -1,0 +1,64 @@
+﻿@model Admin.Models.MenuDetailViewModel
+@using Resources
+
+<div class="page-title">
+    <div class="title_left">
+        <h3>
+            @Resource.Menu
+            <small>@Resource.Detail</small>
+        </h3>
+    </div>
+</div>
+
+<div class="main-content">
+    @using (Html.BeginForm("Create", "Menu", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-horizontal">
+            <div class="form-group">
+                <span class="control-label col-md-2 col-sm-3 col-xs-12">@Resource.ID</span>
+                <div class="col-md-10 col-sm-9 col-xs-12">
+                    @Html.EditorFor(model => model.MenuID, new { htmlAttributes = new { @class = "form-control", @readonly = true } })
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.Label("", @Resource.Auth, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+                <div class="col-md-10 col-sm-9 col-xs-12">
+                    <div class="form-control" readonly>@Model.Author</div>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2 col-sm-3 col-xs-12">@Resource.MenuName</label>
+                <div class="col-md-10 col-sm-9 col-xs-12">
+                    @Html.EditorFor(model => model.MenuName, new { htmlAttributes = new { @class = "form-control", @readonly = true } })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2 col-sm-3 col-xs-12">@Resource.FriendUrl</label>
+                <div class="col-md-10 col-sm-9 col-xs-12">
+                    @Html.EditorFor(model => model.Link, new { htmlAttributes = new { @class = "form-control", @readonly = true } })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2 col-sm-3 col-xs-12">@Resource.Priority</label>
+                <div class="col-md-10 col-sm-9 col-xs-12">
+                    @Html.EditorFor(model => model.MenuOrder, new { htmlAttributes = new { @class = "form-control", @readonly = true } })
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="control-label col-md-2 col-sm-3 col-xs-12">@Resource.MenuParent</label>
+                <div class="col-md-10 col-sm-9 col-xs-12">
+                    @Html.EditorFor(model => model.MenuParentName, new { htmlAttributes = new { @class = "form-control", @readonly = true } })
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-sm-offset-3 col-md-10 col-sm-9 col-xs-12">
+                    @Html.ActionLink(Resource.BackToList, "Index", null, new { @class = "btn btn-default" })
+                </div>
+            </div>
+        </div>
+    }
+</div>
+

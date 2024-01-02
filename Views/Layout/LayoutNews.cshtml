@@ -1,0 +1,70 @@
+﻿@model Frontend.Models.LayoutNewsViewModel
+@using PagedList.Mvc;
+@using PagedList;
+@using Frontend.Infrastructure.ExtensionMethod;
+@using Frontend.Infrastructure.Utility;
+
+@{
+    ViewBag.Title = Model.Group.Title;
+    ViewBag.Description = Model.Group.Description.RemoveHtml();
+    if (!string.IsNullOrEmpty(Model.Group.ImageUrl))
+    {
+        ViewBag.Image = Url.Content(Model.Group.ImageUrl, true);
+    }
+}
+<div class="BodyContent introlayout">
+    <div class="wrapper" id="news-page">
+        
+        @Html.Breadcrumb(BreadcrumbType.Group, @Model.Group.GroupID)
+        
+        <div class="banner-page">
+            <img src="@Model.Group.BannerUrl"/>
+        </div>
+        <div class="news-block clearfix">
+            @while (Model.ListContentOfGroup.Count != 0)
+            {
+                var list = Model.ListContentOfGroup.Take(8).ToList();
+                @DrawNewsContent(list);
+                Model.ListContentOfGroup.RemoveRange(0, list.Count);
+            }
+           
+        </div>
+        <div>@Html.GetPageList(Model.page, Model.pageSize, Model.totalItem)</div>
+    </div>
+</div>
+
+@helper DrawNewsContent(List<Frontend.Models.ContentBoxViewModel> list)
+{
+    int i = 0;
+    int length = list.Count;
+    if (i < 4)
+    {
+        <div class="top-ct clearfix">
+            <div class="focus-news col-lg-6 col-md-6 col-sm-6">
+                @Html.DisplayFor(m => list[i])
+            </div>
+            <div class="list-3-news-list col-lg-6 col-md-6 col-sm-6">
+                @while (++i < 4 && i < length)
+                {
+                    <div class="list-3-news col-lg-12 col-md-12 col-sm-12">
+                        @Html.DisplayFor(m => list[i])
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    if (i >= 4 && i < 8)
+    {
+        <div class="list-4-news-list">
+            <div class="row">
+                @while (i++ < 8 && i < length)
+                {
+                    <div class="list-4-news col-lg-3 col-md-3 col-sm-3 col-xs-6">
+                        @Html.DisplayFor(m => list[i])
+                    </div>
+                }
+            </div>
+        </div>
+    }
+}

@@ -1,0 +1,317 @@
+﻿@model Admin.Models.DiscountViewModel
+@using Store.Service.ProductServices;
+
+@{
+    ViewBag.Title = Resource.Discount;
+    ViewBag.ProductsApplied = "productsApplied";
+    ViewBag.BrandsApplied = "brandsApplied";
+    ViewBag.ProductGroupsApplied = "productGroupApplied";
+}
+
+ <div class="page-title">
+        <div class="title_left">
+            <h3>
+                @Resource.Discount
+                <small>@Resource.Edit</small>
+            </h3>
+        </div>
+        <div class="title_right">
+            <div class="pull-right">
+                <a href="@(ViewBag.ReturnUrl?? @Url.Action("Index"))" class="btn btn-default">@Resource.BackToList</a>
+                <button type="submit" name="submitButton" onclick="btnSubmitOnClick($('#formDiscountInfo'), '@Resource.Save')" class="btn btn-primary">
+                    <i class="fa fa-floppy-o"> @Resource.Save</i>
+                </button>
+                <button type="submit" name="submitButton" onclick="btnSubmitOnClick($('#formDiscountInfo'), '@Resource.SaveAndContinueEdit')" class="btn btn-primary">
+                    <i class="fa fa-floppy-o"> @Resource.SaveAndContinueEdit</i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content" id="discount_page">
+        <div id="wizard" class="form_wizard">
+            <div>
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation" class="active">
+                        <a href="#discount_info" aria-controls="discount_info" role="tab" data-toggle="tab">@Resource.DiscountInfo</a>
+                    </li>
+                    <li role="presentation">
+                        <a href="#requirement" aria-controls="requirement" role="tab" data-toggle="tab">@Resource.Requirement</a>
+                    </li>
+                    <li role="presentation" v-show="DiscountTypeSelect(@((int)DiscountType.AssignedToBrand))">
+                        <a href="#applied_to_brand" aria-controls="applied_to_brand" role="tab" data-toggle="tab">@Resource.AppliedToBrands</a>
+                    </li>
+                    <li role="presentation" v-show="DiscountTypeSelect(@((int)DiscountType.AssignedToCategories))">
+                        <a href="#applied_to_category" aria-controls="applied_to_category" role="tab" data-toggle="tab">@Resource.AppliedToCategories</a>
+                    </li>
+                    <li role="presentation" v-show="DiscountTypeSelect(@((int)DiscountType.AssignedToProducts))">
+                        <a href="#applied_to_product" aria-controls="applied_to_product" role="tab" data-toggle="tab">@Resource.AppliedToProducts</a>
+                    </li>
+                    <li role="presentation">
+                        <a href="#usage_history" aria-controls="usage_history" role="tab" data-toggle="tab">@Resource.UsageHistory</a>
+                    </li>
+                </ul>
+
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane fade in  active" id="discount_info">
+                        @using (Html.BeginForm("Edit", "Discount", FormMethod.Post, new { id = "formDiscountInfo" }))
+                        {
+                            <div class="form-horizontal">
+                                @Html.ValidationSummary(true)
+                                @Html.AntiForgeryToken()
+                                @Html.EditorFor(m => m.discountInfo)
+                                @Html.Hidden("ReturnUrl", (string)ViewBag.ReturlUrl)
+                            </div>
+                            <input type="hidden" name="typeAction" id="typeAction" value="" />
+                        }
+                    </div>
+
+                    <!-- Discount requirement -->
+                    <div role="tabpanel" class="tab-pane fade" id="requirement">
+                        <div id="listDiscountRequirement">
+                            @{Html.RenderAction("ListDiscountRequirement", new { id = Model.discountInfo.ID });}
+                        </div>
+
+                        @using (Ajax.BeginForm("AddDiscountRequirement", 
+                            new AjaxOptions { 
+                                InsertionMode = InsertionMode.Replace, HttpMethod = "POST", 
+                                UpdateTargetId = "listDiscountRequirement",
+                                OnBegin = "return DoesDiscountRequirementExist()"
+                            }))
+                        {
+                            @Html.ValidationSummary(true)
+                            @Html.AntiForgeryToken()
+
+                            @Html.HiddenFor(model => model.discountRequirement.DiscountID)
+
+                            <div class="form-horizontal">
+                                <div class="form-group">
+                                    @Html.LabelFor(model => model.discountRequirement.RequiredType, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+                                    <div class="col-md-10 col-sm-9 col-xs-12">
+                                        @Html.DropDownListFor(model => model.discountRequirement.RequiredType, new SelectList(@ViewBag.DiscountRequirementTypes, "Key", "Value"),
+                                    new { @class = "form-control", v_model = "requiredType" })
+                                    </div>
+                                </div>
+                                <div class="form-group" v-show="DiscountRequirementTypeSelect(@((int)DiscountRequirementType.CustomerHadSpentAmount))">
+                                    @Html.LabelFor(model => model.discountRequirement.amount, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+                                    <div class="col-md-4">
+                                        <div class='input-group'>
+                                            @Html.TextBoxFor(model => model.discountRequirement.amount, new { @class = "form-control col-md-4 col-sm-4 col-xs-12" })
+                                            <span class="input-group-addon">
+                                                <span class="">đ</span>
+                                            </span>
+                                        </div>
+                                        @Html.ValidationMessageFor(model => model.discountRequirement.amount)
+                                    </div>
+                                </div>
+                                <div class="form-group" v-show="DiscountRequirementTypeSelect(@((int)DiscountRequirementType.CustomerHaveProductsInCart))">
+                                    @Html.LabelFor(model => model.discountRequirement.products, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+                                    <div class="col-md-10">
+                                        <div class='input-group'>
+                                            @Html.TextBoxFor(model => model.discountRequirement.products, new { @class = "form-control col-md-4 col-sm-4 col-xs-12", @onchange = "UpdateProductNames($(this), 'productNames')" })
+                                            <a onclick="return DiscountRequirementPopup('@Html.IdFor(model => model.discountRequirement.products)')" class="btn btn-primary input-group-addon">@Resource.AddProduct</a>
+                                        </div>
+                                        <h5 class="col-lg-12" id="productNames"></h5>
+                                        @Html.ValidationMessageFor(model => model.discountRequirement.products, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <div class="col-md-10 col-md-offset-2">
+                                        <div class='input-group'>
+                                            <input type="submit" class="btn btn-primary" value="@Resource.Save" />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <!-- End -->
+
+                    <!-- Applied to brand -->
+                    <div role="tabpanel" class="tab-pane fade" id="applied_to_brand">
+                        <div id="listBrandApplied">
+                            @{Html.RenderAction("ListApplied", new { DiscountTypeID = (int)DiscountType.AssignedToBrand, DiscountID = @Model.discountInfo.ID });}
+                        </div>
+                        <div class="form-group">
+                            <input type="hidden" id="@ViewBag.BrandsApplied" />
+                            <a onclick="return AppliedToBrandPopup()" class="btn btn-primary">@Resource.AddBrand</a>
+                        </div>
+                    </div>
+                    <!-- End -->
+                    
+                    <!-- Applied to product group -->
+                    <div role="tabpanel" class="tab-pane fade" id="applied_to_category">
+                        <div id="listProductGroupApplied">
+                            @{Html.RenderAction("ListApplied", new { DiscountTypeID = (int)DiscountType.AssignedToCategories, DiscountID = @Model.discountInfo.ID });}
+                        </div>
+                        <div class="form-group">
+                            <input type="hidden" id="@ViewBag.ProductGroupsApplied" />
+                            <a onclick="return AppliedToProductGroupPopup()" class="btn btn-primary">@Resource.AddProductGroup</a>
+                        </div>
+                    </div>
+                    <!-- End -->
+
+                    <div role="tabpanel" class="tab-pane fade" id="applied_to_product">
+                        <div id="listProductApplied">
+                            @{Html.RenderAction("ListApplied", new { DiscountTypeID = (int)DiscountType.AssignedToProducts, DiscountID = @Model.discountInfo.ID });}
+                        </div>
+                        <div class="form-group">
+                            <input type="hidden" id="@ViewBag.ProductsApplied" />
+                            <a onclick="return AppliedToProductPopup()" class="btn btn-primary">@Resource.AddProduct</a>
+                        </div>
+                    </div>
+
+                    <div role="tabpanel" class="tab-pane fade" id="usage_history">
+                        @{Html.RenderAction("ListUsageHistory", new { DiscountID = @Model.discountInfo.ID });}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+<div id="divModal" class="modal fade" role="dialog">
+</div>
+
+@section scripts{
+    
+    <script>
+    $(document).ready(function () {
+
+        // setup datetime picker
+        $(function () {
+            $('div[name="datetimepicker"]').datetimepicker();
+        });
+    });
+
+    function btnSubmitOnClick($form, nameAction){
+        $("#typeAction").val(nameAction);
+        $form.submit();
+    }
+
+
+    // set up Vue
+    var vmCheckout = new Vue({
+        el: '#discount_page',
+        data: {
+            usePercentage: @(Model.discountInfo.UsePercentage.ToString().ToLower()),
+            discountLimitation: @Model.discountInfo.DiscountLimitationId,
+            discountType: @Model.discountInfo.DiscountTypeId,
+            requiredType: @((int)DiscountRequirementType.CustomerHaveProductsInCart),
+        },
+        methods: {
+            LimitationSelect:function(){
+                return this.discountLimitation != @((int)DiscountLimitationType.Unlimited);
+            },
+            DiscountTypeSelect:function(type){
+                return this.discountType == type;
+            },
+            DiscountRequirementTypeSelect:function(type){
+                return this.requiredType == type;
+            }
+        }
+    });
+
+    function DiscountRequirementPopup(updateTargetId){
+        // clear validate message if popup show again
+        $("[data-valmsg-for='@Html.NameFor(model => model.discountRequirement.products)']").html("").text();
+
+        var win = window.open("@Url.Action("ProductAddPopup", "Discount")?UpdateTargetId=" + updateTargetId + "&RemoveProducts=" + $("#" + updateTargetId).val(), "@Resource.AddProduct",
+            "height=700,width=600,left=300");
+    }
+
+
+
+    function AppliedToProductPopup(){
+
+        var win = window.open("@Html.Raw(@Url.Action("ProductsAppliedPopup", new { UpdateTargetId = @ViewBag.ProductsApplied, DiscountID = @Model.discountInfo.ID }))", "@Resource.AddProduct",
+        "height=700,width=600,left=300");
+
+        // clear value
+        win.onload = function(){
+            $("#@ViewBag.ProductsApplied").val("");
+        };
+
+        win.onunload = function() {
+            if(win.closed)
+            {
+                var param = {
+                    DiscountID: @Model.discountInfo.ID,
+                    Products: $("#@ViewBag.ProductsApplied").val()
+                }
+                // insert into DiscountTypeMapping
+                $.post("@Url.Action("AddProductApplied")", param, function (data){
+                    $("#listProductApplied").html(data);
+                });
+            }
+        }
+    }
+
+    function AppliedToBrandPopup(){
+
+        var win = window.open("@Html.Raw(@Url.Action("BrandsAppliedPopup", new { UpdateTargetId = @ViewBag.BrandsApplied, DiscountID = @Model.discountInfo.ID }))", "@Resource.AddBrand",
+    "height=700,width=600,left=300");
+
+        win.onunload = function() {
+            if(win.closed) {
+                var param = {
+                    DiscountID: @Model.discountInfo.ID,
+                    Brands: $("#@ViewBag.BrandsApplied").val()
+                }
+                // insert into DiscountTypeMapping
+                $.post("@Url.Action("AddBrandApplied")", param, function (data){
+                        $("#listBrandApplied").html(data);
+                    });
+                }
+            }
+        }
+
+        function AppliedToProductGroupPopup(){
+
+            var win = window.open("@Html.Raw(@Url.Action("ProductGroupsAppliedPopup", new { UpdateTargetId = @ViewBag.ProductGroupsApplied, DiscountID = @Model.discountInfo.ID }))", "@Resource.AddProductGroup",
+        "height=700,width=600,left=300");
+
+            win.onunload = function() {
+                if(win.closed) {
+                    var param = {
+                        DiscountID: @Model.discountInfo.ID,
+                        ProductGroups: $("#@ViewBag.ProductGroupsApplied").val()
+                    }
+                    // insert into DiscountTypeMapping
+                    $.post("@Url.Action("AddProductGroupApplied")", param, function (data){
+                        $("#listProductGroupApplied").html(data);
+                    });
+                }
+            }
+        }
+
+
+    // IDs : id of product with format: 1,2,3,...
+    function UpdateProductNames($this, updateTargetId){
+        $.ajax({
+            type : "Post",
+            dataType : "json",
+            data: "productList=" + $this.val(),
+            url : "@Url.Action("getProductNames", "Discount")",
+            success: function(data) {
+                $("#"+ updateTargetId).text(data);
+            }
+        });
+    }
+
+    function DoesDiscountRequirementExist(){
+        $.ajax({
+            type : "Post",
+            dataType : "json",
+            data: "DiscountID=@(Model.discountInfo.ID)&RequiredType=" + $("#@Html.IdFor(model => Model.discountRequirement.RequiredType)").val(),
+            url : "@Url.Action("doesDiscountRequirementExist", "Discount")",
+            success: function(data) {
+                if(data){
+                    $("[data-valmsg-for='@Html.NameFor(model => model.discountRequirement.products)']").html("@Resource.DiscountRequirementExist").text();
+                }
+
+                return data;
+            }
+        });
+    }
+</script>
+}
+

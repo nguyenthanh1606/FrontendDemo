@@ -1,0 +1,103 @@
+﻿@model Admin.Models.ProductVersionViewModel
+@using Store.Service.ProductServices
+
+@Html.HiddenFor(m => m.ProductVersionID)
+@Html.HiddenFor(m => m.ProductID)
+
+@for (int i = 0; i < Model.ListGroupProperties.Count; i++)
+{
+    <div class="form-group">
+        @Html.Label(Model.ListGroupProperties[i].Name, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+        <div class="col-md-10 col-sm-9 col-xs-12">
+            @Html.TextBoxFor(model => model.ListGroupProperties[i].ValueName, new { @class = "form-control", @readonly = "readonly" })
+        </div>
+    </div>
+}
+
+<div class="form-group">
+    @Html.LabelFor(model => model.Title, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextBoxFor(model => model.Title, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.Title, "")
+    </div>
+</div>
+
+<div class="form-group">
+    @Html.LabelFor(model => model.Thumbnail, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.FilesManagerTextboxFor(model => model.Thumbnail, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.Thumbnail, "")
+    </div>
+</div>
+
+<div class="form-group">
+    @Html.LabelFor(model => model.ImageUrls, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        <span class="btn btn-primary" onclick="CloneTableRow('#images-table')">@Resource.AddNewRow</span>
+    </div>
+    <div class="col-md-10 col-sm-9 col-xs-12 col-md-offset-2 col-sm-offset-3">
+        <table class="table table-bordered" id="images-table">
+            <thead class="thead-blue">
+                <tr>
+                    <th class="width-16">@Html.LabelFor(m => m.ImageUrls)</th>
+                    <th class="width-4">@Resource.Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.ListImages.Count(); i++)
+                {
+                    <tr>
+                        <td>
+                            @Html.FilesManagerTextboxFor(model => model.ListImages[i], new { @class = "form-control" })
+                        </td>
+                        <td>
+                            <span class="btn btn-primary" onclick="DeleteTableRow(this)">@Resource.Delete</span>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        @Html.ValidationMessageFor(model => model.ListImages)
+    </div>
+</div>
+
+<div class="form-group">
+    @Html.LabelFor(model => model.InventoryNumber, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextBoxFor(model => model.InventoryNumber, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.InventoryNumber, "")
+    </div>
+</div>
+
+<div class="form-group">
+    @Html.LabelFor(model => model.DefaultPrice, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextBoxFor(model => model.DefaultPrice, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.DefaultPrice, "")
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.OriginalPrice, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextBoxFor(model => model.OriginalPrice, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.OriginalPrice, "")
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.Priority, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextBoxFor(model => model.Priority, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.Priority, "")
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.Status, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+
+        <label class="checkbox-inline">
+            @Html.RadioButtonFor(model => model.Status, "0")<text>@Resource.Visible</text>
+        </label><label class="checkbox-inline">
+            @Html.RadioButtonFor(model => model.Status, "-1")<text>@Resource.Invisible</text>
+        </label>
+    </div>
+</div>

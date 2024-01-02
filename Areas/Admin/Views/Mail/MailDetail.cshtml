@@ -1,0 +1,181 @@
+﻿
+@using Microsoft.AspNet.Identity
+@model IEnumerable<Admin.Models.MailDetailViewModel>
+@{ 
+    int originalMailID = Model.FirstOrDefault().MailID;
+    int lastMailID = Model.Last().MailID;
+}
+
+<div class="inbox-body">
+    <div class="mail_heading row">
+        <h4>@Model.FirstOrDefault().Title</h4>
+    </div>
+    @using (var iter = Model.GetEnumerator())
+    {
+        if (iter.MoveNext())
+        {
+            var current = iter.Current;
+            //check not last item
+            while (iter.MoveNext())
+            {
+                //get string receiver name 
+                string receiverName = "";
+                foreach (var receiver in current.Receivers)
+                {
+                    if (!(receiver.ReceiverID == User.Identity.GetUserId<int>()))
+                    {
+                        receiverName += (receiver.ReceiverUsername + ", ");
+                    }
+                    else
+                    {
+                        receiverName = Resource.Me + receiverName + ", ";
+                    }
+                }
+                receiverName = receiverName.Remove(receiverName.Length - 2, 2);
+                <div class="child-mail">
+                    <div class="short">
+                        <div class="mail-head clearfix">
+                            <div class="pull-left">
+                                <span class="bold">@current.SenderFullName</span>
+                                <span class="gray">(@current.SenderUsername)</span>
+                            </div>
+                            <div class="mail-time">
+                                @current.CreationDate
+                            </div>
+                        </div>
+                        <div class="mail-body">
+                            @current.Content.RemoveHtml().Truncate(100)
+                        </div>
+
+                    </div>
+                    <div class="full">
+                        <div class="clearfix">
+                            <div class="mail-head">
+                                <div class="pull-left">
+                                    <span class="bold">@current.SenderFullName</span>
+                                    <span class="gray">(@current.SenderUsername)</span>
+                                </div>
+                                <div class="mail-time">
+                                    @current.CreationDate
+                                </div>
+                            </div>
+
+                            <div class="btn-group actionBtn pull-right">
+                                @Ajax.FontawsomeActionLink("fa-reply", "", "Reply", new { id = current.MailID }, new AjaxOptions
+                                {
+                                    HttpMethod = "Get",
+                                    InsertionMode = InsertionMode.Replace,
+                                    UpdateTargetId = current.MailID.ToString(),
+                                    OnComplete = string.Format("InitReplyForm({0})", current.MailID)
+                                }, new { @class = "btn btn-sm btn-default", data_toggle = "tooltip", title = Resource.Reply, data_placement = "top" })
+                                <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown">
+                                    <span class="caret"></span>
+                                    <span class="sr-only">Toggle Dropdown</span>
+                                </button>
+
+                                <ul class="dropdown-menu btn-dropdown-menu" role="menu">
+                                    <li>
+                                        @Ajax.FontawsomeActionLink("fa-mail-reply-all", Resource.ReplyAll, "Reply", new { id = current.MailID, mode = 1 }, new AjaxOptions
+                                        {
+                                            HttpMethod = "Get",
+                                            InsertionMode = InsertionMode.Replace,
+                                            UpdateTargetId = current.MailID.ToString(),
+                                            OnComplete = string.Format("InitReplyForm({0})", current.MailID)
+                                        })
+                                    </li>
+                                    <li>
+                                        @Ajax.FontawsomeActionLink("fa-trash-o", Resource.Delete, "Delete", new { id = current.MailID }, new AjaxOptions
+                                        {
+                                            HttpMethod = "Post",
+                                            InsertionMode = InsertionMode.Replace,
+                                            UpdateTargetId = "mail_detail",
+                                            OnComplete = string.Format("CompleteDelete(\"{0}\")", Html.Raw(Resource.DeleteSuccessfully))
+                                        })
+                                    </li>
+
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="mail-body">
+                            <div class="gray">
+                                @Resource.To
+                                <b>@receiverName</b>
+                            </div>
+                            <div>
+                                @Html.Raw(current.Content)
+                            </div>
+                            <div id="@current.MailID"></div>
+                        </div>
+                    </div>
+                </div>
+                current = iter.Current;
+            }
+            // last item, show full
+            //get string receiver name 
+            string lastReceiverName = "";
+            foreach (var receiver in current.Receivers)
+            {
+                if (!(receiver.ReceiverID == User.Identity.GetUserId<int>()))
+                {
+                    lastReceiverName += (receiver.ReceiverUsername + ", ");
+                }
+                else
+                {
+                    lastReceiverName = Resource.Me + lastReceiverName + ", ";
+                }
+            }
+            lastReceiverName = lastReceiverName.Remove(lastReceiverName.Length - 2, 2);
+            <div class="padding10">
+                <div class="mail-head clearfix">
+                    <div class="pull-left">
+                        <span class="bold">@current.SenderFullName</span>
+                        <span class="gray">(@current.SenderUsername)</span>
+                    </div>
+                    <div class="mail-time">@current.CreationDate</div>
+                </div>
+                <div class="mail-body">
+                    <div class="gray">
+                        @Resource.To
+                        <b>@lastReceiverName</b>
+                    </div>
+                    <div>
+                        @Html.Raw(current.Content)
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    <div class="btn-group">
+        @Ajax.FontawsomeActionLink("fa-reply", Resource.Reply, "Reply", new { id = lastMailID}, 
+            new AjaxOptions
+            {
+                HttpMethod = "Get",
+                InsertionMode = InsertionMode.Replace,
+                UpdateTargetId = lastMailID.ToString(),
+                OnComplete = string.Format("InitReplyForm({0})", lastMailID)
+            }, 
+            new { @class = "btn btn-sm btn-primary", data_toggle = "tooltip", title = Resource.Reply, data_placement = "top" })
+        @Ajax.FontawsomeActionLink("fa-mail-reply-all", "", "Reply", new { id = lastMailID, mode = 1 }, 
+            new AjaxOptions
+            {
+                HttpMethod = "Get",
+                InsertionMode = InsertionMode.Replace,
+                UpdateTargetId = lastMailID.ToString(),
+                OnComplete = string.Format("InitReplyForm({0})", lastMailID)
+            }, 
+            new { @class="btn btn-sm btn-default", data_toggle="tooltip", title= Resource.ReplyAll, data_placement="top"})
+            @Ajax.FontawsomeActionLink("fa-trash-o", "", "Delete", new { id = lastMailID, deleteAll = true, fromSentMail = ViewBag.FromSentMail },
+                new AjaxOptions
+                {
+                    Confirm = Resource.DeleteConfirmation,
+                    HttpMethod = "POST",
+                    InsertionMode = InsertionMode.Replace,
+                    UpdateTargetId = "main-body",
+                    OnComplete = string.Format("CompleteDelete(\"{0}\")", Html.Raw(Resource.DeleteSuccessfully))
+                },
+            new { @class = "btn btn-sm btn-default", data_toggle = "tooltip", title = Resource.Delete, data_placement = "top" })
+    </div>
+
+    <div id="@lastMailID"></div>
+</div>

@@ -1,0 +1,109 @@
+﻿@using Store.Service.Models
+@model Frontend.Models.MainMenuViewModel
+
+<div class="dv-item-module ">
+    <div class="navbar navbar-inverse yamm menu_horizontal" id="menu_id_MB01">
+        <div class="navbar-header">
+            <div class="text_title_nav"></div>
+            <button type="button" data-toggle="collapse" data-target="#navbar-collapse-MB01" class="navbar-toggle">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+        </div>
+        <div id="navbar-collapse-MB01" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="/">
+                        @Resource.HomePage
+                    </a>
+                </li>
+                @foreach(var item in Model.MainMenu.GetAllChilds())
+                {
+                    @DrawMenu(item)
+                }
+            </ul>
+        </div>
+    </div>
+    <div class="row">
+        <!-- MOBILE MENU START -->
+        <div class="col-sm-12 mobile-menu-area">
+            <div class="mobile-menu hidden-md hidden-lg" id="mob-menu">
+                <span class="mobile-menu-title"></span>
+                <nav>
+                    <ul>
+                        <li>
+                            <a href="/">
+                                @Resource.HomePage
+                            </a>
+                        </li>
+                        @foreach (var item in Model.MainMenu.GetAllChilds())
+                        {
+                            @DrawMenuMobile(item)
+                        }
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        <!-- MOBILE MENU END -->
+    </div>
+
+</div>
+
+@helper DrawMenu(TreeNode<MenuItem> nodes)
+{
+    if (nodes.Value != null && !string.IsNullOrEmpty(nodes.Value.Url) && !string.IsNullOrEmpty(nodes.Value.MenuName))
+    {
+        if (nodes.HasChild())
+        {
+            <li class="dropdown">
+                <a href="@Url.Content(nodes.Value.Url)" data-toggle="dropdown" class="dropdown-toggle" aria-expanded="false">
+                    @Html.Raw(nodes.Value.MenuName)<b class="caret"></b>
+                </a>
+                <ul  class="dropdown-menu multi-level" role="menu" aria-labelledby="dropdownMenu">
+                    @foreach (var child in nodes.GetAllChilds())
+                    {
+                        @DrawMenu(child);
+                    }
+                </ul>
+            </li>
+        }
+        else
+        {
+            <li>
+                <a href="@Url.Content(nodes.Value.Url)">
+                    @Html.Raw(nodes.Value.MenuName)
+                </a>
+            </li>
+        }
+    }
+}
+
+@helper DrawMenuMobile(TreeNode<MenuItem> nodes)
+{
+if (nodes.Value != null && !string.IsNullOrEmpty(nodes.Value.Url) && !string.IsNullOrEmpty(nodes.Value.MenuName))
+{
+    if (nodes.HasChild())
+    {
+            <li>
+                <a href="@Url.Content(nodes.Value.Url)">
+                    @Html.Raw(nodes.Value.MenuName)
+                </a>
+                <ul>
+                    @foreach (var child in nodes.GetAllChilds())
+                    {
+                        @DrawMenuMobile(child);
+                    }
+                </ul>
+            </li>
+    }
+    else
+    {
+            <li>
+                <a href="@Url.Content(nodes.Value.Url)">
+                    @Html.Raw(nodes.Value.MenuName)
+                </a>
+            </li>
+    }
+}
+}

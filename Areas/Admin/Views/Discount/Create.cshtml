@@ -1,0 +1,117 @@
+﻿@model Admin.Models.DiscountViewModel
+@using Store.Service.ProductServices;
+
+@{
+    ViewBag.Title = Resource.Discount;
+}
+
+    <div class="page-title">
+        <div class="title_left">
+            <h3>
+                @Resource.Discount
+                <small>@Resource.Edit</small>
+            </h3>
+        </div>
+        <div class="title_right">
+            <div class="pull-right">
+                <a href="@(ViewBag.ReturnUrl?? @Url.Action("Index"))" class="btn btn-default">@Resource.BackToList</a>
+                <button type="submit" name="submitButton" onclick="btnSubmitOnClick($('#formDiscountInfo'), '@Resource.Create')" class="btn btn-primary">
+                    <i class="fa fa-floppy-o"> @Resource.Create</i>
+                </button>
+                <button type="submit" name="submitButton" onclick="btnSubmitOnClick($('#formDiscountInfo'), '@Resource.CreateAndContinueEdit')" class="btn btn-primary">
+                    <i class="fa fa-floppy-o"> @Resource.CreateAndContinueEdit</i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content" id="discount_page">
+        <div id="wizard" class="form_wizard">
+            <div>
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation" class="active">
+                        <a href="#discount_info" aria-controls="discount_info" role="tab" data-toggle="tab">@Resource.DiscountInfo</a>
+                    </li>
+                    <li role="presentation">
+                        <a href="#requirement" aria-controls="requirement" role="tab" data-toggle="tab">@Resource.Requirement</a>
+                    </li>
+                    <li role="presentation" v-show="DiscountTypeSelect(@((int)DiscountType.AssignedToBrand))">
+                        <a href="#applied_to_brand" aria-controls="applied_to_brand" role="tab" data-toggle="tab">@Resource.AppliedToBrands</a>
+                    </li>
+                    <li role="presentation" v-show="DiscountTypeSelect(@((int)DiscountType.AssignedToCategories))" >
+                        <a href="#applied_to_category" aria-controls="applied_to_category" role="tab" data-toggle="tab">@Resource.AppliedToCategories</a>
+                    </li>
+                    <li role="presentation" v-show="DiscountTypeSelect(@((int)DiscountType.AssignedToProducts))">
+                        <a href="#applied_to_product" aria-controls="applied_to_product" role="tab" data-toggle="tab">@Resource.AppliedToProducts</a>
+                    </li>
+                </ul>
+
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane fade in  active" id="discount_info">
+                        @using (Html.BeginForm("Create", "Discount", FormMethod.Post, new {id="formDiscountInfo" }))
+                        {
+                            <div class="form-horizontal">
+                                @Html.ValidationSummary(true)
+                                @Html.AntiForgeryToken()
+                                @Html.EditorFor(m => m.discountInfo)
+                            </div>
+                            <input type="hidden" name="typeAction" id="typeAction" value="" />
+                        }
+                        
+                    </div>
+                    <div role="tabpanel" class="tab-pane fade" id="requirement">
+                        @Resource.TabEmptyMessage
+                    </div>
+                    <div role="tabpanel" class="tab-pane fade" id="applied_to_brand">
+                        @Resource.TabEmptyMessage
+                    </div>
+                    <div role="tabpanel" class="tab-pane fade" id="applied_to_category">
+                        @Resource.TabEmptyMessage
+                    </div>
+                    <div role="tabpanel" class="tab-pane fade" id="applied_to_product">
+                        @Resource.TabEmptyMessage
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+<div id="divModal" class="modal fade" role="dialog"></div>
+
+@section scripts{
+
+    <script>
+
+    $(document).ready(function () {
+
+        // setup datetime picker
+        $(function () {
+            $('div[name="datetimepicker"]').datetimepicker();
+        });
+    });
+
+    function btnSubmitOnClick($form, nameAction){
+        $("#typeAction").val(nameAction);
+        $form.submit();
+    }
+
+    // set up Vue
+    var vmDiscount = new Vue({
+        el: '#discount_page',
+        data: {
+            usePercentage: false,
+            discountLimitation: @Model.discountInfo.DiscountLimitationId,
+            discountType: @Model.discountInfo.DiscountTypeId,
+        },
+        methods: {
+            LimitationSelect:function(){
+                return this.discountLimitation != @((int)DiscountLimitationType.Unlimited);
+                },
+            DiscountTypeSelect:function(type){
+                return this.discountType == type;
+                }
+            }
+        });
+    </script>
+}
+

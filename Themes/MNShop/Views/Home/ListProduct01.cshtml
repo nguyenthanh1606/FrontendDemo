@@ -1,0 +1,49 @@
+﻿@using Frontend.Infrastructure.Helpers
+@model Frontend.Models.ProductGroupViewModel
+@{
+    string themeHomeViewPath = "~/Themes/" + TabWeb.GetCurrentTheme() + "/Views/Home/{0}.cshtml";
+    int count = 0;
+}
+
+@if (Model.ListProduct.Any())
+{
+    <section class="home-sk">
+        <h2 class="home-about_title">
+            @if (Model.DefaultName != "")
+            {
+                @Model.DefaultName
+            }
+            else
+            {
+                @Model.Title
+            }
+        </h2>
+        <div class="home-sk_desc">
+            <p>Amet luctus venenatis lectus magna fringilla urna porttitor rhoncus. A lacus vestibulum sed arcu non odio euismod. Vitae tempus quam pellentesque nec nam aliquam. Libero enim sed faucibus turpis in eu mi bibendum. Aenean sed adipiscing diam donec adipiscing tristique risus nec feugiat.</p>
+        </div>
+        <div>
+            <a href="@Url.CustomAction(Store.Service.SystemService.RoutingType.ProductGroup, Model.GroupID)" class="text-uppercase link link-active font-small pl-0">XEM TRỌN BỘ SƯU TẬP  <i class="fas fa-caret-right"></i></a>
+        </div>
+        <div class="home-sk_list">
+            @foreach (var item in Model.ListProduct)
+            {
+                <div class="home-sk_item card-product">
+                    <a href="@Url.CustomAction(Store.Service.SystemService.RoutingType.Product, item.ProductID)" class="thumnails-template hover-ef-1">
+                        <div class="thumnails-content thumb-img">
+                            <img src="@item.ImageUrl" class="img-fluid" alt="@item.Title">
+                        </div>
+                    </a>
+                    <div class="card-product--name text-center">
+                        <a href="@Url.CustomAction(Store.Service.SystemService.RoutingType.Product, item.ProductID)">@item.Title</a>
+                    </div>
+                    <p class="card-product--author text-center">@item.Value1.RemoveHtml()</p>
+                    <p class="card-product--type text-center">
+                        Chất liệu tranh gốc: <span class="color-active"> @item.Value2.RemoveHtml() </span>
+                    </p>
+                </div>
+            }
+        </div>
+    </section>
+
+}
+

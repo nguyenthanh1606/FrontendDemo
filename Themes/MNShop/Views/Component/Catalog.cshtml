@@ -1,0 +1,28 @@
+﻿@model List<Frontend.Models.BannerViewModel>
+
+@if (Model.Any())
+{
+    var firstItem = Model.FirstOrDefault();
+<section class="home-catalog">
+    <div class="home-catalog_wrapper container">
+        <div class="home-catalog_content">
+            <h3>@firstItem.AdName</h3>
+            <p>@firstItem.Content.RemoveHtml()</p>
+            <form action="/" method="post" class="form-container">
+                <div class="input-container">
+                    <input type="email" name="emai" id="email" placeholder="Email của bạn" />
+                </div>
+                <div class="input-container">
+                    <input type="text" name="phone" id="phone" placeholder="Số điện thoại của bạn" />
+                </div>
+                <button type="submit" class="btn btn-default">DOWNLOAD</button>
+            </form>
+        </div>
+        <div class="home-catalog_thumbnail">
+            <img src="@firstItem.ImageUrl" alt="@firstItem.AdName" loading="lazy" />
+        </div>
+    </div>
+</section>
+}
+
+

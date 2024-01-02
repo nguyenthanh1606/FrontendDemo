@@ -1,0 +1,210 @@
+﻿@model Admin.Models.ContentViewModel
+@using Store.Service.Service
+@using Store.Service.Helper.ExtensionMethod
+@{
+
+    ViewBag.Title = string.Format(Resource.ContentStatusPlaceholder, @Model.Status.GetDescription());
+    string[] listAdvanceProperties = ViewBag.ListAdvanceProp;
+}
+
+
+@section css{
+    @Styles.Render("~/Content/css/elFinder")
+}
+
+<div class="page-title">
+    <div class="title_left">
+        <h3>
+            @string.Format(Resource.ContentStatusPlaceholder, @Model.Status.GetDescription())
+            <small>@Resource.Update</small>          
+        </h3>
+    </div>
+    <div class="title_right">
+        <div class="pull-right">
+            <div class="onoffswitch">
+                <input type="checkbox" class="onoffswitch-checkbox" id="myonoffswitch" value="true" onchange="$('#properties_container').toggleClass('showAdvance')">
+                <label class="onoffswitch-label" for="myonoffswitch">
+                    <span class="onoffswitch-inner" data-locale-basic="@Resource.Basic" data-locale-advanced="@Resource.Advance"></span>
+                    <span class="onoffswitch-switch"></span>
+                </label>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="main-content" id="properties_container">
+    <div class="x_panel">
+        <div class="x_title clearfix">
+            <h2>@Resource.Infomation</h2>
+            <ul class="nav navbar-right panel_toolbox">
+                <li>
+                    <a class="collapse-link"><i class="fa fa-chevron-down"></i></a>
+                </li>
+                <li>
+                    <a class="close-link"><i class="fa fa-close"></i></a>
+                </li>
+            </ul>
+        </div>
+        <div class="x_content">
+            <div class="form-horizontal">
+                <div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.ContentID))? "advanceProp" : "")">
+                    @Html.LabelFor(model => model.ContentID, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+                    <div class="col-md-10 col-sm-9 col-xs-12">
+                        <div class="form-control" readonly>@Model.ContentID </div>
+                    </div>
+                </div>
+                <div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.Version))? "advanceProp" : "")">
+                    @Html.LabelFor(model => model.Version, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+                    <div class="col-md-10 col-sm-9 col-xs-12">
+                        <div class="form-control" readonly>@Model.Version </div>
+                    </div>
+                </div>
+                <div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.Author))? "advanceProp" : "")">
+                    @Html.LabelFor(model => model.Author, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+                    <div class="col-md-10 col-sm-9 col-xs-12">
+                        <div class="form-control" readonly>@ViewBag.ResultAuthor</div>
+                    </div>
+                </div>
+                <div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.Editor))? "advanceProp" : "")">
+                    @Html.LabelFor(model => model.Editor, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+                    <div class="col-md-10 col-sm-9 col-xs-12">
+                        <div class="form-control" readonly>@ViewBag.ResultEditor</div>
+                    </div>
+                </div>
+                <div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.Approver))? "advanceProp" : "")">
+                    @Html.LabelFor(model => model.Approver, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+                    <div class="col-md-10 col-sm-9 col-xs-12">
+                        <div class="form-control" readonly>@ViewBag.ResultApprover</div>
+                    </div>
+                </div>
+                <div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.Status))? "advanceProp" : "")">
+                    @Html.LabelFor(model => model.Status, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+                    <div class="col-md-10 col-sm-9 col-xs-12">
+                        <div class="form-control" readonly>@Model.Status.GetDescription()</div>
+                    </div>
+                </div>
+                <div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.ModifiedDate))? "advanceProp" : "")">
+                    @Html.LabelFor(model => model.ModifiedDate, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+                    <div class="col-md-10 col-sm-9 col-xs-12">
+                        <div class="form-control" readonly>@Model.ModifiedDate</div>
+                    </div>
+                </div>
+                <div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.CreationDate))? "advanceProp" : "")">
+                    @Html.LabelFor(model => model.CreationDate, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+                    <div class="col-md-10 col-sm-9 col-xs-12">
+                        <div class="form-control" readonly>@Model.CreationDate</div>
+                    </div>
+                </div>
+                @if (Model.Status == ContentStatus.Published)
+                {
+                    <div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.PublishedDate))? "advanceProp" : "")">
+                        @Html.LabelFor(model => model.PublishedDate, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+                        <div class="col-md-10 col-sm-9 col-xs-12">
+                            @Html.TextBoxFor(model => model.PublishedDate, new { @class = "form-control", @readonly = "readonly" })
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+    <div class="x_panel">
+        <div class="x_title clearfix">
+            <h2>@Resource.Update</h2>
+        </div>
+        <div class="x_content">
+            @using (Html.BeginForm("Edit", "Content", FormMethod.Post, new { enctype = "multipart/form-data" }))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary(true)
+                    @Html.Hidden("ReturnUrl", (string)ViewBag.ReturnUrl)
+
+                    <div>
+                        @Html.EditorForModel()
+                        <div class="form-group">
+                            <div class="col-md-offset-2 col-sm-offset-3 col-md-10 col-sm-9 col-xs-12">
+                                <input type="submit" value="@Resource.Update" class="btn btn-primary" />
+                                @if (string.IsNullOrEmpty(ViewBag.ReturnUrl))
+                                {
+                                    switch (Model.Status)
+                                    {
+                                        case ContentStatus.WaitPublishing:
+                                        case ContentStatus.Rejected:
+                                            @Html.ActionLink(Resource.Ignore, "Waitting", null, new { @class = "btn btn-default" })
+                                            break;
+                                        case ContentStatus.WaitApproval:
+                                            @Html.ActionLink(Resource.Ignore, "ApproveContent", null, new { @class = "btn btn-default" })
+                                            break;
+                                        case ContentStatus.Published:
+                                            @Html.ActionLink(Resource.Ignore, "PublishedContent", null, new { @class = "btn btn-default" })
+                                            break;
+                                    }
+                                }
+                                else
+                                {
+                                    <a href="@ViewBag.ReturnUrl" class="btn btn-default">@Resource.Ignore</a>
+                                }
+                                <button class="btn btn-default" type="reset">@Resource.Reset</button>
+                                <button class="btn btn-default" type="button" onclick="myfunction()">@Resource.Unformat</button>
+                            </div>
+                        </div>
+                    </div>
+            }
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+    @Scripts.Render("~/bundles/elFinder")
+    <script type="text/javascript" src="~/Scripts/ckeditor/ckeditor.js"></script>
+    <script type="text/javascript" src="~/Scripts/ckeditor/adapters/jquery.js"></script>
+<script>
+    var vmContent = new Vue({
+        el: '#main-body',
+        mixins: [contentMixin],
+        data: {
+            isEditUrl: false,
+            friendlyUrl: '@(Model.FriendlyUrl?? "")',
+            originalFriendlyUrl: '@(Model.FriendlyUrl?? "")',
+            content: @Html.Raw(Json.Encode(Model)),
+            contentTitleMaxLength: 128,
+            customizeTitleMaxLength: 128,
+        },
+        created: function () {
+            var self = this;
+            var title = document.getElementById('@Html.IdFor(m => m.Headline)');
+            self.contentTitleMaxLength = title.dataset.valMaxlengthMax;
+            var customizeTitle = document.getElementById('@Html.IdFor(m => m.CustomizeTitle)');
+            self.customizeTitleMaxLength = title.dataset.valMaxlengthMax;
+        }
+    });
+
+    $(document).ready(function () {
+        initCkEl('@Url.Action("GetFile", "Files")', '@Request.Cookies["lang"].Value.Substring(0, 2)');
+        InitElf('@Url.Action("GetFile", "Files")', '@Request.Cookies["lang"].Value.Substring(0, 2)');
+
+        ReplaceCKEditor();
+        ReplaceSelect2('@Request.Cookies["lang"].Value.Substring(0, 2)');
+
+        
+        $("#Tags").select2({
+            theme: "bootstrap",
+            tags: true,
+            language: '@Request.Cookies["lang"].Value.Substring(0, 2)'
+        });
+    });
+
+    function myfunction() {
+        for (name in CKEDITOR.instances) {
+            var editor = CKEDITOR.instances[name];
+            editor.document.$.execCommand('SelectAll', false, null);
+            editor.document.$.execCommand('RemoveFormat', editor.getSelection().getNative());
+            editor.getSelection().getNative().removeAllRanges();
+        }
+    }
+
+    $('#PictureUrl, #BannerImages, #IconUrl').on('change', function () {
+        $('#' + $(this).attr('id') + 'Thumbnail').attr('src', $(this).val())
+    });
+</script>
+}

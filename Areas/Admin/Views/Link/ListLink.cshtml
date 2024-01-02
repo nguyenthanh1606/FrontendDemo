@@ -1,0 +1,64 @@
+﻿
+@using PagedList.Mvc
+@model PagedList.IPagedList<Admin.Models.LinkViewModel>
+
+@Styles.Render("~/Content/pagedList")
+
+<table class="table table-hover">
+    <thead class="thead-inverse">
+        <tr>
+            <th class="width-2">@Html.DisplayNameFor(model => model.FirstOrDefault().LinkID)</th>
+            <th class="width-4">@Html.DisplayNameFor(model => model.FirstOrDefault().Title)</th>
+            <th class="width-4">@Html.DisplayNameFor(model => model.FirstOrDefault().LinkHref)</th>
+            <th class="width-4">@Html.DisplayNameFor(model => model.FirstOrDefault().ImageUrl)</th>
+            <th class="width-3">@Html.DisplayNameFor(model => model.FirstOrDefault().Note)</th>
+            <th class="width-3">@Resource.Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.LinkID</td>
+                <td>@item.Title</td>
+                <td>@item.LinkHref</td>
+                <td>
+                    @if (!string.IsNullOrEmpty(item.ImageUrl))
+                    {
+                        <img src="@Url.Content(item.ImageUrl)" class="img-responsive" />
+                    }
+                </td>
+                <td>@item.Note</td>
+                <td>
+                    <div class="btn-group">
+                        <a href="@Url.Action("Update", new { id = item.LinkID })" class="btn btn-default">
+                            <i class="fa fa-pencil" aria-hidden="true"></i> @Resource.Edit
+                        </a>
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                            <span class="caret"></span>
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+
+                        <ul class="dropdown-menu btn-dropdown-menu" role="menu">
+                            <li>
+                                <a href="@Url.Action("Delete", new { id = item.LinkID })">
+                                    <i class="fa fa-trash-o" aria-hidden="true"></i> @Resource.Delete
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="pull-left">
+    @string.Format(Resource.PaginationTxt, Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber, @Model.PageCount)
+</div>
+<div class="pull-right">
+    @Html.PagedListPager(Model, page => Url.Action("ListLink",
+        new { page }),
+        PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() {
+            HttpMethod = "GET", UpdateTargetId = "list", OnSuccess = string.Format("UpdatePagingAjaxUrl(this)") }))
+</div>

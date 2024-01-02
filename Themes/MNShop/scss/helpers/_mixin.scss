@@ -1,0 +1,100 @@
+@mixin d-flex($direction: row) {
+  display: flex;
+  flex-direction: $direction;
+}
+
+@mixin d-flex-row($align: left, $vehicle: center, $gap: 10px) {
+  justify-content: $align;
+  align-items: $vehicle;
+  gap: $gap;
+  @include d-flex(row);
+}
+
+@mixin d-flex-column($align: left, $vehicle: center, $gap: 10px) {
+  justify-content: $align;
+  align-items: $vehicle;
+  gap: $gap;
+  @include d-flex(column);
+}
+
+@mixin reset-spacing() {
+  padding: 0;
+  margin: 0;
+  line-height: normal;
+}
+
+@mixin font-style(
+  $font-family: $font-default,
+  $font-size: 16px,
+  $font-style: normal,
+  $font-weight: normal,
+  $color: #000000,
+  $text-align: left
+) {
+  font-family: $font-family;
+  font-size: $font-size;
+  font-weight: $font-weight;
+  font-style: $font-style;
+  color: $color;
+  text-align: $text-align;
+}
+
+@mixin max-line($line: 1) {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: $line;
+  line-clamp: $line;
+  -webkit-box-orient: vertical;
+}
+
+@mixin reset-ul() {
+  ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+  }
+}
+
+@mixin maxline($line, $lineHeight) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: $line;
+  line-clamp: $line;
+  -webkit-box-orient: vertical;
+  line-height: $lineHeight;
+}
+@mixin thumnails-template($canvas) {
+  position: relative;
+  overflow: hidden;
+  transition: 0.4s ease;
+  border: 1px solid #e2e2e2;
+  border-color: transparent;
+  font-size: 0px;
+  display: block;
+
+  &:before {
+    content: "";
+    display: block;
+    padding-top: $canvas;
+  }
+
+  .thumnails-content {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #f1f1f1;
+    overflow: hidden;
+
+    img {
+      width: 100%;
+      height: auto;
+    }
+  }
+
+  &:hover {
+    transition: 0.4s ease-in-out;
+  }
+}

@@ -1,0 +1,51 @@
+﻿@model Admin.Models.BrandFilterViewModel
+
+@{
+    ViewBag.Title = Resource.Brand;
+}
+
+<div class="page-title">
+    <div class="title_left">
+        <h3>@Resource.Brand</h3>
+    </div>
+    <div class="title_right">
+        <div class="pull-right">
+            @Html.ActionLink(@Resource.Create, "Create", null, new { @class = "btn btn-primary" })
+            <button class="btn btn-default" onclick="$('#mainform').submit()">@Resource.UpdateRank</button>
+        </div>
+    </div>
+</div>
+
+<div class="main-content">
+    @using (Ajax.BeginForm("List", "Brand", new AjaxOptions { InsertionMode = InsertionMode.Replace, UpdateTargetId = "list", HttpMethod = "Get" }, new { id = "filter_div" }))
+    {
+        <div class="form-group clearfix">
+            <div class="col-md-6 col-sm-6 col-xs-12">
+                <label class="control-label">@Resource.Brand</label>
+                <div class="input-group">
+                    @Html.TextBoxFor(m => m.SearchString, new { @class = "form-control", @placeholder = @Resource.SearchPlaceholder })
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+                    </span>
+                </div>
+            </div>
+        </div>
+    }
+
+    @using (Ajax.BeginForm("UpdatePriority", "Brand", new AjaxOptions {
+        UpdateTargetId = "list", InsertionMode = InsertionMode.Replace, HttpMethod = "POST" }, new { @id = "mainform"}))
+    {
+        @Html.AntiForgeryToken()
+        <div id="list">
+            @{Html.RenderAction("List", "Brand", new { SearchString = Model.SearchString, Page = ViewBag.Page });}
+        </div>
+    }
+</div>
+
+@section scripts{
+    <script>
+        $('#filter_div').submit(function () {
+            ChangeUrl({ SearchString: $('#SearchString').val() });
+        });
+    </script>
+}

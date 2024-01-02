@@ -1,0 +1,127 @@
+﻿@model Admin.Models.ProductGroupViewModel
+@{
+    string[] listAdvanceProperties = ViewBag.ListAdvanceProp;
+}
+<div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.GroupID))? "advanceProp" : "")">
+    @Html.LabelFor(model => model.GroupID, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextBoxFor(model => model.GroupID, new { @class = "form-control", @readonly = true })
+    </div>
+</div>
+<div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.Title))? "advanceProp" : "")">
+    @Html.LabelFor(model => model.Title, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextBoxFor(model => model.Title, new { @class = "form-control", @readonly = true })
+    </div>
+</div>
+<div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.FriendlyUrl))? "advanceProp" : "")">
+    @Html.LabelFor(model => model.FriendlyUrl, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextBoxFor(model => model.FriendlyUrl, new { @class = "form-control", @readonly = true })
+    </div>
+</div>
+<div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.Description))? "advanceProp" : "")">
+    @Html.LabelFor(model => model.Description, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        <div class="form-control html-area" readonly>
+            @Html.Raw(Model.Description)
+        </div>
+    </div>
+</div>
+<div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.ShowOnMainMenu))? "advanceProp" : "")">
+    @Html.LabelFor(model => model.ShowOnMainMenu, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        <label class="checkbox-inline">
+            @Html.RadioButtonFor(model => model.ShowOnMainMenu, false)@Resource.Invisible
+        </label>
+        <label class="checkbox-inline">
+            @Html.RadioButtonFor(model => model.ShowOnMainMenu, true)@Resource.Visible
+        </label>
+    </div>
+</div>
+<div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.ShowOnBottomMenu))? "advanceProp" : "")">
+    @Html.LabelFor(model => model.ShowOnBottomMenu, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        <label class="checkbox-inline">
+            @Html.RadioButtonFor(model => model.ShowOnBottomMenu, false)@Resource.Invisible
+        </label>
+        <label class="checkbox-inline">
+            @Html.RadioButtonFor(model => model.ShowOnBottomMenu, true)@Resource.Visible
+        </label>
+    </div>
+</div>
+<div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.ShowOnHome))? "advanceProp" : "")">
+    @Html.LabelFor(model => model.ShowOnHome, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        <label class="checkbox-inline">
+            @Html.RadioButtonFor(model => model.ShowOnHome, false)@Resource.Invisible
+        </label>
+        <label class="checkbox-inline">
+            @Html.RadioButtonFor(model => model.ShowOnHome, true)@Resource.Visible
+        </label>
+    </div>
+</div>
+<div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.GroupParentID))? "advanceProp" : "")">
+    @Html.LabelFor(model => model.GroupParentID, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        <input class="form-control" readonly value="@Model.GroupParentName" />
+    </div>
+</div>
+<div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.ImageUrl))? "advanceProp" : "")">
+    @Html.LabelFor(model => model.ImageUrl, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+        {
+            <img src=@Url.Content(Model.ImageUrl) alt="@Resource.FileImage" class="img-responsive" />
+        }
+    </div>
+</div>
+<div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.BannerUrl))? "advanceProp" : "")">
+    @Html.LabelFor(model => model.BannerUrl, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @if (!string.IsNullOrEmpty(Model.BannerUrl))
+        {
+            <img src=@Url.Content(Model.BannerUrl) alt="@Model.BannerUrl" class="img-responsive" />
+        }
+    </div>
+</div>
+<div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.IconUrl))? "advanceProp" : "")">
+    @Html.LabelFor(model => model.IconUrl, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @if (!string.IsNullOrEmpty(Model.IconUrl))
+        {
+            <img src=@Url.Content(Model.IconUrl) alt="@Model.IconUrl" class="img-responsive" />
+        }
+    </div>
+</div>
+<div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.ProductGroupProperties))? "advanceProp" : "")">
+    @Html.LabelFor(model => model.ProductGroupProperties, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12" id="property-table">
+        <table class="table table-bordered">
+            <thead class="thead-blue">
+                <tr>
+                    <th class="width-9">@Html.LabelFor(m => m.ProductGroupProperties.FirstOrDefault().Title)</th>
+                    <th class="width-9">@Html.LabelFor(m => m.ProductGroupProperties.FirstOrDefault().Note)</th>
+                    <th class="width-9">@Html.LabelFor(m => m.ProductGroupProperties.FirstOrDefault().Priority)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.ProductGroupProperties.Count(); i++)
+                {
+                    <tr>
+                        <td>
+                            @Html.TextBoxFor(m => m.ProductGroupProperties[i].Title, new { @class = "form-control", @readonly = true })
+                        </td>
+                        <td>
+                            @Html.TextBoxFor(m => m.ProductGroupProperties[i].Note, new { @class = "form-control", @readonly = true })
+                        </td>
+                        <td>
+                            @Html.TextBoxFor(m => m.ProductGroupProperties[i].Priority, new { @class = "form-control", @readonly = true })
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        @Html.ValidationMessageFor(model => model.ProductGroupProperties)
+    </div>
+</div>

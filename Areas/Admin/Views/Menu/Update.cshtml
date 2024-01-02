@@ -1,0 +1,230 @@
+﻿@model Admin.Models.MenuViewModel
+@using Store.Service.Helper.ExtensionMethod
+@using Store.Service.Service
+
+@{
+
+    string menuPosition = null;
+    if (Model.MenuPosition.HasValue)
+    {
+        menuPosition = ((MenuType)Model.MenuPosition).GetDescription();
+    }
+
+}
+
+@section css{
+    @Styles.Render("~/Content/css/elFinder")
+}
+<div class="page-title">
+    <div class="title_left">
+        <h3>
+            @Resource.Menu
+            <small>@Resource.Update</small>
+        </h3>
+    </div>
+</div>
+
+<div class="main-content">
+    <ul class="nav nav-tabs">
+        <li><a data-toggle="tab" href="#generalInfo">@Resource.GeneralInfo</a></li>
+        <li class="active"><a data-toggle="tab" href="#manageComponent">@Resource.ManageComponent</a></li>
+    </ul>
+
+    <div class="tab-content">
+        <div id="generalInfo" class="tab-pane fade ">
+            <div class="form-horizontal">
+
+                @using (Ajax.BeginForm("EditComponent", "Menu", new { isRootMenu = true }, new AjaxOptions { HttpMethod = "Post" }, new { id = "rootMenuForm" }))
+                {
+                    @Html.HiddenFor(model => model.MenuID)
+                    @Html.HiddenFor(model => model.Priority)
+                    @Html.HiddenFor(model => model.MenuPosition)
+
+                    <div class="form-group">
+                        @Html.LabelFor(model => model.MenuName, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+                        <div class="col-md-10 col-sm-9 col-xs-12">
+                            <div class="input-group">
+                                @Html.TextBoxFor(model => model.MenuName, new { @class = "form-control" })
+                                <a class="input-group-addon btn-primary" href="#" onclick="$('#rootMenuForm').submit()">@Resource.Save</a>
+                            </div>
+                            @Html.ValidationMessageFor(model => model.MenuName)
+                        </div>
+                    </div>
+                }
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MenuPosition, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+                    <div class="col-md-10 col-sm-9 col-xs-12">
+                        @Html.TextBox("MenuPosition", @menuPosition, new { @class = "form-control", @readonly = true })
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="manageComponent" class="tab-pane fade in active">
+            <div class="col-md-6 col-sm-6 col-xs-12" id="list">
+                @{Html.RenderAction("ListMenuComponent", "Menu", new { id = Model.MenuID });}
+            </div>
+            <div class="col-md-6 col-sm-6 col-xs-12">
+                <h4 class="text-center">@Resource.Create</h4>
+                @using (Html.BeginForm("CreateComponent", "Menu", new { id = Model.MenuID }, FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary(true)
+
+                    <div class="form-horizontal" id="menuForm">
+                        @{ var model = new Admin.Models.MenuViewModel(); }
+                        @Html.EditorFor(m => model, "MenuViewModel")
+                        <div class="form-horizontal">
+                            <div class="col-md-offset-2 col-sm-offset-3 col-md-10 col-sm-9 col-xs-12">
+                                <input type="submit" value="@Resource.Save" class="btn btn-primary" />
+                            </div>
+                        </div>
+                    </div>
+                            }
+            </div>
+
+            <!-- Modal -->
+            <div id="editComponentModal" class="modal fade" role="dialog">
+                <div class="modal-dialog">
+                    <!-- Modal content-->
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">@Resource.Update</h4>
+                        </div>
+                        <div class="modal-body">
+                            @using (Ajax.BeginForm("EditComponent", "Menu", new { id = Model.MenuID },
+new AjaxOptions { HttpMethod = "Post", OnSuccess = "editMenuSuccess(data)" }, new { id = "editMenuForm" }))
+                            {
+                                @Html.AntiForgeryToken()
+                                @Html.ValidationSummary(true)
+                                <span id="message" class="alert-danger"></span>
+                                <div class="form-horizontal">
+                                    @{ var model = new Admin.Models.MenuViewModel(); }
+                                    @Html.EditorFor(m => model, "MenuOverviewViewModel")
+                                </div>
+                                        }
+                        </div>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary" onclick="$('form#editMenuForm').submit()">@Resource.Save</button>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">@Resource.Cancel</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</div>
+
+@section scripts{
+    @Scripts.Render("~/bundles/elFinder")
+    <script>
+        $(document).ready(function () {
+            InitElf('@Url.Action("GetFile", "Files")', '@Request.Cookies["lang"].Value.Substring(0, 2)');
+
+            ReplaceSelect2('@Request.Cookies["lang"].Value.Substring(0, 2)');
+
+            $('div[name="list-content"] .ddl_select2').select2({
+                theme: "bootstrap",
+                language: '@Request.Cookies["lang"].Value.Substring(0, 2)',
+
+                ajax: {
+                    url: "@Url.Action("GetListPostedContent", "Menu")",
+                    dataType: 'json',
+                    delay: 500,
+                    method:'POST',
+                    data: function (params) {
+                        return {
+                            query: params.term, // search term
+                            page: params.page
+                        };
+                    },
+                    processResults: function (data, params) {
+                        params.page = params.page || 1;
+                        return {
+                            results: $.map(data.result, function (item) {
+                                return {
+                                    text: item.Text,
+                                    id: item.Value,
+                                }
+                            }),
+                            pagination: {
+                                more: (params.page * data.pageSize) < data.totalItems
+                            }
+                        };
+                    },
+                    cache: true
+                },
+                minimumInputLength: 1
+            });
+
+
+        });
+
+        var vmMenu = new Vue({
+            el: '#menuForm',
+            data: {
+                menuComponent: @Html.Raw(Json.Encode(new Admin.Models.MenuViewModel() { EntityType = MenuEntityType.Group.ToString()})),
+                listMenu: @Html.Raw(Json.Encode(ViewBag.ListMenu)),
+            },
+            methods: {
+                MenuEntityTypeSelect:function(type){
+                    return this.menuComponent.EntityType == type;
+                }
+            }
+        })
+
+        var vmEditMenu = new Vue({
+            el: '#editMenuForm',
+            data: {
+                menuComponent: @Html.Raw(Json.Encode(new Admin.Models.MenuViewModel())),
+                listMenu: @Html.Raw(Json.Encode(ViewBag.ListMenu)),
+            },
+            methods: {
+                MenuEntityTypeSelect: function (type) {
+                    return this.menuComponent.EntityType == type;
+                },
+                GetMenuComponent: function (componentID) {
+                    var self = this;
+                    $.post("@Url.Action("GetMenuByID", "Menu")", { MenuID: @Model.MenuID, ComponentID: componentID }, function (data) {
+                        self.menuComponent = data.result;
+                        self.listMenu = data.listMenu;
+
+                        // set selected select2
+                        if(data.result.ContentID != null){
+                            $("#editMenuForm #ContentID").val(data.result.ContentID).trigger("change");
+                        }
+                        else if(data.result.GroupID != null){
+                            $("#editMenuForm #GroupID").val(data.result.GroupID).trigger("change");
+                        }
+                        else if(data.result.Link != null){
+                            $("#editMenuForm #Link").val(data.result.Link).trigger("change");
+                        }
+                        else if(data.result.ProductGroupID != null){
+                            $("#editMenuForm #ProductGroupID").val(data.result.ProductGroupID).trigger("change");
+                        }
+                        $("#editMenuForm #ParentMenuID").val(data.result.ParentMenuID).trigger("change");
+
+                        // end
+                    })
+                }
+            }
+        })
+
+        function editMenuSuccess(data){
+            if(data.length != 0)
+                $("#message").text(data);
+            else
+                location.reload();
+        }
+
+        //$('#menuForm div[name="list-content"] .ddl_select2, #menuForm div[name="list-group"] .ddl_select2').on('change', function () {
+        //    vmMenu.menuComponent.MenuName = $(this).find('option:selected').text().replace(/-/g, '');
+        //});
+
+
+    </script>
+}

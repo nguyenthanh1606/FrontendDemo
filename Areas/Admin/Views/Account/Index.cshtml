@@ -1,0 +1,85 @@
+﻿@model Admin.Models.AccountFilterViewModel
+
+@{
+    ViewBag.Title = Resource.AccountList;
+}
+
+<div class="page-title">
+    <div class="title_left">
+        <h3>@Resource.AccountList</h3>
+    </div>
+    <div class="title_right">
+        <div class="pull-right">
+            @Html.ActionLink(@Resource.CreateANewAccount, "Create", null, new { @class = "btn btn-primary" })
+        </div>
+    </div>
+</div>
+
+<div class="main-contain">
+    @using (Ajax.BeginForm("AccountList", "Account", new AjaxOptions { InsertionMode = InsertionMode.Replace, UpdateTargetId = "list", HttpMethod = "Get" }, new { id = "filter_div" }))
+    {
+        <div class="form-group clearfix">
+            <div class="col-md-6 col-sm-6 col-xs-12">
+                <label>@Resource.AccountListForRoles</label>
+                @Html.DropDownListFor(m => m.Role, new SelectList(ViewBag.Roles, "Value", "Text"), @Resource.All, new { @class = "form-control" })
+            </div>
+            <div class="col-md-6 col-sm-6 col-xs-12">
+                <label class="control-label">@Resource.Search</label>
+                <div class="input-group">
+                    @Html.TextBoxFor(m => m.StartWith, null, new { @class = "form-control", @placeholder = @Resource.SearchPlaceholder, @aria_describedby = "basic-addon2" })
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="form-group">
+            <ul class="alphabet_search">
+                <li><a href="#">@Resource.All</a></li>
+                @foreach (var item in ViewBag.Alphabets)
+                {
+                    <li><a href="#">@item</a></li>
+                }
+                <li><a href="#">@Resource.Other</a></li>
+            </ul>
+        </div>
+    }
+
+    <div id="list">
+        @{Html.RenderAction("AccountList", "Account", new { role = ViewBag.Role, startWith = ViewBag.StartWith, page = ViewBag.Page });}
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $('#Role').change(function () {
+            $('#filter_div').submit();
+        });
+
+        $('.alphabet_search > li > a').click(function () {
+            if($(this).text() ==  "@Resource.All"){
+                $('#StartWith').val("");
+            }
+            else {
+                if ($(this).text() == "@Resource.Other") {
+                    $('#StartWith').val("0");
+                }
+                else {
+                    $('#StartWith').val($(this).text());
+                }
+            }
+            $('#filter_div').submit();
+        });
+
+        $('#filter_div').submit(function () {
+            ChangeUrl({ Role: $('#Role').val(), StartWith: $('#StartWith').val() });
+        });
+
+        $(document).ready(function () {
+            $('select').select2({
+                theme: "bootstrap",
+                language: '@Request.Cookies["lang"].Value.Substring(0, 2)'
+            });
+        });
+    </script>
+}

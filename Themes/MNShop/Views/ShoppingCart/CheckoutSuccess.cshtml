@@ -1,0 +1,242 @@
+﻿@model Frontend.Models.CheckoutViewModel
+@{
+    ViewBag.Title = Resource.Checkout;
+}
+
+<link href="~/Themes/AnhNhan/css/User.css" rel="stylesheet" />
+<link href="~/Themes/AnhNhan/css/checkout.css" rel="stylesheet" />
+<div class="breadcum_main">
+    <div class="container">
+        @Html.Breadcrumb(Frontend.Infrastructure.Utility.BreadcrumbType.Custom, htmlAttributes: new { @class = "breadcrumb" }, customMenuName: Resource.Checkout, customUrl: Url.Action("Checkout", "ShoppingCart"))
+    </div>
+</div>
+
+
+<div class="cartlayout" id=checkout_page>
+    <div class="form_wizard wizard_horizontal">
+        @*<ul class="wizard_steps anchor">
+                <li>
+                    <a href="javascript:void(0)" v-bind:class="classStep(1)">
+                        <span class="step_no">1</span>
+                        <span class="step_descr">
+                            @Resource.Login
+                        </span>
+                    </a>
+                </li>
+                <li>
+                    <a href="javascript:void(0)" v-bind:class="classStep(2)">
+                        <span class="step_no">2</span>
+                        <span class="step_descr">
+                            @Resource.ShippingAddress
+                        </span>
+                    </a>
+                </li>
+                <li>
+                    <a href="javascript:void(0)" v-bind:class="classStep(3)">
+                        <span class="step_no">3</span>
+                        <span class="step_descr">
+                            @Resource.Payment
+                        </span>
+                    </a>
+                </li>
+            </ul>*@
+
+        <div class="bread">
+            <div id="step-title-checkout" class="wrap-page pd-left pd-right">
+                <ul class="wizard_steps anchor">
+                    <li><a href="javascript:void(0)"><span class="rounded-circle circle">1</span><span>Đăng nhập</span></a></li>
+                    <li><a href="javascript:void(0)"><span class="rounded-circle circle">2</span><span>Thông tin giao hàng</span></a></li>
+                    <li><a href="javascript:void(0)"><span class="rounded-circle circle">3</span><span>Phương thức thanh toán</span></a></li>
+                    <li class="active"><a href="javascript:void(0)"><span class="rounded-circle circle">4</span><span>Hoàn tất đơn hàng</span></a></li>
+                    <li class="step-title-checkout-none"><a href="#"></a></li>
+                </ul>
+            </div>
+        </div>
+
+
+
+        <div class="row wrap-page pd-left pd-right" style="margin-top: 10px">
+            <div class="col-md-3 p1-checkout" style="padding-right: 0">
+            </div>
+            <div class="col-md-5 table-checkout" style="padding: 0">
+                <div class="form-style" style="border: 0;">
+                    <div class="main-form">
+                        <div class="img">
+                            <img src="~/Themes/AnhNhan/Images/success.png" class="rounded mx-auto d-block" alt="">
+                        </div>
+                        <p class="text-center"><strong style="font-size: 18px;">
+                            @Model.CheckoutSuccess.ParaName</strong></p>
+                        <p>@Model.CheckoutSuccess.Description.RemoveHtml()</p>
+                    </div>
+                    <div class="main-form">
+                        <div>
+                            <input type="submit" class="btn btn-danger submit-style" style="background: #d50606;" onclick="window.location.href='/'" value="TIẾP TỤC MUA HÀNG">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4">
+            </div>
+        </div>
+
+
+    </div>
+</div>
+
+
+
+
+
+@section scripts{
+    <script>
+        function EditAddressFail(data){
+            ShowAlertDialog(data.errorMsg);
+        }
+
+        function DoneEditAddress(data, isEdit){
+            if(isEdit){
+                vmCheckout.listAddress = data.listAddress;
+                vmCheckout.isEditAddress = false;
+            }
+            else{
+                vmCheckout.listAddress.push(data);
+                vmCheckout.isEditAddress = false;
+            }
+        }
+
+        function CancelEdit(){
+            vmCheckout.isEditAddress = false;
+        }
+
+        function ChangePaymentType(n)
+        {
+            if (n == 0)
+            {
+                if ($("#bankTransfer").hasClass("active"))
+                {
+                    $("#directPayment").prop('checked', true);
+                }
+                else
+                {
+                    $("#bankPayment input").prop('checked', false);
+                }
+            }
+            else
+            {
+                if ($("#bankTransfer").hasClass("active"))
+                {
+                    $("#directPayment").prop('checked', false);
+                }
+                else
+                {
+                    $("#bankPayment input").prop('checked', true);
+                }
+            }
+        }
+
+        var baseEditAddress = '@Url.Action("EditAddressCheckout", "Account")';
+        var vmCheckout = new Vue({
+            el: '#checkout_page',
+            data: {
+                currentStep: @(User.Identity.IsAuthenticated? 2 : 1),
+                listAddress: @Html.Raw(Json.Encode(Model.ListAddress)),
+                isEditAddress:false,
+                useNameOnAddress:true,
+                shippingAddress:@Html.Raw(Json.Encode(new Frontend.Models.CustomerAddressOverviewViewModel())),
+                checkoutWithoutLogin:0,
+                email:null,
+                customerAddress:@Html.Raw(Json.Encode(new Frontend.Models.CustomerAddressViewModel())),
+                customerAddressFormData:null,
+            },
+            methods:{
+                ProceedWithoutLogin:function(){
+                    var self = this;
+                    var re = /^(([^<>()\[\]\\.,;:\s@@"]+(\.[^<>()\[\]\\.,;:\s@@"]+)*)|(".+"))@@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+                    if(self.email && re.test(self.email)){
+                        this.currentStep = 2;
+                        this.$nextTick(function () {
+                            InitAjaxForm('#newAddressForm');
+                        });
+                    }
+                    else{
+                        alert('@Html.Raw(Resource.PleaseInputValidEmail)');
+                    }
+                },
+                EditAddress:function(id){
+                    var self = this;
+                    $.ajax({
+                        type: "GET",
+                        url: baseEditAddress + "/" + id,
+                        success: function (data) {
+                            $('#edit_address').html(data);
+                            InitAjaxForm('#edit_address');
+                            self.isEditAddress = true;
+                        },
+                        error: function (jqXHR, textStatus) {
+                            alert(textStatus);
+                        }
+                    });
+                },
+                AddAddress:function(id){
+                    var self = this;
+                    $.ajax({
+                        type: "GET",
+                        url: baseEditAddress,
+                        success: function (data) {
+                            $('#edit_address').html(data);
+                            InitAjaxForm('#edit_address');
+                            self.isEditAddress = true;
+                        },
+                        error: function (jqXHR, textStatus) {
+                            alert(textStatus);
+                        }
+                    });
+                },
+                SelectAddress:function(item){
+                    this.currentStep = 3;
+                    this.shippingAddress = item;
+                },
+                ChooseNewAddress:function(){
+                    var self = this;
+                    var form = $("#newAddressForm");
+                    form.validate();
+                    if(form.valid()){
+                        self.customerAddressFormData = form.serializeArray();
+                        self.shippingAddress.CustomerName = self.customerAddress.CustomerName;
+                        self.shippingAddress.Phone = self.customerAddress.Phone;
+                        self.shippingAddress.Address = self.customerAddress.Address +
+                            ', ' +  $('#@Html.IdFor(m => m.Order.CustomerAddress.Ward) option:selected').text() +
+                            ', ' +  $('#@Html.IdFor(m => m.Order.CustomerAddress.District) option:selected').text() +
+                            ', ' +  $('#@Html.IdFor(m => m.Order.CustomerAddress.Province) option:selected').text();
+                        self.currentStep = 3;
+                    }
+                },
+                classStep: function(step) {
+                    return {
+                        'disabled': this.currentStep < step,
+                        'selected': this.currentStep === step,
+                        'done': this.currentStep > step
+                    }
+                },
+                isOnStep:function(step){
+                    return this.currentStep === step;
+                }
+            },
+            watch: {
+                currentStep: function(val){
+                    if(val === 3){
+                        @*this.$nextTick(function(){
+                            $('#@Html.IdFor(m => m.Order.ShippingDate)').datetimepicker({
+                                locale: '@Request.Cookies["lang"].Value.Substring(0,2)',
+                                format: 'DD/MM/YYYY'
+                            });
+                        })*@
+                    }
+                }
+            }
+        });
+
+
+    </script>
+}
+

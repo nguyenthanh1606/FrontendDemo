@@ -1,0 +1,68 @@
+﻿@model Frontend.Models.LayoutContactViewModel
+
+@{
+    ViewBag.Title = Model.Group.Title;
+}
+
+<div class="page_image_title" style="background-image:url(@Model.Group.BannerUrl);">
+    <h3>
+        @Model.Group.Title
+    </h3>
+</div>
+<div class="breadcum_main">
+    <div class="container">
+        @Html.Breadcrumb(Frontend.Infrastructure.Utility.BreadcrumbType.Group, Model.Group.GroupID, new { @class = "breadcrumb" })
+    </div>
+</div>
+
+<div class="container">
+    <div class="google-map">
+        @Html.Raw(Model.Map)
+    </div>
+
+    <div class="content_info add_contact">
+        <div class="row content-column">
+            <div class="item-content col-md-3">
+                <div class="item-image">
+                    <img src="@Html.BannerImageLinkOnly(1, Request.Cookies["lang"].Value)">
+                </div>
+            </div>
+            <div class="item-content col-md-3">
+                <div class="item-description">
+                    @Resource.Address: @Model.Address
+                </div>
+            </div>
+            <div class="item-content col-md-3">
+                <div class="item-title">
+                    @Resource.Email: @Model.Email
+                </div>
+                <div class="item-description">
+                    @Resource.HotLine: @Model.Hotline
+                </div>
+            </div>
+            <div class="item-content col-md-3">
+                <div class="item-title">
+                    
+                </div>
+                <div class="item-description">
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @using (Ajax.BeginForm("Contact", "Home", new AjaxOptions { HttpMethod = "POST", OnSuccess = "ContactSuccess" }, new { @class = "form-horizontal" }))
+    {
+        @Html.AntiForgeryToken()
+        <fieldset>
+            <h3>@Resource.ContactForm:</h3>
+            @Html.EditorFor(m => m.CustomerContact)
+        </fieldset>
+
+        <div class="buttons">
+            <div class="pull-right">
+                <input class="btn btn-primary" type="submit" value="@Resource.Submit">
+            </div>
+        </div>
+    }
+</div>

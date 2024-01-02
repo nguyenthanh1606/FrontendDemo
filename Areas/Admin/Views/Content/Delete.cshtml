@@ -1,0 +1,67 @@
+﻿@model Admin.Models.ContentViewModel
+@using Store.Service.Helper.ExtensionMethod
+
+@{
+    ViewBag.Title = string.Format(Resource.ContentStatusPlaceholder, @Model.Status.GetDescription());
+}
+<div class="page-title">
+    <div class="title_left">
+        <h3>
+            @string.Format(Resource.ContentStatusPlaceholder, @Model.Status.GetDescription())
+            <small>@Resource.Delete</small>
+        </h3>
+    </div>
+</div>
+
+<div class="main-content">
+    @using (Html.BeginForm("Delete", "Content", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        
+        <div class="form-horizontal">
+            @Html.ValidationSummary(true)
+            <div class="form-group">
+                @Html.Label("", @Resource.Headline, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+                <div class="col-md-10 col-sm-9 col-xs-12">
+                    @Html.TextBoxFor(model => model.Headline, new { @class = "form-control", @readonly = "readonly" })
+                    @Html.ValidationMessageFor(model => model.Headline)
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.Label("", @Resource.Summary, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+                <div class="col-md-10 col-sm-9 col-xs-12">
+                    <div class="form-control html-area" readonly>
+                        @Html.Raw(Model.Summary)
+                    </div>
+                    @Html.ValidationMessageFor(model => model.Summary)
+                </div>
+            </div>
+            <div class="form-group">
+                @Html.Label("", @Resource.Delete, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+                <div class="col-md-10 col-sm-9 col-xs-12">
+                    <label class="radio-inline">
+                        @Html.RadioButtonFor(model => model.Value4, "1", new { Checked = "checked" })<text>@Resource.DeleteOnlyVersion</text>
+                    </label>
+                    <label class="radio-inline">
+                        @Html.RadioButtonFor(model => model.Value4, "0")<text>@Resource.DeleteAllVersion</text>
+                    </label>
+                </div>
+            </div>
+            @Html.HiddenFor(model => model.Version)
+            @Html.HiddenFor(model => model.ContentID)
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-sm-offset-3 col-md-10 col-sm-9 col-xs-12">
+                    <input type="submit" value="@Resource.Delete" class="btn btn-primary" />
+                    <a href="@(ViewBag.ReturnUrl?? @Url.Action("Writed"))" class="btn btn-default">@Resource.Skip</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+
+
+   
+
+

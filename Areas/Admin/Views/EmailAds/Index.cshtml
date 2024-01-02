@@ -1,0 +1,27 @@
+﻿@using Resources
+
+
+@{
+    ViewBag.Title = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+}
+
+@Styles.Render("~/Content/pagedList")
+<div class="page-title">
+    <div class="title_left">
+        <h3>@Resource.EmailPromote</h3>
+    </div>
+    <div class="title_right">
+        <div class="pull-right">
+            @Html.ActionLink(@Resource.Download, "DownloadCSV", null, new { @class = "btn btn-primary" })
+        </div>
+    </div>
+</div>
+
+<div class="main-content">
+    <div id="list">
+        @{Html.RenderAction("ListEmailAds", "EmailAds");}
+    </div>
+</div>
+
+

@@ -1,0 +1,54 @@
+﻿@model Admin.Models.ProductAdsViewModel
+@using Store.Service.Helper
+
+@Html.HiddenFor(model => model.ProductAdID)
+@Html.HiddenFor(model => model.ProductGroupID)
+@Html.HiddenFor(model => model.Status)
+
+<div class="form-group">
+    @Html.LabelFor(model => model.AdName, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextBoxFor(model => model.AdName, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.AdName)
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.Url, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextBoxFor(model => model.Url, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.Url)
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.ImageUrl, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.FilesManagerTextboxFor(m => m.ImageUrl, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.ImageUrl)
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.OpenInNewTab, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        <label class="checkbox-inline">
+            @Html.RadioButtonFor(model => model.OpenInNewTab, false)<text>@Resource.No</text>
+        </label>
+        <label class="checkbox-inline">
+            @Html.RadioButtonFor(model => model.OpenInNewTab, true)<text>@Resource.Yes</text>
+        </label>
+        @Html.ValidationMessageFor(model => model.OpenInNewTab)
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.Content, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextAreaFor(model => model.Content, new { @class = "form-control", @rows = 4 })
+        @Html.ValidationMessageFor(model => model.Content)
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.Note, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextAreaFor(model => model.Note, new { @class = "form-control", @rows = 4 })
+        @Html.ValidationMessageFor(model => model.Note)
+    </div>
+</div>

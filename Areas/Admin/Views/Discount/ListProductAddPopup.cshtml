@@ -1,0 +1,54 @@
+﻿@model Admin.Models.ProductAddPopupViewModel
+@using  Resources;
+
+@using PagedList.Mvc;
+
+<div class="clearfix col-lg-12">
+    <table class="table table-hover">
+        <thead class="thead-inverse">
+            <tr>
+                <th class="col-lg-1">
+                    @Html.CheckBox("checkAll")
+                </th>
+                <th class="col-lg-4">
+                    @Resource.ProductName
+                </th>
+                <th class="col-lg-3">
+                    @Resource.ProductGroup
+                </th>
+                <th class="col-lg-3">
+                    @Resource.Brand
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.listProducts)
+            {
+                <tr>
+                    <td>
+                        @Html.CheckBox(string.Format("{0}", @item.ProductID), new { @class = "checkbox", id = @item.ProductID })
+                    </td>
+                    <td>
+                        <label for="@item.ProductID">@item.Title</label>
+                    </td>
+                    <td>
+                        @item.ProductGroupName
+                    </td>
+                    <td>
+                        @item.BrandName
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <div class="pull-left">
+        @string.Format(Resource.PaginationTxt, Model.listProducts.PageCount < Model.listProducts.PageNumber ? 0 : Model.listProducts.PageNumber, @Model.listProducts.PageCount)
+    </div>
+    <div class="pull-right">
+        @Html.PagedListPager(Model.listProducts, page => Url.Action("ListProductAddPopup",
+                    new { page, @Model.RemoveProducts, @Model.UpdateTargetId, @Model.ProductGroup, @Model.ProductName, @Model.Brand }),
+                    PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() { HttpMethod = "POST", InsertionMode = System.Web.Mvc.Ajax.InsertionMode.Replace, UpdateTargetId = "listProducts" }))
+    </div>
+</div>
+

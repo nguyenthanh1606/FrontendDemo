@@ -1,0 +1,363 @@
+﻿@media only screen and (max-width:1130px)
+{
+        .wrapper
+        {
+        width: calc(100% - 20px);
+            margin: auto;
+        }
+        .main-menu ul
+        {
+            width: 100%;
+            margin-left: 0px;
+        }
+    .ft-l{
+            padding-left: 10px;
+        }
+}
+
+@media screen and (max-device-width:1114px)
+{
+        .wrap90per, .main-category
+        {
+            width: 100%;
+            margin: auto;
+        }
+        .main-content, .sub-content, .main-category, .content
+        {
+            width: 100%;
+            margin: auto;
+            padding-left: 10px;
+            padding-right: 10px;
+            padding-bottom: 30px;
+        }
+        
+         .ft-l
+        {
+            padding-left: 10px;
+        }
+        
+        .main-menu ul
+        {
+            width: 100%;
+            margin-left: 0px;
+        }
+}
+
+@media only screen and (max-width: 768px)
+{
+    .customer-review, .sub-category, .col-30, .col-70
+    {
+        width: 100%;
+    }
+        
+    .category-box
+    {
+        width: 50%;
+    }
+    .main-menu
+    {
+        display: none;
+    }
+        
+    .project-content
+    {
+        padding-top: 10px;
+    }
+    .lcategory-box
+    {
+        padding-left: 10px;
+    }
+
+    .list-4-news:nth-child(2n):after{
+        border:none;
+}
+
+    .focus-news{
+        border:none;
+        padding-right: 0;
+    }
+
+    .list-3-news:first-child{
+        padding-top: 10px;
+    }
+
+    .focus-news .news-img:before {
+        margin-top: 45%;
+    }
+
+    .ProductContentLeft, .SearchBox{
+        display: none;
+    }
+    .followcharacter{
+        margin-right: 0;
+    }
+    .column-left .news-item{
+        width: 33%;
+        float:left;
+    }
+    .ProductContentRight {
+        width: 100%;
+        margin-left: 0; 
+    }
+    .column-left, .column-right{
+        width: 100%;
+    }
+    .column-left{
+        margin-top: 30px;
+        padding-right: 0;
+    }
+
+    .column-right .news-detail {
+        padding: 0 15px;
+    }
+
+    .ProductDetail{
+         padding:20px 20px;
+     }
+}
+
+@media screen and (max-device-width: 768px)
+{
+        .customer-review, .sub-category, .col-30, .col-70
+        {
+            width: 100%;
+        }
+        
+        .category-box
+        {
+            width: 50%;
+        }
+        
+        .main-menu
+        {
+            display: none;
+        }
+        
+        .project-content
+        {
+            padding-top: 10px;
+        }
+}
+
+@media only screen and (max-width: 670px)
+{
+    .customer a span, .letter a span
+    {
+        display: none;
+    }
+    .letter a
+    {
+        padding-right: 0;
+    }
+    .customer a {
+        background: url("../images/icon/customer-ic.png") no-repeat 10px 0px;
+        padding-right: 30px;
+    } 
+    .slogan
+    {
+        left: 200px;
+    } 
+    
+    .footer
+    {
+        /* height: 150px; */
+    }
+     
+    .ft-l, .ft-r
+    {
+        width: 100%;
+        /* padding-left: 10px; */
+        padding-right: 10px;
+        float: left;
+    }
+    .ft-r
+    {
+        padding-top: 10px;
+    }
+}
+
+@media screen and (max-device-width: 670px)
+{
+    .customer a span, .letter a span
+    {
+        display: none;
+    }
+    .letter a
+    {
+        padding-right: 0;
+    }
+    .customer a {
+        background: url("../images/icon/customer-ic.png") no-repeat 10px 0px;
+        padding-right: 30px;
+    } 
+    .slogan
+    {
+        left: 200px;
+    } 
+    
+    .footer
+    {   
+        height: 150px;
+    }
+     
+    .ft-l, .ft-r
+    {
+        width: 100%;
+        padding-left: 10px;
+        padding-right: 10px;
+        float: left;
+    }
+    .ft-r
+    {
+        padding-top: 10px;
+    }
+}
+
+@media only screen and (min-width: 480px) and (max-width: 768px)
+{
+    input.searchd-h 
+    {
+      display: block;
+      width: 40%;
+      height: 30px;
+      margin-top: 25px;
+      float: right;
+      z-index: 1;
+      position: absolute;
+      right: 10px;
+    }
+    
+    button.btn_WebSearch-h 
+    {
+      display: block;
+      margin-top: 33px;
+      margin-right: 10px;
+      float: right;
+      position: absolute;
+      z-index: 2;
+      right: 0px;
+    }
+    .searchd
+    {
+        display: none;
+    }
+    button.btn_WebSearch
+    {
+        display: none;
+    }
+}
+
+@media screen and (min-device-width: 480px) and (max-device-width: 768px)
+{
+    input.searchd-h {
+      display: block;
+      width: 40%;
+      height: 30px;
+      margin-top: 25px;
+      float: right;
+      z-index: 1;
+      position: absolute;
+      right: 10px;
+    }
+    
+    button.btn_WebSearch-h {
+      display: block;
+      margin-top: 33px;
+      margin-right: 10px;
+      float: right;
+      position: absolute;
+      z-index: 2;
+      right: 0px;
+    }
+    .searchd
+    {
+        display: none;
+    }
+    button.btn_WebSearch
+    {
+        display: none;
+    }
+}
+
+@media only screen and (max-width: 480px)
+{
+    .logo img
+    {
+        padding-top: 30px;
+    }
+    .top-menu 
+    {
+      right: 0px;
+      width: 100%;
+      padding-left: 20%;
+    }
+    .article
+    {
+        width: 50%;
+    }
+    .category-box
+    {
+        width: 100%;
+    }
+    .focus-news .news-summary{
+        max-height: 40px;
+        overflow: hidden;
+    }
+
+    .column-left .news-item{
+        width: 100%;
+    }
+    .a-news-title{
+        font-size: 18px;
+    }
+}
+
+@media screen and (max-device-width: 480px)
+{
+    .logo img
+    {
+        padding-top: 30px;
+    }
+    .top-menu 
+    {
+      right: 0px;
+      width: 100%;
+      padding-left: 20%;
+    }
+    .article
+    {
+        width: 50%;
+    }
+    .category-box
+    {
+        width: 100%;
+    }
+}
+
+
+@media only screen and (max-width: 320px)
+{
+   .article
+    {
+        width: 100%;
+    }
+    
+    .slogan
+    {
+        display: none;
+    }
+}
+
+@media screen and (max-device-width: 320px)
+{
+    .article
+    {
+        width: 100%;
+    }
+    
+    .slogan
+    {
+        display: none;
+    }
+}
+

@@ -1,0 +1,166 @@
+﻿@model Admin.Models.ContentViewModel
+@using Store.Service.Helper.ExtensionMethod
+@{
+    string[] listAdvanceProperties = ViewBag.ListAdvanceProp;
+}
+
+<div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.ContentID))? "advanceProp" : "")">
+    @Html.LabelFor(model => model.ContentID, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        <span class="form-control" readonly>@Model.ContentID</span>
+    </div>
+</div>
+<div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.Version))? "advanceProp" : "")">
+    @Html.LabelFor(model => model.Version, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        <span class="form-control" readonly>@Model.Version</span>
+    </div>
+</div>
+<div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.Headline))? "advanceProp" : "")">
+    @Html.LabelFor(model => model.Headline, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        <span class="form-control html-area" readonly>@Model.Headline</span>
+    </div>
+</div>
+<div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.Summary))? "advanceProp" : "")">
+    @Html.LabelFor(model => model.Summary, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        <div class="form-control html-area" readonly>@Html.Raw(Model.Summary)</div>
+    </div>
+</div>
+<div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.Body))? "advanceProp" : "")">
+    @Html.LabelFor(model => model.Body, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        <div class="form-control html-area" readonly>@Html.Raw(Model.Body)</div>
+    </div>
+</div>
+<div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.FriendlyUrl))? "advanceProp" : "")">
+    @Html.LabelFor(model => model.FriendlyUrl, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        <div class="form-control html-area" readonly>@Html.Raw(Model.FriendlyUrl)</div>
+    </div>
+</div>
+
+<div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.Source))? "advanceProp" : "")">
+    @Html.LabelFor(model => model.Source, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        <div class="form-control html-area" readonly>@Html.Raw(Model.Source)</div>
+    </div>
+</div>
+<div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.Tags))? "advanceProp" : "")">
+    @Html.LabelFor(model => model.Tags, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        <span class="form-control" readonly>@string.Join("; ", Model.Tags)</span>
+    </div>
+</div>
+<div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.Author))? "advanceProp" : "")">
+    @Html.LabelFor(model => model.Author, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        <span class="form-control" readonly>@ViewBag.ResultAuthor</span>
+    </div>
+</div>
+<div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.PictureUrl))? "advanceProp" : "")">
+    @Html.LabelFor(model => model.PictureUrl, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @if (!string.IsNullOrEmpty(Model.PictureUrl))
+        {
+            <img src="@Model.PictureUrl" alt="@Model.PictureUrl" class="img-responsive" />
+        }
+    </div>
+</div>
+<div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.BannerImages))? "advanceProp" : "")">
+    @Html.LabelFor(model => model.BannerImages, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @if (!string.IsNullOrEmpty(Model.BannerImages))
+        {
+            <img src="@Model.PictureUrl" alt="@Model.BannerImages" class="img-responsive" />
+        }
+    </div>
+</div>
+@*<div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.PictureNote))? "advanceProp" : "")">
+    @Html.LabelFor(model => model.PictureNote, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        <span class="form-control" readonly>@Model.PictureNote</span>
+    </div>
+</div>*@
+<div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.Status))? "advanceProp" : "")">
+    @Html.LabelFor(model => model.Status, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        <span class="form-control" readonly>@Model.Status.GetDescription()</span>
+    </div>
+</div>
+<div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.Editor))? "advanceProp" : "")">
+    @Html.LabelFor(model => model.Editor, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        <span class="form-control" readonly>@ViewBag.ResultEditor</span>
+    </div>
+</div>
+<div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.Approver))? "advanceProp" : "")">
+    @Html.LabelFor(model => model.Approver, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        <span class="form-control" readonly>@ViewBag.ResultApprover</span>
+    </div>
+</div>
+<div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.ModifiedUser))? "advanceProp" : "")">
+    @Html.LabelFor(model => model.ModifiedUser, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        <span class="form-control" readonly>@ViewBag.ResultModifiedUser</span>
+    </div>
+</div>
+<div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.ModifiedDate))? "advanceProp" : "")">
+    @Html.LabelFor(model => model.ModifiedDate, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        <span class="form-control" readonly>@Model.ModifiedDate</span>
+    </div>
+</div>
+<div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.CreationDate))? "advanceProp" : "")">
+    @Html.LabelFor(model => model.CreationDate, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        <span class="form-control" readonly>@Model.CreationDate</span>
+    </div>
+</div>
+@if (Model.Status == Store.Service.Service.ContentStatus.Published)
+{
+    <div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.CreationDate))? "advanceProp" : "")">
+        @Html.LabelFor(model => model.PublishedDate, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+        <div class="col-md-10 col-sm-9 col-xs-12">
+            <span class="form-control" readonly>@Model.PublishedDate</span>
+        </div>
+    </div>
+}
+<div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.Counter))? "advanceProp" : "")">
+    @Html.LabelFor(model => model.Counter, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        <span class="form-control" readonly>@Model.Counter</span>
+    </div>
+</div>
+<div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.Value1))? "advanceProp" : "")">
+    @Html.LabelFor(model => model.Value1, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        <div class="form-control html-area" readonly>@Html.Raw(Model.Value1)</div>
+    </div>
+</div>
+<div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.Value2))? "advanceProp" : "")">
+    @Html.LabelFor(model => model.Value2, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        <div class="form-control html-area" readonly>@Html.Raw(Model.Value2)</div>
+    </div>
+</div>
+<div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.Value3))? "advanceProp" : "")">
+    @Html.LabelFor(model => model.Value3, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        <div class="form-control html-area" readonly>@Html.Raw(Model.Value3)</div>
+    </div>
+</div>
+<div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.Value4))? "advanceProp" : "")">
+    @Html.LabelFor(model => model.Value4, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        <div class="form-control html-area" readonly>@Html.Raw(Model.Value4)</div>
+    </div>
+</div>
+<div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.Value5))? "advanceProp" : "")">
+    @Html.LabelFor(model => model.Value5, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        <div class="form-control html-area" readonly>@Html.Raw(Model.Value5)</div>
+    </div>
+</div>

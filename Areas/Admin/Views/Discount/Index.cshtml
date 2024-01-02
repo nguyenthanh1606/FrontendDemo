@@ -1,0 +1,81 @@
+﻿@model Admin.Models.DiscountFilterViewModel
+
+<link href="~/Content/css/PagedList.css" rel="stylesheet" />
+@{
+    ViewBag.Title = Resource.Discount;
+}
+
+<div class="page-title">
+    <div class="title_left">
+        <h3>@Resource.Discount</h3>
+    </div>
+    <div class="title_right">
+        <div class="pull-right">
+            @Html.ActionLink(@Resource.Create, "Create", null, new { @class = "btn btn-primary" })
+        </div>
+    </div>
+</div>
+
+<div class="main-content">
+    @using (Ajax.BeginForm("ListDiscount", null,
+        new AjaxOptions
+        {
+            InsertionMode = InsertionMode.Replace,
+            UpdateTargetId = "list",
+            HttpMethod = "Post"
+        },
+            new { id = "filter_div" }))
+    {
+        <div class="form-group clearfix">
+            <div class="col-md-4 col-sm-6 col-xs-12">
+                <label class="control-label">@Resource.Type @Resource.Discount.ToLower() </label>
+                @Html.DropDownListFor(model => model.DiscountType, new SelectList(@ViewBag.DiscountTypes, "Key", "Value"), @Resource.All, new { @class = "form-control ddl_select2" })
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+                <label class="control-label">@Resource.DiscountName</label>
+                <div class="input-group">
+                    @Html.TextBoxFor(model => model.DiscountName, new { @class = "form-control", @placeholder = @Resource.DiscountName, @aria_describedby = "basic-addon2" })
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+                    </span>
+                </div>
+            </div>
+            
+            <div class="col-md-4 col-sm-6 col-xs-12">
+                <label class="control-label">@Resource.CouponCode</label>
+                <div class="input-group">
+                    @Html.TextBoxFor(model => model.CouponCode, new { @class = "form-control", @placeholder = @Resource.CouponCode, @aria_describedby = "basic-addon2" })
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+                    </span>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div id="list">
+        @{Html.RenderAction("ListDiscount", "Discount", new { DiscountType = Model.DiscountType,
+                DiscountName = Model.DiscountName,
+                CouponCode = Model.CouponCode, Page = ViewBag.Page
+            });}
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $('#DiscountType, #DiscountName, #CouponCode').change(function () {
+            $('#filter_div').submit();
+        });
+
+        $('#filter_div').submit(function () {
+            ChangeUrl({
+                DiscountType: $('#DiscountType').val(), DiscountName: $('#DiscountName').val(),
+                CouponCode: $('#CouponCode').val()
+            });
+        });
+
+        $(document).ready(function () {
+            ReplaceSelect2('@Request.Cookies["lang"].Value.Substring(0, 2)');
+        });
+    </script>
+}

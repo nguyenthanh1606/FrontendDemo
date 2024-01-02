@@ -1,0 +1,87 @@
+﻿@model  IEnumerable<Admin.Models.ProductVersionViewModel>
+
+<div class="widget-area">
+    @Ajax.ActionLink(@Resource.Create, "CreateProductVersion",
+                            new { id = ViewBag.ProductId }, new AjaxOptions
+                            {
+                                UpdateTargetId = "divModal",
+                                InsertionMode = InsertionMode.Replace,
+                                OnComplete = "ShowPopup('#divModal','"+ @Request.Cookies["lang"].Value.Substring(0, 2) + "')",
+                                OnFailure = string.Format("ShowAlertDialog('{0}')", Resource.UnknowErrorMessage)
+                            }, new { @class = "btn btn-primary" })
+</div>
+
+<table class="table table-hover">
+    <thead class="thead-inverse">
+        <tr>
+            <th class="width-5">
+                @Resource.Title
+            </th>
+            <th class="width-4">
+                @Resource.Price
+            </th>
+            <th class="width-2">
+                @Resource.InventoryNumber
+            </th>
+            <th class="width-3">
+                @Resource.Status
+            </th>
+            <th class="width-3">
+                @Resource.Action
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Title)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.DefaultPrice)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.InventoryNumber)
+                </td>
+                <td>
+                    @if (item.Status == -1)
+                    {
+                        @Resource.StopSelling
+                    }
+                    else
+                    {
+                        @Resource.Selling
+                    }
+                </td>
+                <td>
+                    <div class="btn-group">
+                        @Ajax.FontawsomeActionLink("fa-pencil", @Resource.Edit, "UpdateProductVersion",
+                            new { id = item.ProductVersionID }, new AjaxOptions
+                            {
+                                UpdateTargetId = "divModal",
+                                InsertionMode = InsertionMode.Replace,
+                                OnSuccess = "ShowPopup('#divModal','" + @Request.Cookies["lang"].Value.Substring(0, 2) + "')"
+                            }, new { @class = "btn btn-default" })
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                            <span class="caret"></span>
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+
+                        <ul class="dropdown-menu btn-dropdown-menu" role="menu">
+                            <li>
+                                @Ajax.FontawsomeActionLink("fa-eye", @Resource.View, "ProductVersionDetails",
+                                    new { id = item.ProductVersionID }, new AjaxOptions
+                                    {
+                                        UpdateTargetId = "divModal",
+                                        InsertionMode = InsertionMode.Replace,
+                                        OnSuccess = "ShowPopup('#divModal','" + @Request.Cookies["lang"].Value.Substring(0, 2) + "')"
+                                    })
+                            </li>
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

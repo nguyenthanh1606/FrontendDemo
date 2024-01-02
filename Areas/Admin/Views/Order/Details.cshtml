@@ -1,0 +1,292 @@
+﻿@model Admin.Models.OrderViewModel
+@using Store.Service.Helper.ExtensionMethod
+
+@{
+    ViewBag.Title = Resource.Orders;
+}
+@section css{
+    @Styles.Render("~/Content/css/elFinder")
+}
+
+<div class="page-title">
+    <div class="title_left">
+        <h3>
+            @Resource.Orders
+        </h3>
+    </div>
+    <div class="title_right">
+        <div class="pull-right">
+            <a href="@(ViewBag.ReturnUrl?? @Url.Action("Index", "Order"))" class="btn btn-default">@Resource.BackToList</a>
+        </div>
+    </div>
+</div>
+
+<div class="main-content" id="orderDetail">
+    <div id="wizard" class="form_wizard">
+        <div>
+            @using (Ajax.BeginForm("UpdateStatus", new AjaxOptions { HttpMethod = "POST", OnFailure= "AlertFailure" }))
+            {
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active">
+                    <a href="#general_info" aria-controls="general_info" role="tab" data-toggle="tab">@Resource.GeneralInfo</a>
+                </li>
+                <li role="presentation">
+                    <a href="#shipping" aria-controls="product_version" role="tab" data-toggle="tab">@Resource.Orders</a>
+                </li>
+                <li role="presentation">
+                    <a href="#orderCart" aria-controls="product_version" role="tab" data-toggle="tab">@Resource.Product</a>
+                </li>
+            </ul>
+
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane fade in  active" id="general_info">
+                    <div class="form-horizontal">
+                        @Html.ValidationSummary(true)
+                        @Html.HiddenFor(m => m.OrderID)
+                        @Html.AntiForgeryToken()
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.OrderID, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+                            <div class="col-md-10 col-sm-9 col-xs-12">
+                                @Html.TextBoxFor(model => model.OrderID, new { @class = "form-control", @readonly = "readonly" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Status, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+                            <div class="col-md-10 col-sm-9 col-xs-12">
+                                <div class="input-group" v-show="changeStatus">
+                                    @Html.DropDownListFor(m => m.Status, ViewBag.ListOrderStatus as SelectList, new { @class = "form-control", v_model = "orderStatus" })
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-primary" type="submit" name="btnAction" value="saveStatus" v-on:click="SaveStatus()">@Resource.Save</button>
+                                        <button class="btn btn-default" type="button" v-on:click="changeStatus = false">@Resource.Cancel</button>
+                                    </span>
+                                </div>
+                                <div class="input-group" v-show="!changeStatus">
+                                    <input class = "form-control" readonly v-model="orderStatusText"/>
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button" v-on:click="changeStatus = true">@Resource.ChangeStatus</button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-show="orderStatus === '@((int)Store.Service.ProductServices.OrderStatus.Cancel)'" class="form-group">
+                            @Html.LabelFor(model => model.CancelOrderReason, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+                            <div class="col-md-10 col-sm-9 col-xs-12">
+                                @Html.DropDownListFor(m => m.CancelOrderReason, ViewBag.ListCancelOrderReason as SelectList, new { @class = "form-control", v_show = "changeStatus" })
+                                <input class="form-control" readonly v-model="cancelOrderReasonText" v-show="!changeStatus"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Email, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+                            <div class="col-md-10 col-sm-9 col-xs-12">
+                                @Html.TextBoxFor(model => model.Email, new { @class = "form-control", @readonly = "readonly" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.CustomerName, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+                            <div class="col-md-10 col-sm-9 col-xs-12">
+                                @Html.TextBoxFor(model => model.CustomerName, new { @class = "form-control", @readonly = "readonly" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.CustomerPhone, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+                            <div class="col-md-10 col-sm-9 col-xs-12">
+                                @Html.TextBoxFor(model => model.CustomerPhone, new { @class = "form-control", @readonly = "readonly" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.OrderDate, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+                            <div class="col-md-10 col-sm-9 col-xs-12">
+                                <input class = "form-control" readonly value="@Model.OrderDate.Value.ToShortDateString()"/> 
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Subtotal, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+                            <div class="col-md-10 col-sm-9 col-xs-12">
+                                @Html.TextBoxFor(model => model.Subtotal, new { @class = "form-control", @readonly = "readonly" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Discount, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+                            <div class="col-md-10 col-sm-9 col-xs-12">
+                                @Html.TextBoxFor(model => model.Discount, new { @class = "form-control", @readonly = "readonly" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Total, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+                            <div class="col-md-10 col-sm-9 col-xs-12">
+                                @Html.TextBoxFor(model => model.Total, new { @class = "form-control", @readonly = "readonly" })
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.PaymentStatus, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+                            <div class="col-md-10 col-sm-9 col-xs-12">
+                                <div class="input-group" v-show="changePaymentStatus">
+                                    @Html.DropDownListFor(m => m.PaymentStatus, ViewBag.ListPaymentStatus as SelectList, new { @class = "form-control" })
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-primary" type="submit" name="btnAction" value="savePaymentStatus" v-on:click="SavePaymentStatus()">@Resource.Save</button>
+                                        <button class="btn btn-default" type="button" v-on:click="changePaymentStatus = false">@Resource.Cancel</button>
+                                    </span>
+                                </div>
+                                <div class="input-group" v-show="!changePaymentStatus">
+                                    <input class="form-control" readonly v-model="paymentStatusText" />
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button" v-on:click="changePaymentStatus = true">@Resource.ChangeStatus</button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.ShippingStatus, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+                            <div class="col-md-10 col-sm-9 col-xs-12">
+                                <div class="input-group" v-show="changeShippingStatus">
+                                    @Html.DropDownListFor(m => m.ShippingStatus, ViewBag.ListShippingStatus as SelectList, new { @class = "form-control" })
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-primary" type="submit" name="btnAction" value="saveShippingStatus" v-on:click="SaveShippingStatus()">@Resource.Save</button>
+                                        <button class="btn btn-default" type="button" v-on:click="changeShippingStatus = false">@Resource.Cancel</button>
+                                    </span>
+                                </div>
+                                <div class="input-group" v-show="!changeShippingStatus">
+                                    <input class="form-control" readonly v-model="shippingStatusText" />
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button" v-on:click="changeShippingStatus = true">@Resource.ChangeStatus</button>
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.Note, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+                            <div class="col-md-10 col-sm-9 col-xs-12">
+                                <textarea class="form-control html-area" readonly>
+                                    @Model.Note
+                                </textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div role="tabpanel" class="tab-pane fade" id="shipping">
+                    <div class="form-horizontal">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.AddressReceive, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+                            <div class="col-md-10 col-sm-9 col-xs-12">
+                                <textarea readonly class="form-control">@Model.AddressReceive</textarea>
+                            </div>
+                        </div>
+                        @if (!string.IsNullOrEmpty(Model.AddressPay))
+                        {
+                            <div class="form-group">
+                                @Html.LabelFor(model => model.AddressPay, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+                                <div class="col-md-10 col-sm-9 col-xs-12">
+                                    <textarea readonly class="form-control">@Model.AddressPay</textarea>
+                                </div>
+                            </div>
+                        }
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.ReceiverName, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+                            <div class="col-md-10 col-sm-9 col-xs-12">
+                                <input readonly class="form-control" value="@Model.ReceiverName" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.ReceiverPhone, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+                            <div class="col-md-10 col-sm-9 col-xs-12">
+                                <input readonly class="form-control" value="@Model.ReceiverPhone"/>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.PaymentType, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+                            <div class="col-md-10 col-sm-9 col-xs-12">
+                                <input readonly class="form-control" value="@Model.PaymentType.GetDescription()" />
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.ShippingMethod, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+                            <div class="col-md-10 col-sm-9 col-xs-12">
+                                <input readonly class="form-control" value="@Model.DeleveryMethod" />
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div role="tabpanel" class="tab-pane fade" id="orderCart">
+                    <table class="table table-hover">
+                        <thead class="thead-inverse">
+                            <tr>
+                                <th>@Resource.Title</th>
+                                <th>@Resource.OriginalPrice</th>
+                                <th>@Resource.Quantity</th>
+                                <th>@Resource.Discount</th>
+                                <th>@Resource.Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var order in Model.OrderCart)
+                            {
+                                <tr>
+                                    <td>
+                                        <a href="/@order.FriendlyUrl">@order.Title</a>
+                                        <div>
+                                            <ul class="list-style-none">
+                                                @foreach (var property in order.ListProperties)
+                                                {
+                                                    <li>@property.Item1: <strong>@property.Item2</strong><br /></li>
+                                                }
+                                            </ul>
+                                        </div>
+                                    </td>
+                                    <td>@string.Format("{0:n0}", order.Price) VNĐ</td>
+                                    <td>@order.Quantity</td>
+                                    <td>@string.Format("{0:n0}", order.DiscountedPrice != null ? order.Price - order.DiscountedPrice : 0) VNĐ</td>
+                                    <td>@string.Format("{0:n0}", order.DiscountedPrice != null ? order.DiscountedPrice * order.Quantity : order.Price * order.Quantity) VNĐ</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            }
+        </div>
+    </div>
+</div>
+
+<div id="divModal" class="modal fade" role="dialog"></div>
+
+@section scripts{
+    @Scripts.Render("~/bundles/elFinder")
+    <script type="text/javascript" src="~/Scripts/ckeditor/ckeditor.js"></script>
+    <script type="text/javascript" src="~/Scripts/ckeditor/adapters/jquery.js"></script>
+
+    <script>
+        function AlertFailure() {
+            ShowAlertDialog('@Html.Raw(Resource.UnknowErrorMessage)');
+        };
+
+        var vmOrder = new Vue({
+            el: '#orderDetail',
+            data: {
+                changeStatus: false,
+                changePaymentStatus: false,
+                changeShippingStatus: false,
+                orderStatus: '@((int)Model.Status)',
+                orderStatusText: '@Html.Raw(Model.Status.GetDescription())',
+                paymentStatusText: '@Html.Raw(Model.PaymentStatus.GetDescription())',
+                shippingStatusText: '@Html.Raw(Model.ShippingStatus.GetDescription())',
+                cancelOrderReasonText: '@Html.Raw(Model.CancelOrderReason.GetDescription())'
+            },
+            methods:{
+                SaveStatus: function () {
+                    this.orderStatusText = $('#Status option:selected').text();
+                    this.cancelOrderReasonText = $('#CancelOrderReason option:selected').text();
+                    this.changeStatus = false;
+                },
+                SavePaymentStatus: function () {
+                    this.paymentStatusText = $('#PaymentStatus option:selected').text();
+                    this.changePaymentStatus = false;
+                },
+                SaveShippingStatus: function () {
+                    this.shippingStatusText = $('#ShippingStatus option:selected').text();
+                    this.changeShippingStatus = false;
+                }
+            }
+        });
+    </script>
+}
+

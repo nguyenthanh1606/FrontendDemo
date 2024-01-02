@@ -1,0 +1,255 @@
+﻿@using PagedList.Mvc;
+@using PagedList;
+@using Store.Service.ProductServices;
+
+
+@Styles.Render("~/Content/pagedList")
+@{
+    ViewBag.Title = "Index";
+}
+
+<style>
+    .x_title h2{
+        white-space: normal;
+    }
+</style>
+<div class="page-title">
+    <div class="title_left">
+        <h3>@ResourceAdmin.Dashboard</h3>
+    </div>
+</div>
+
+<div class="main-content">
+    <div class="container" id="overview">
+        <div class="col-sm-4">
+            <div class="small-box bg-aqua">
+                <div class="inner">
+                    <h3>{{lastOrder.value}}
+                        <small v-bind:class="lastOrder.increase >= 0 ? 'increase' : 'reduce'">
+                            <i v-bind:class="lastOrder.increase >= 0 ? 'fa fa-caret-up' : 'fa fa-caret-down'"></i>
+                            {{Math.abs(lastOrder.increase)}}%
+                        </small>
+                    </h3>
+                    <p>@Resource.LatestOrders (@Resource.InWeek)</p>
+                </div>
+                <div class="icon">
+                    <i class="fa fa-shopping-bag"></i>
+                </div>
+                <a href="@Url.Action("Index", "Order")" class="small-box-footer">
+                    @Resource.ReadMore
+                    <i class="fa fa-arrow-circle-right"></i>
+                </a>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="small-box bg-yellow">
+                <div class="inner">
+                    <h3>
+                        {{lastGoodsForSale.value}}
+                        <small v-bind:class="lastGoodsForSale.increase >= 0 ? 'increase' : 'reduce'">
+                            <i v-bind:class="lastGoodsForSale.increase >= 0 ? 'fa fa-caret-up' : 'fa fa-caret-down'"></i>
+                            {{Math.abs(lastGoodsForSale.increase)}}%
+                        </small>
+                    </h3>
+                    <p>@Resource.GoodsForSale (@Resource.InWeek)</p>
+                </div>
+                <div class="icon">
+                </div>
+                <a href="@Url.Action("Index","Order", new {Status = (int)OrderStatus.Cancel})" class="small-box-footer">
+                    @Resource.ReadMore
+                    <i class="fa fa-arrow-circle-right"></i>
+                </a>
+            </div>
+        </div>
+        <div class="col-sm-4">
+            <div class="small-box bg-green">
+                <div class="inner">
+                    <h3>
+                        {{lastRegister.value}}
+                        <small v-bind:class="lastRegister.increase >= 0 ? 'increase' : 'reduce'">
+                            <i v-bind:class="lastRegister.increase >= 0 ? 'fa fa-caret-up' : 'fa fa-caret-down'"></i>
+                            {{Math.abs(lastRegister.increase)}}%
+                        </small>
+                    </h3>
+                    <p>@Resource.RegisteredCustomer (@Resource.InWeek)</p>
+                </div>
+                <div class="icon">
+                    <i class="fa fa-user-plus"></i>
+                </div>
+                <a href="#" class="small-box-footer">
+                    @Resource.ReadMore
+                    <i class="fa fa-arrow-circle-right"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    <br />
+
+    <div class="col-sm-6" id="orderDashboard">
+        <div class="x_panel">
+            <div class="x_title clearfix">
+                <h2>
+                    @Resource.LatestOrders
+                    <small>(@Resource.InWeek)</small>
+                </h2> 
+            </div>
+            <!--Show list content-->
+            <div>
+                <table class="table table-hover">
+                    <thead class="thead-inverse">
+                        <tr>
+                            <th class="col-sm-5">@Resource.CustomerName</th>
+                            <th class="col-sm-3">@Resource.OrderDate</th>
+                            <th class="col-sm-4">@Resource.OrderStatus</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="order in orderList">
+                            <td>
+                                <a v-bind:href="'@Url.Action("Details", "Order")/' + order.OrderID">
+                                    {{order.ReceiverName}}
+                                </a>
+                            </td>
+                            <td>{{order.OrderDate | toDateTime}}</td>
+                            <td>{{order.Status | formatStatus}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-sm-6" id="productDashboard">
+        <div class="x_panel">
+            <div class="x_title clearfix">
+                <h2>
+                    @Resource.BestSeller
+                    <small>(@Resource.InWeek)</small>
+                </h2>
+            </div>
+            <!--Show list content-->
+            <div>
+                <table class="table table-hover">
+                    <thead class="thead-inverse">
+                        <tr>
+                            <th class="width-10">@Resource.ProductName</th>
+                            <th class="width-5">@Resource.Price</th>
+                            <th class="width-5">@Resource.Quantity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr v-for="product in productList">
+                            <td>
+                                <a href="javscript:void(0)">
+                                    {{product.Title}}
+                                </a>
+                            </td>
+                            <td>{{ (product.DefaultPrice != null ? product.DefaultPrice : product.OriginalPrice)| formatMoney}}</td>
+                            <td>
+                                {{product.TotalQuantity}}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+@section scripts{
+    <script>
+
+        var vmOverview = new Vue({
+            el: '#overview',
+            data: {
+                lastOrder: null,
+                lastGoodsForSale: null,
+                lastRegister: null
+            },
+            created: function () {
+                this.Initial();
+            },
+            methods:{
+                Initial: function(){
+                    var self = this;
+                    $.post("@Url.Action("Overview", "Home")", function (data) {
+                        if (data != undefined) {
+                            self.lastOrder = data.Order;
+                            self.lastGoodsForSale = data.Goods;
+                            self.lastRegister = data.Customer;
+                        }
+                    });
+                }
+            }
+        });
+
+        var vmOrder = new Vue({
+            el: '#orderDashboard',
+            data: {
+                orderList: null
+            },
+            created: function () {
+                this.getLastestOrder();
+            },
+            methods:{
+                getLastestOrder: function(){
+                    var self = this;
+                    $.post("@Url.Action("OrderDashboard", "Home")", function (data) {
+                        if (data != undefined) {
+                            self.orderList = data.orderList
+                        }
+                    });
+                }
+            },
+            filters: {
+                toDateTime: function (date) {
+                    var date = new Date(parseInt(date.substr(6)));
+                    return date.toLocaleString();
+                },
+                formatStatus: function (data) {
+                    if (data == @((int)OrderStatus.Cancel))
+                        return '@Html.Raw(Resource.Cancel)';
+                    else if(data == @((int)OrderStatus.Done))
+                        return '@Html.Raw(Resource.Done)';
+                    else if(data == @((int)OrderStatus.Error))
+                        return '@Html.Raw(Resource.Error)';
+                    else if(data == @((int)OrderStatus.InProgress))
+                        return '@Html.Raw(Resource.InProgress)';
+                }
+            },
+        });
+
+
+        var vmProduct = new Vue({
+            el: '#productDashboard',
+            data: {
+                productList: null
+            },
+            created: function () {
+                this.getProductByOrder();
+            },
+            methods:{
+                getProductByOrder: function(){
+                    var self = this;
+                    $.post("@Url.Action("ProductDashboard", "Home")", function (data) {
+                        if (data != undefined) {
+                            self.productList = data.productList;
+                        }
+                    });
+                },
+            },
+            filters: {
+                formatMoney: function (value) {
+                    if(value){
+                        return value.toLocaleString("@Request.Cookies["lang"].Value", { minimumFractionDigits: 0 });
+                    }
+                    else{
+                        return null;
+                    }
+                }          
+            },
+        });
+
+    </script>
+}

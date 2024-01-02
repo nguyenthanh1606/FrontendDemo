@@ -1,0 +1,22 @@
+﻿@model List<Frontend.Models.BannerViewModel>
+
+@{ var firstBanner = Model.FirstOrDefault();}
+
+@if (firstBanner != null)
+{
+    <div class="content_bottom page_panel">
+        <div class="banner_center" style="background:url(@firstBanner.ImageUrl) no-repeat">
+            <div class="container">
+                <div class="position-display">
+                    <div>
+                        <div class="slogan_content">
+                            <span>@firstBanner.AdName</span>
+                            @Html.Raw(firstBanner.Content)
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+

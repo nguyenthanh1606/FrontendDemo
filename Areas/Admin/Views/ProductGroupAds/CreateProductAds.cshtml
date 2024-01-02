@@ -1,0 +1,43 @@
+﻿@model Admin.Models.ProductAdsViewModel
+
+@{
+    ViewBag.Title = Resource.ProductAds;
+}
+@section css{
+    @Styles.Render("~/Content/css/elFinder")
+}
+
+<div class="page-title">
+    <div class="title_left">
+        <h3>
+            @Resource.ProductAds
+            <small>@Resource.Create</small>
+        </h3>
+    </div>
+</div>
+
+<div class="main-content">
+    @using (Html.BeginForm("CreateProductAds", "ProductGroupAds", FormMethod.Post))
+    {
+        <div class="form-horizontal">
+            @Html.ValidationSummary(true)
+            @Html.AntiForgeryToken()
+            @Html.EditorForModel()
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-sm-offset-3 col-md-10 col-sm-9 col-xs-12">
+                    <input type="submit" value="@Resource.Create" class="btn btn-primary" />
+                    <button class="btn btn-default" type="reset">@Resource.Reset</button>
+                    <a href="@(ViewBag.ReturnUrl?? @Url.Action("Index"))" class="btn btn-default">@Resource.Skip</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/elFinder")
+    <script>
+        InitElf('@Url.Action("GetFile", "Files")', '@Request.Cookies["lang"].Value.Substring(0, 2)');
+    </script>
+}

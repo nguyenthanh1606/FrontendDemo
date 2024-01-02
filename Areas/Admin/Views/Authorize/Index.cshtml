@@ -1,0 +1,136 @@
+﻿@model Admin.Models.AuthorizeViewModels
+@using Store.Service.Helper.ExtensionMethod
+
+@{
+    ViewBag.Title = Resource.Authorize;
+    int globalIndex = 0;
+}
+
+@using (Ajax.BeginForm("Index", null, new AjaxOptions
+{
+    OnSuccess = string.Format("ShowAlertDialog('{0}')", Resource.UpdateSuccess),
+    OnFailure = string.Format("ShowAlertDialog('{0}')", Resource.UnknowErrorMessage)
+}, new { id = "authorize_form" }))
+{
+    @Html.AntiForgeryToken()
+}
+<div class="page-title">
+    <div class="title_left">
+        <h3>@Resource.Authorize</h3>
+    </div>
+    <div class="title_right">
+        <div class="pull-right">
+            <button type="button" class="btn btn-primary" onclick="SubmitAuthorize()">@Resource.Update</button>
+        </div>
+    </div>
+</div>
+
+<div class="main-content" id="authorize">
+    @for (int i = 0; i < Model.ListGroupFunction.Count; i++)
+    {
+        if (Model.ListGroupFunction[i].ListFunction.Count < 1)
+        {
+
+        }
+        else
+        {
+            <div class="x_panel">
+                <div class="x_title clearfix">
+                    <h2>@Model.ListGroupFunction[i].Type.GetDescription()</h2>
+                    <ul class="nav navbar-right panel_toolbox">
+                        <li>
+                            <a class="collapse-link"><i class="fa fa-chevron-down"></i></a>
+                        </li>
+                    </ul>
+                </div>
+                <div class="x_content">
+                    <table class="table table-bordered table-centered">
+                        <thead class="thead-blue">
+                            <tr>
+                                <th class="width-5">@Resource.Function</th>
+                                @foreach (var role in Model.ListRoles)
+                                {
+                                    <th>@role.Value</th>
+                                }
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var groupFunction in Model.ListGroupFunction[i].ListFunction)
+                            {
+                                <tr>
+                                    <td>
+                                        <label>@groupFunction.Name</label>
+                                        <input type="hidden" name="@string.Format("ListFunction[{0}].Id", globalIndex)"
+                                               value="@groupFunction.Id" />
+                                    </td>
+                                    @{ int index = 0;}
+                                    @foreach (var item in groupFunction.SelectedRole)
+                                    {
+                                        <td>
+                                            <label class="checkbox-inline">
+                                                <input type="checkbox" v-on:click="ChangeAuthorize(@groupFunction.Id, @item.Key, @item.Value.ToString().ToLower())" @(item.Value ? "checked" : "") />@Resource.Allow
+                                            </label>
+                                        </td>
+                                        index++;
+                                    }
+                                </tr>
+                                            globalIndex++;
+                                        }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+                                            }
+                                        }
+</div>
+
+
+@section scripts{
+    <script>
+    var vmAuthourize = new Vue({
+        el: '#authorize',
+        data: {
+            listSubmitItem: [],
+            listDeleteItem: []
+        },
+        methods: {
+            ChangeAuthorize: function (functionId, roleId, initValue) {
+                var found = false;
+                if (initValue) {
+                    var list = this.listDeleteItem;
+                }
+                else {
+                    var list = this.listSubmitItem;
+                }
+                for (var i = 0; i < list.length; i++) {
+                    if (list[i].FunctionId === functionId && list[i].RoleId == roleId) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    list.push({ FunctionId: functionId, RoleId: roleId });
+                }
+            }
+        }
+    });
+
+    function SubmitAuthorize() {
+        var form = $('#authorize_form');
+        var data = form.serializeArray();
+        data.push({ name: "listFunction", value: JSON.stringify(vmAuthourize.listSubmitItem) });
+        data.push({ name: "listDeleteFunction", value: JSON.stringify(vmAuthourize.listDeleteItem) });
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("Index")',
+            data: data,
+            success: function (data) {
+                ShowAlertDialog('@Html.Raw(Resource.UpdateSuccess)');
+            },
+            error: function (jqXHR, textStatus, errorThrown) {
+                ShowAlertDialog('@Html.Raw(Resource.UnknowErrorMessage)');
+            }
+        });
+    }
+    </script>
+}

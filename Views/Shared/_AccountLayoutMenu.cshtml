@@ -1,0 +1,26 @@
+﻿
+<div class="left_block_T1">TÀI KHOẢN</div>
+<div class="left_block_T1a"></div>
+<div class="left_block_M">
+    <img style="width:30px;height:30px;border-radius:50%;" src=""><span class="username"></span>
+    <ul class="menu_page">
+        <li class="active">@Html.ActionLink(Resource.YourAccount, "Info")</li>
+        <li class="end">@Html.ActionLink(Resource.ChangePassword, "ChangePassword")</li>
+        <li class="end">
+            @using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))
+            {
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn-link">@Resource.Logout</button>
+            }
+        </li>
+    </ul>
+</div>
+<div class="left_block_T1" style="margin-top: 20px;">ĐƠN HÀNG</div>
+<div class="left_block_T1a"></div>
+<div class="left_block_M">
+    <ul class="menu_page">
+        <li>@Html.ActionLink(Resource.MyOrder, "MyOrders", "Account")
+        <li><a href="/tien-thuong">Thông tin tiền thưởng</a></li>
+    </ul>
+</div>
+

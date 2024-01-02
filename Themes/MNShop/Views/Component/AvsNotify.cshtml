@@ -1,0 +1,13 @@
+﻿@model List<Frontend.Models.BannerViewModel>
+
+@if (Model.Count() > 0)
+{
+    var first = Model.FirstOrDefault();
+    <div class="avs-notify">
+        <div class="container">
+            <img src="@first.ImageUrl" alt="" height="36px">
+            <span class="text-bold small">@first.AdName</span>
+            <a href="@first.Url" class="link link-active text-decoration small">Khám phá thêm</a>
+        </div>
+    </div>
+}

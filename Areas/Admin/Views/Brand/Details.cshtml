@@ -1,0 +1,29 @@
+﻿@model Admin.Models.BrandViewModel
+
+
+@{
+    ViewBag.Title = Resource.Brand;
+}
+
+<div class="page-title">
+    <div class="title_left">
+        <h3>
+            @Resource.Brand
+            <small>@Resource.View</small>
+        </h3>
+    </div>
+</div>
+
+<div class="main-content">
+    <div class="form-horizontal">
+        @Html.DisplayForModel()
+    </div>
+
+    <div class="form-group">
+        <div class="col-md-offset-2 col-sm-offset-3 col-md-10 col-sm-9 col-xs-12">
+            <a href="@(ViewBag.ReturnUrl?? @Url.Action("Index"))" class="btn btn-default">@Resource.Skip</a>
+        </div>
+    </div>
+</div>
+
+

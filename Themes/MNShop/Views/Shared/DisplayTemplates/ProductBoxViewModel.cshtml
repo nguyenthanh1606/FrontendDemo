@@ -1,0 +1,18 @@
+﻿@model Frontend.Models.ProductBoxViewModel
+<div class="pr-body_item card-product">
+    <a href="@Url.CustomAction(Store.Service.SystemService.RoutingType.Product, @Model.ProductID)" class="thumnails-template hover-ef-1">
+        <div class="thumnails-content thumb-img">
+            <img src="@Model.ImageUrl" class="img-fluid" alt="@Model.Title">
+        </div>
+    </a>
+    <div class="card-product--name">
+        <a href="@Url.CustomAction(Store.Service.SystemService.RoutingType.Product, @Model.ProductID)">@Model.Title</a>
+    </div>
+    <p class="card-product--author">@Model.Value1.RemoveHtml()</p>
+    <p class="card-product--type">
+        Chất liệu tranh gốc: <span class="color-active"> @Model.Value2.RemoveHtml() </span>
+    </p>
+    @*<div class="button_link mt-2">
+        <a href="#" class="text-uppercase">ĐẶT IN <i class="fas fa-caret-right"></i></a>
+    </div>*@
+</div>

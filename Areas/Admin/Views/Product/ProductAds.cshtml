@@ -1,0 +1,48 @@
+﻿@{
+    ViewBag.Title = Resource.ProductAds;
+}
+
+<div class="page-title">
+    <div class="title_left">
+        <h3>@Resource.ProductAds</h3>
+    </div>
+    <div class="title_right">
+        <div class="pull-right">
+            @Html.ActionLink(@Resource.CreateNewAd, "CreateProductAds", new { productID = @ViewBag.ProductID }, new { @class = "btn btn-primary" })
+        </div>
+    </div>
+</div>
+
+<div class="main-content">
+    @using (Ajax.BeginForm("ListAd", "Product", new { productID = @ViewBag.ProductID }, new AjaxOptions { InsertionMode = InsertionMode.Replace, UpdateTargetId = "list", HttpMethod = "Get" }, new { id = "filter_div" }))
+    {
+        <div class="form-group clearfix">
+            <div class="col-md-6 col-sm-6 col-xs-12">
+                <label class="control-label">@Resource.AdItemsForStatus</label>
+                @Html.DropDownList("Status", new SelectList(ViewBag.ListStatus, "Value", "Text"), @Resource.All, new { @class = "form-control" })
+            </div>
+        </div>
+    }
+
+    <div id="list">
+        @{Html.RenderAction("ListAd", "Product", new { status = ViewBag.Status, productID = ViewBag.ProductID });}
+    </div>
+</div>
+@section scripts{
+    <script>
+        $('#Status').change(function () {
+            $('#filter_div').submit();
+        });
+
+        $('#filter_div').submit(function () {
+            ChangeUrl({ Status: $('#Status').val() });
+        });
+
+        $(document).ready(function () {
+            $('select').select2({
+                theme: "bootstrap",
+                language: '@Request.Cookies["lang"].Value.Substring(0, 2)'
+            });
+        });
+    </script>
+}

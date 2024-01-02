@@ -1,0 +1,112 @@
+﻿@using Store.Service.SystemService
+@using Store.Service.Helper
+@using Frontend.Infrastructure.Helpers
+@using Admin.Infrastructure.Helpers
+
+@{
+    string themeHomeViewPath = "~/Themes/" + TabWeb.GetCurrentTheme() + "/Views/Home/{0}.cshtml";
+}
+
+<main>
+    @{Html.RenderAction(MVC.Component.Display(2, "SliderBanner"));}
+    @{Html.RenderAction(MVC.Component.Display(5, "AvsNotify"));}
+    @{Html.RenderAction(MVC.Component.Display(6, "AvsPolicy"));}
+    <div class="home-content container">
+        <div class="home-left">
+            @{Html.RenderAction(MVC.Component.Display(7, "AboutUs1"));}
+            @{Html.RenderAction(MVC.Component.Display(8, "AboutUs2"));}
+            @{Html.RenderAction(MVC.Component.Display(9, "TranhSuKien"));}
+            @{Html.RenderAction(MVC.Component.GetProductForProductGroupID(string.Format(themeHomeViewPath, "ListProduct01"), ThemeConfig.GetComponent("GroupProduct1"), Store.Service.ProductServices.ProductSortOrder.Newest, "77"));}
+            @{Html.RenderAction(MVC.Component.GetProductForProductGroupID(string.Format(themeHomeViewPath, "ListProduct01"), ThemeConfig.GetComponent("GroupProduct2"), Store.Service.ProductServices.ProductSortOrder.Newest, "46"));}
+            @{Html.RenderAction(MVC.Component.Display(10, "TranhSuKien"));}
+            @{Html.RenderAction(MVC.Component.GetContentForGroupID(string.Format(themeHomeViewPath, "GroupNews2"), ThemeConfig.GetComponent("GroupNews2"), Store.Service.Service.DistributionOrder.HighestPriority, true, ""));}
+        </div>
+        <div class="home-right">
+            <div class="pr-right-content home-right-content">
+                <h3 class="pr-top_content__title">
+                    Khách hàng nói về chúng tôi
+                </h3>
+                <div class="pr-right-content_list review-list">
+                    <div class="pr-right-content_item review-item">
+                        <div class="review-item-body">
+                            <p>
+                                “… Tranh thì lớn, khung thì chắc chắn, hình in thì sắc nét như này thì suốt ngày ngắm tranh không làm ăn gì được cả…”
+                                [https://www.facebook.com/babasocola90]
+                            </p>
+                        </div>
+                        <h4 class="review-item-title">
+                            MIHA NGUYỄN
+                        </h4>
+                        <span class="review-item-note">Tp. Hồ Chí Minh</span>
+                    </div>
+                    <div class="pr-right-content_item review-item">
+                        <div class="review-item-body">
+                            <p>
+                                “… We can see the Vietnamese spirit through them. Thanks a lot for your work MN Fine Art Prints. Can't wait to hang them in our living room when we get back to Finland…” [https://www.facebook.com/thu.khong]
+                            </p>
+                        </div>
+                        <h4 class="review-item-title">
+                            THƯ KHỔNG
+                        </h4>
+                        <span class="review-item-note">Phần Lan</span>
+                    </div>
+                    <div class="pr-right-content_item review-item">
+                        <div class="review-item-body">
+                            <p>
+                                “… Thật ý nghĩa khi nhận tranh Mẹ về với gia đình đúng vào tháng hoa, một trong những bản in đầu tiên từ tác phẩm tranh gốm mosaic "Mẹ Hằng cứu giúp" của HS. Mai Nhơn. Dưới bàn tay của người hoạ sĩ khác tôn giáo Mẹ vẫn đẹp làm sao…” [https://www.facebook.com/nga.hip.7]
+                            </p>
+                        </div>
+                        <h4 class="review-item-title">
+                            NGUYỄN THỊ NGA
+                        </h4>
+                        <span class="review-item-note">Hà Nội</span>
+                    </div>
+                </div>
+            </div>
+            @{Html.RenderAction(MVC.Component.GetContentForGroupID(string.Format(themeHomeViewPath, "BCVeChungToi"), ThemeConfig.GetComponent("BCVeChungToi"), Store.Service.Service.DistributionOrder.HighestPriority, true, ""));}
+
+            <div class="pr-right-content contact-home">
+                <h3 class="pr-top_content__title">
+                    Liên hệ
+                </h3>
+                <form action="" class="fContactHome">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Họ tên" />
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Điện thoại" />
+                    </div>
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Email" />
+                    </div>
+                    <div class="form-group">
+                        <textarea rows="8" type="text" class="form-control" placeholder="Nội dung"></textarea>
+                    </div>
+                    <div class="home-sk_link m-auto w-100 text-center">
+                        <button type="submit" class="text-uppercase">Gửi cho chúng tôi <i class="fas fa-caret-right"></i></button>
+                    </div>
+                </form>
+            </div>
+            <div class="pr-right-content contact-home">
+                <h3 class="pr-top_content__title">
+                    Tag keywords
+                </h3>
+                <div class="tag-list">
+                    <ul>
+                        <li><a href="#!">Ceramic Mosaic</a></li>
+                        <li><a href="#!">Tranh Chúa Giesu</a></li>
+                        <li><a href="#!">Tranh hổ, Tranh trừu tượng</a></li>
+                        <li><a href="#!">Tranh phố cổ</a></li>
+                        <li><a href="#!">Tranh Quan âm</a></li>
+                        <li><a href="#!">Tranh Acrylic</a></li>
+                        <li><a href="#!">Tranh lãnh tựu</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+@section scripts{
+}
+

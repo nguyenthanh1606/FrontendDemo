@@ -1,0 +1,90 @@
+﻿@model Frontend.Models.LayoutContentDetailViewModel
+@using PagedList.Mvc;
+@using PagedList;
+@using Frontend.Infrastructure.ExtensionMethod;
+@using Frontend.Infrastructure.Utility;
+@using Frontend.Infrastructure.Helpers;
+@using Admin.Infrastructure.Helpers;
+
+@{
+    ViewBag.Title = Model.Group.Title;
+    ViewBag.Description = Model.Group.Description.RemoveHtml();
+    if (!string.IsNullOrEmpty(Model.Group.ImageUrl))
+    {
+        ViewBag.Image = Url.Content(Model.Group.ImageUrl, true);
+    }
+    string ComponentViewPath = "~/Themes/" + TabWeb.GetCurrentTheme() + "/Views/Component/{0}.cshtml";
+
+    var component = new Component();
+    component.EntityID = Model.Group.GroupID;
+    component.ComponentType = 0;
+    component.TotalItems = 100;
+
+    var bannerImg = Model.Content.BannerImages;
+    if (bannerImg == null)
+    {
+        bannerImg = Model.Group.BannerUrl;
+    }
+}
+
+
+<main class="page-info">
+    <section class="banner-page" style="background-image: url('@bannerImg')">
+    </section>
+    <div class="container">
+        <div class="breadcrumb">
+            @Html.Breadcrumb(Frontend.Infrastructure.Utility.BreadcrumbType.Group, Model.Group.GroupID, new { @class = "" })
+        </div>
+    </div>
+    <div class="page-info--body container">
+        <div class="page-info--sidebar">
+            <h1 class="sidebar-title">@Model.Group.Title</h1>
+            <div class="sidebar-list">
+                @{Html.RenderAction(MVC.Component.GetContentForGroupID(string.Format(ComponentViewPath, "ListNewsSidebarPartial"), component, Store.Service.Service.DistributionOrder.Lastest, true, ""));}
+            </div>
+        </div>
+        <div class="page-info--content">
+            <div class="box-container">
+                <h1 class="page-info--content_title">
+                    @Model.Content.Headline
+                </h1>
+                <div class="page-info--content_body">
+                    @Html.Raw(Model.Content.Body)
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            // Get the current window.location.pathname
+            var currentPathname = window.location.pathname.replace('/', '');
+
+            // Get all the navigation items
+            var navItems = document.querySelectorAll('.sidebar-list a');
+
+            // Variable to track if a match is found
+            var matchFound = false;
+
+            // Iterate through the navigation items and check if their href matches the current pathname
+            for (var i = 0; i < navItems.length; i++) {
+                var navItem = navItems[i];
+                var navItemPathname = navItem.getAttribute('href');
+
+                // Check if the currentPathname matches the navItemPathname
+                if (currentPathname === navItemPathname) {
+                    // Add the --active class to the parent div of the matching navigation item
+                    navItem.parentElement.classList.add('--active');
+                    matchFound = true;
+                    break; // Exit the loop once a match is found
+                }
+            }
+
+            // If no match is found, add --active to the first item
+             if (!matchFound && navItems.length > 0) {
+            navItems[0].parentElement.classList.add('--active');
+        }
+        });
+    </script>
+}

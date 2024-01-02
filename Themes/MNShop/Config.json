@@ -1,0 +1,89 @@
+[
+  {
+    "Language": "vi-VN",
+    "Component": [
+      {
+        "ComponentName": "AboutUs",
+        "EntityID": 1,
+        "TotalItems": 2,
+        "ComponentType": 0,
+        "Description": ""
+      },
+      {
+        "ComponentName": "GroupProduct1",
+        "EntityID": 1,
+        "TotalItems": 3,
+        "ComponentType": 4,
+        "Description": "Bộ sưu tập tranh ghép gốm nguyên thủ quốc gia từ APEC 2017"
+      },
+      {
+        "ComponentName": "GroupProduct2",
+        "EntityID": 1,
+        "TotalItems": 3,
+        "ComponentType": 4,
+        "Description": "Các mẫu tranh phù hợp cho nhiều không gian nội thất"
+      },
+      {
+        "ComponentName": "Brand1",
+        "EntityID": 8,
+        "TotalItems": 6,
+        "ComponentType": 4,
+        "Description": "Bộ sưu tập tranh ghép gốm nguyên thủ quốc gia từ APEC 2017"
+      },
+      {
+        "ComponentName": "BCVeChungToi",
+        "EntityID": 13,
+        "TotalItems": 4,
+        "ComponentType": 0,
+        "Description": ""
+      },
+      {
+        "ComponentName": "GroupNews2",
+        "EntityID": 14,
+        "TotalItems": 6,
+        "ComponentType": 0,
+        "Description": "Khám phá các nội dung thú vị khác"
+      },
+      {
+        "ComponentName": "GroupCamNang",
+        "EntityID": 10,
+        "TotalItems": 4,
+        "ComponentType": 0,
+        "Description": "Bạn nhận được gì từ sản phẩm của MN ArtHouse?"
+      },
+      {
+        "ComponentName": "GroupHuongDan",
+        "EntityID": 12,
+        "TotalItems": 6,
+        "ComponentType": 0,
+        "Description": ""
+      }
+    ]
+  },
+  {
+    "Language": "en-US",
+    "Component": [
+      {
+        "ComponentName": "GroupIntroductionID",
+        "EntityID": 29,
+        "TotalItems": 1,
+        "ComponentType": 0,
+        "Description": "ABOUT US"
+      },
+      {
+        "ComponentName": "GroupProductID1",
+        "EntityID": 30,
+        "TotalItems": 4,
+        "ComponentType": 1,
+        "Description": "PRODUCT CATEGORY"
+      },
+      {
+        "ComponentName": "GroupNewsID",
+        "EntityID": 35,
+        "TotalItems": 3,
+        "ComponentType": 0,
+        "Description": "HOT NEWS"
+      }
+    ]
+  }
+]

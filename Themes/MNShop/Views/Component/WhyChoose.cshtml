@@ -1,0 +1,34 @@
+﻿@model List<Frontend.Models.BannerViewModel>
+
+@if (Model.Any())
+{
+    var firstBanner = Model.First();
+
+    <section class="home-about container">
+        <div class="home-section_wrapper">
+            <div class="home-section_top">
+                <h2 class="home-section_title">@firstBanner.AdName</h2>
+                <div class="home-section_desc">
+                    @Html.Raw(firstBanner.Content)
+                </div>
+            </div>
+        </div>
+        <div class="home-about_body">
+            @foreach (var item in Model.Skip(1))
+            {
+                <div class="home-about_item">
+                    <div class="home-about_item__thumbnail">
+                        <img src="@item.ImageUrl" alt="Khai Tâm Montessori" loading="lazy" />
+                    </div>
+                    <div class="home-about_item__title">
+                        <h4>@item.AdName</h4>
+                    </div>
+                    <div class="home-about_item__desc">
+                        @Html.Raw(item.Content)
+                    </div>
+                </div>
+
+            }
+        </div>
+    </section>
+}

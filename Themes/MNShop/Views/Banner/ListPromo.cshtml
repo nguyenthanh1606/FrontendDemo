@@ -1,0 +1,10 @@
+﻿@model List<Frontend.Models.BannerViewModel>
+
+@foreach (var banner in Model)
+{
+    <div class="ad-picture">
+        <a href="@banner.Url">
+            <img class="rounded mx-auto d-block" src="@banner.ImageUrl" alt="">
+        </a>
+    </div>
+}

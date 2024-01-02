@@ -1,0 +1,39 @@
+﻿@model Admin.Models.ProductAdsViewModel
+
+@{
+    ViewBag.Title = Resource.ProductAds;
+}
+
+<div class="page-title">
+    <div class="title_left">
+        <h3>
+            @Resource.ProductAds
+            <small>@Resource.Delete</small>
+        </h3>
+    </div>
+</div>
+
+<div class="main-content">
+    @using (Html.BeginForm("DeleteProductAds", "ProductGroupAds", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true)
+        @Html.HiddenFor(model => model.ProductGroupID)
+        @Html.Hidden("ReturnUrl", (string)ViewBag.ReturnUrl)
+
+        <div class="form-horizontal">
+            <div class="alert alert-danger fade in">
+                <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                <span><i class="fa fa-bullhorn" style="padding-right: 7px" aria-hidden="true"></i>@Resource.AlertDelete</span>
+            </div>
+
+            @Html.DisplayForModel()
+        </div>
+        <div class="form-group">
+            <div class="col-md-offset-2 col-sm-offset-3 col-md-10 col-sm-9 col-xs-12">
+                <input type="submit" class="btn btn-primary" value="@Resource.Delete" />
+                <a href="@(ViewBag.ReturnUrl?? @Url.Action("Index"))" class="btn btn-default">@Resource.Skip</a>
+            </div>
+        </div>
+    }
+</div>

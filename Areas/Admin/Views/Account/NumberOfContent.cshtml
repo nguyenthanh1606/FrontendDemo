@@ -1,0 +1,40 @@
+﻿
+@{
+    ViewBag.Title = Resource.NumberOfContents;
+}
+
+@section css{
+    @Styles.Render("~/bundles/css/datePicker")
+}
+
+<div class="page-title">
+    <div class="title_left">
+        <h3>@Resource.NumberOfContents</h3>
+    </div>
+</div>
+
+@using (Ajax.BeginForm("NumberOfContentList", new AjaxOptions { UpdateTargetId = "list", InsertionMode = InsertionMode.Replace, }))
+{
+    <div class="form-group" style="position:relative">
+        <label>@Resource.CreateReportFrom</label>
+        <input type="date" id="dateFrom" value="@DateTime.Now.Date.AddDays(-30)" name="dateFrom" required class="input" min="2000-01-01" />
+        <label>@Resource.To</label>
+        <input type="date" id="dateTo" value="@DateTime.Now.Date" name="dateTo" required class="input" min="2000-01-01" />
+    </div>
+
+    <div id="list">
+    </div>
+
+    <input type="submit" value="@Resource.Create" class="btn btn-default" />
+}
+
+@section scripts{
+    @Scripts.Render("~/bundles/datePicker");
+
+    <script>
+        $('#dateFrom,#dateTo').datetimepicker({
+                locale: 'vi',
+                format: 'DD/MM/YYYY'
+            });
+    </script>
+}

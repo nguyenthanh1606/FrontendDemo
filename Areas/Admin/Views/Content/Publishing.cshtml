@@ -1,0 +1,53 @@
+﻿@model Admin.Models.PublishingContentViewModel
+
+@{
+    ViewBag.Title = Resource.Publishing;
+}
+
+@section css{
+    @Styles.Render("~/bundles/css/datePicker")
+}
+
+<div class="page-title">
+    <div class="title_left">
+        <h3>
+            @Resource.Contents
+            <small>@Resource.Publishing</small>
+        </h3>
+    </div>
+</div>
+
+<div class="main-content">
+    @using (Html.BeginForm("Publishing", "Content", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true)
+        @Html.Hidden("ReturnUrl", (string)ViewBag.ReturnUrl)
+
+        <div class="form-horizontal">
+            @Html.EditorForModel()
+            <div class="form-group">
+                <div class="col-md-offset-2 col-sm-offset-3 col-md-10 col-sm-9 col-xs-12">
+                    <input type="submit" value="@Resource.Publishing" class="btn btn-primary" />
+                    <a href="@(ViewBag.ReturnUrl?? @Url.Action("Waiting"))" class="btn btn-default">@Resource.Skip</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section scripts{
+    @Scripts.Render("~/bundles/datePicker");
+
+    <script>
+        $(document).ready(function () {
+            ReplaceSelect2('@Request.Cookies["lang"].Value.Substring(0, 2)');
+
+            $('#CustomPublishDate').datetimepicker({
+                locale: 'vi',
+                format: 'DD/MM/YYYY'
+            });
+        });
+    </script>
+}
+

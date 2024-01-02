@@ -1,0 +1,78 @@
+﻿@model Frontend.Models.LayoutContentViewModel
+@using PagedList.Mvc;
+@using PagedList;
+@using Frontend.Infrastructure.ExtensionMethod;
+@using Frontend.Infrastructure.Utility;
+@using Frontend.Infrastructure.Helpers;
+
+@{
+    ViewBag.Title = Model.Group.Title;
+    ViewBag.Description = Model.Group.Description.RemoveHtml();
+    if (!string.IsNullOrEmpty(Model.Group.ImageUrl))
+    {
+        ViewBag.Image = Url.Content(Model.Group.ImageUrl, true);
+    }
+    string ComponentViewPath = "~/Themes/" + TabWeb.GetCurrentTheme() + "/Views/Component/{0}.cshtml";
+    string themeBannerViewPath = "~/Themes/" + TabWeb.GetCurrentTheme() + "/Views/Banner/{0}.cshtml";
+
+    var firstItem = Model.ListContent.FirstOrDefault();
+
+}
+
+<main class="page-about">
+    <div class="page-about--header">
+        <div class="page-about--content">
+            <div class="breadcrumb">
+                @Html.Breadcrumb(Frontend.Infrastructure.Utility.BreadcrumbType.Group, Model.Group.GroupID, new { @class = "" })
+            </div>            <h3 class="page-about--title">@Model.Group.Title</h3>
+            <p class="page-about--desc">@Model.Group.Description.RemoveHtml()</p>
+        </div>
+        <div class="page-about--banner">
+            <img src="@ViewBag.Image" alt="@Model.Group.Title" class="img-fluid">
+        </div>
+        @{Html.RenderAction(MVC.Component.GetChildGroup(Model.LastGroupParentID, "ListGroupMenu", null, true));
+        }
+    </div>
+    <div class="page-about--body container">
+        <div class="text-center page-about--body_desc">
+            @Html.Raw(firstItem.Summary)
+        </div>
+        <section class="home-about--item container">
+            @Html.Raw(firstItem.Body)
+        </section>
+    </div>
+    @{Html.RenderAction(MVC.Component.Display(8, "Catalog"));}
+</main>
+
+@section scripts{
+    <script>
+        // Get the current window.location.pathname
+        var currentPathname = window.location.pathname;
+
+        // Get all the navigation items
+        var navItems = document.querySelectorAll('.page-about--nav_item a');
+
+        // Variable to track if a match is found
+        var matchFound = false;
+
+        // Iterate through the navigation items and check if their href matches the current pathname
+        for (var i = 0; i < navItems.length; i++) {
+            var navItem = navItems[i];
+            var navItemPathname = navItem.getAttribute('href');
+
+            // Check if the currentPathname matches the navItemPathname
+            if (currentPathname === navItemPathname) {
+                // Add the --active class to the parent div of the matching navigation item
+                navItem.parentElement.classList.add('--active');
+                matchFound = true;
+                break; // Exit the loop once a match is found
+            }
+        }
+
+        // If no match is found, add --active to the first item
+         if (!matchFound && navItems.length > 0) {
+            navItems[0].parentElement.classList.add('--active');
+        }
+
+    </script>
+}

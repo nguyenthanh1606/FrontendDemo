@@ -1,0 +1,99 @@
+﻿@model Frontend.Models.LayoutGroupViewModel
+@using PagedList.Mvc;
+@using PagedList;
+@using Frontend.Infrastructure.ExtensionMethod;
+@using Frontend.Infrastructure.Utility;
+@using Frontend.Infrastructure.Helpers;
+@using Admin.Infrastructure.Helpers;
+
+@{
+    ViewBag.Title = Model.Group.Title;
+    ViewBag.Description = Model.Group.Description.RemoveHtml();
+    if (!string.IsNullOrEmpty(Model.Group.ImageUrl))
+    {
+        ViewBag.Image = Url.Content(Model.Group.ImageUrl, true);
+    }
+    string ComponentViewPath = "~/Themes/" + TabWeb.GetCurrentTheme() + "/Views/Component/{0}.cshtml";
+}
+
+
+<main class="page-category">
+    <section class="banner-page" style="background-image: url('@Model.Group.BannerUrl')">
+        <div class="container">
+            <div class="banner-content">
+                <h2>@Model.Group.Title</h2>
+                @Html.Raw(Model.Group.Description)
+                <a href="/hoc-cu-cho-tre-0-3" class="btn btn-outline">CỬA HÀNG</a>
+            </div>
+        </div>
+    </section>
+    <div class="container">
+        <div class="breadcrumb">
+            @Html.Breadcrumb(Frontend.Infrastructure.Utility.BreadcrumbType.Group, Model.Group.GroupID, new { @class = "" })
+        </div>
+    </div>
+    <div class="page-category--body container">
+        @if (Model.ListGroup.Any())
+        {
+            var index = 0;
+        <section class="home-about--item container">
+            @foreach (var item in Model.ListGroup)
+            {
+                var className = index % 2 == 0 ? "" : "";
+                <div class="home-about--item_wrapper home-about--item_center template">
+                    <div class="home-about--item_content template-content">
+                        <div class="template-content--wrapper">
+                            <h3 class="template-title">
+                                @item.Title
+                            </h3>
+                            <div class="template-desc">
+                                <p>@item.Description.RemoveHtml()</p>
+                            </div>
+                            <div class="template-action">
+                                <a href="@Url.CustomAction(Store.Service.SystemService.RoutingType.Group, item.GroupID)" class="btn btn-outline">KHÁM PHÁ CHI TIẾT</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="home-about--item_thumbnail template-thumbnail">
+                        <a href="@Url.CustomAction(Store.Service.SystemService.RoutingType.Group, item.GroupID)">
+                            <img src="@item.ImageUrl" alt="@item.Title" loading="lazy" />
+                        </a>
+                    </div>
+                </div>
+
+            }
+        </section>
+        }
+    </div>
+    @{Html.RenderAction(MVC.Component.Display(8, "Catalog"));}
+</main>
+
+@section scripts{
+    <script>
+        const tabList = document.getElementById('tabList');
+
+        tabList.addEventListener('click', (event) => {
+            if (event.target.tagName === 'LI') {
+                const currentActiveTab = tabList.querySelector('li.--active');
+                if (currentActiveTab) {
+                    currentActiveTab.classList.remove('--active');
+                }
+
+                event.target.classList.add('--active');
+
+                const tabIndex = Array.from(tabList.children).indexOf(event.target);
+
+                const tabContent = document.getElementById('tabContent');
+                const tabChildren = Array.from(tabContent.children);
+                tabChildren.forEach((element, index) => {
+                    if (tabIndex === index) {
+                        element.classList.add('--active');
+                    } else {
+                        element.classList.remove('--active');
+                    }
+                });
+            }
+        });
+
+    </script>
+}

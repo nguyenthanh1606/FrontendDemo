@@ -1,0 +1,31 @@
+﻿@model Admin.Models.ProductVersionMediaViewModel
+
+<form id="mediaForm">
+    <div class="modal-dialog modal-lg" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">
+                    {{mediaModalTitle}}
+                </h4>
+            </div>
+
+            <div class="modal-body">
+                <div class="form-horizontal">
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary(true)
+                    <div v-if="action === 0 || action === 1">
+                        @Html.EditorForModel()
+                    </div>
+                    <div v-else>
+                        @Html.DisplayForModel()
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary" v-if="action !== 2" v-on:click="SubmitMedia()">{{mediaSubmitBtnText}}</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">@Resource.Cancel</button>
+            </div>
+        </div>
+    </div>
+</form>

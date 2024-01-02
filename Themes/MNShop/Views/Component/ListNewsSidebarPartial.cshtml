@@ -1,0 +1,13 @@
+﻿@model Frontend.Models.HomePageGroupViewModel
+
+
+@if (Model.ListItem.Any())
+{
+    <ul id="tabList">
+
+        @foreach (var item in Model.ListItem)
+        {
+            <li><a href="@item.Url">@item.Headline</a></li>
+        }
+    </ul>
+}

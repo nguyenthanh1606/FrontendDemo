@@ -1,0 +1,116 @@
+﻿@model Admin.Models.ParrentAttributeViewModel
+
+
+<table class="table table-bordered" id="parent-property-table">
+    <thead class="thead-blue">
+        <tr>
+            <th class="width-8">@Html.LabelFor(m => m.ListParentProperties.FirstOrDefault().Title)</th>
+            <th class="width-5">@Html.LabelFor(m => m.ListParentProperties.FirstOrDefault().Type)</th>
+            <th class="width-2">@Html.LabelFor(m => m.ListParentProperties.FirstOrDefault().Priority)</th>
+            <th class="width-1">@Html.LabelFor(m => m.ListParentProperties.FirstOrDefault().AllowFilter)</th>
+            <th class="width-4">@Resource.Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @for (int i = 0; i < Model.ListParentProperties.Count(); i++)
+        {
+            <tr>
+                <td>
+                    @Html.HiddenFor(m => m.ListParentProperties[i].GroupPropertyID)
+                    @Html.TextBoxFor(m => m.ListParentProperties[i].Title, new { @class = "form-control", @readonly = "readonly" })
+                    @Html.ValidationMessageFor(m => m.ListParentProperties[i].Title)
+                </td>
+                <td>
+                    @Html.EnumDropDownListFor(m => m.ListParentProperties[i].Type, new
+                   {
+                       @class = "form-control", @readonly = "readonly",
+                       onChange = string.Format("ChangeGroupPropertiesType(this, '#{0}-table')", @Html.IdFor(m => m.ListParentProperties[i].ListProductProperty))
+                   })
+                    @Html.ValidationMessageFor(m => m.ListParentProperties[i].Type)
+                </td>
+                <td>
+                    @Html.TextBoxFor(m => m.ListParentProperties[i].Priority, new { @class = "form-control", @readonly = "readonly" })
+                    @Html.ValidationMessageFor(m => m.ListParentProperties[i].Priority)
+                </td>
+                <td style="text-align: center;vertical-align: middle;">
+                    @Html.CheckBoxFor(m => m.ListParentProperties[i].AllowFilter, new { @class = "checkbox-inline", @readonly = "readonly", onclick = "return false" })
+                    @Html.ValidationMessageFor(m => m.ListParentProperties[i].AllowFilter)
+                </td>
+                <td>
+                    <div class="modal fade" role="dialog" id="@Html.IdFor(m => m.ListParentProperties[i].ListProductProperty)">
+                        <div class="modal-dialog modal-lg" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                            <!-- Modal content-->
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                                    <h4 class="modal-title">@Resource.ProductProperty</h4>
+                                </div>
+
+                                <div class="modal-body">
+                                    <div class="form-horizontal">
+                                        <div>
+                                            <button type="button" class="btn btn-primary" onclick="AddPropertyRow('#@Html.IdFor(m => m.ListParentProperties[i].ListProductProperty)-table', '#@Html.IdFor(m => m.ListParentProperties[i].Type)')">@Resource.AddNewRow</button>
+                                        </div>
+                                        <table class="table table-bordered" id="@Html.IdFor(m => m.ListParentProperties[i].ListProductProperty)-table">
+                                            <thead class="thead-blue">
+                                                <tr>
+                                                    <th class="width-5">@Html.DisplayNameFor(m => m.ListParentProperties[i].ListProductProperty.FirstOrDefault().Title)</th>
+                                                    <th class="width-5">@Html.DisplayNameFor(m => m.ListParentProperties[i].ListProductProperty.FirstOrDefault().Note)</th>
+                                                    <th class="width-2">@Html.DisplayNameFor(m => m.ListParentProperties[i].ListProductProperty.FirstOrDefault().Priority)</th>
+                                                    <th class="width-5">@Html.DisplayNameFor(m => m.ListParentProperties[i].ListProductProperty.FirstOrDefault().PictureUrl)</th>
+                                                    <th class="width-3">@Resource.Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @for (int j = 0; j < Model.ListParentProperties[i].ListProductProperty.Count(); j++)
+                                                {
+                                                    <tr>
+                                                        <td>
+                                                            @Html.HiddenFor(m => m.ListParentProperties[i].ListProductProperty[j].ProductPropertyID)
+                                                            @Html.HiddenFor(m => m.ListParentProperties[i].ListProductProperty[j].GroupPropertyID)
+                                                            @Html.TextBoxFor(m => m.ListParentProperties[i].ListProductProperty[j].Title, new { @class = "form-control" })
+                                                            @Html.ValidationMessageFor(m => m.ListParentProperties[i].ListProductProperty[j].Title)
+                                                        </td>
+                                                        <td>
+                                                            <div id="@Html.IdFor(m => m.ListParentProperties[i].ListProductProperty[j].Note)-cp" class="input-group colorpicker-component">
+                                                                @Html.TextBoxFor(m => m.ListParentProperties[i].ListProductProperty[j].Note, new { @class = "form-control" })
+                                                                <span class="input-group-addon"><i></i></span>
+                                                            </div>
+                                                            @Html.ValidationMessageFor(m => m.ListParentProperties[i].ListProductProperty[j].Note)
+                                                        </td>
+                                                        <td>
+                                                            @Html.TextBoxFor(m => m.ListParentProperties[i].ListProductProperty[j].Priority, new { @class = "form-control" })
+                                                            @Html.ValidationMessageFor(m => m.ListParentProperties[i].ListProductProperty[j].Priority)
+                                                        </td>
+                                                        <td>
+                                                            @Html.FilesManagerTextboxFor(m => m.ListParentProperties[i].ListProductProperty[j].PictureUrl, new { @class = "form-control" })
+                                                            @Html.ValidationMessageFor(m => m.ListParentProperties[i].ListProductProperty[j].PictureUrl)
+                                                        </td>
+                                                        <td>
+                                                            <button type="button" class="btn btn-primary" onclick="DeleteTableRow(this)">@Resource.Delete</button>
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-primary" data-dismiss="modal">@Resource.Save</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-default" data-toggle="modal" data-target="#@Html.IdFor(m => m.ListParentProperties[i].ListProductProperty)">
+                            @Resource.AddProperties
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+@Html.ValidationMessageFor(model => model)
+

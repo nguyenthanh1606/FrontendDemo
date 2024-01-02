@@ -1,0 +1,46 @@
+﻿@model Admin.Models.PublishingContentViewModel
+
+@Html.HiddenFor(model => model.Version)
+@Html.HiddenFor(model => model.ContentID)
+<div class="form-group">
+    @Html.LabelFor(model => model.Headline, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextBoxFor(model => model.Headline, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.Headline)
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.Summary, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        <div class="form-control html-area" readonly>@Html.Raw(Model.Summary)</div>
+        @Html.ValidationMessageFor(model => model.Summary)
+    </div>
+</div>
+<div class="x_title clearfix">
+    <h2>
+        @Resource.PublishingInGroup
+        <small>@Resource.PublishingInSomeGroup</small>
+    </h2>
+
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.Groups, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.DropDownListFor(m => m.Groups, new SelectList(@ViewBag.HierachyGroup, "Key", "Value"), new { @class = "form-control ddl_select2", multiple = "multiple" })
+        @Html.ValidationMessageFor(m => m.Groups)
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.RankId, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.DropDownListFor(m => m.RankId, new SelectList(@ViewBag.ResultAllRank, "RankID", "Rank"), new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.RankId)
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.CustomPublishDate, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextBoxFor(m => m.CustomPublishDate, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.CustomPublishDate)
+    </div>
+</div>

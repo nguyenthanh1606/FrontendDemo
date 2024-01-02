@@ -1,0 +1,128 @@
+﻿
+@model Admin.Models.AppPropertyViewModel
+
+@{
+    ViewBag.Title = Resource.AdminPageSettings;
+}
+
+<div class="page-title">
+    <div class="title_left">
+        <h3>
+            @Resource.System
+            <small>@Resource.AdminPageSettings</small>
+        </h3>
+    </div>
+</div>
+
+<div class="main-content">
+    @if (!string.IsNullOrEmpty(ViewBag.Message))
+    {
+        <div class="alert alert-danger fade in">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <span><i class="fa fa-bullhorn" style="padding-right: 7px" aria-hidden="true"></i>@ViewBag.Message</span>
+        </div>
+    }
+    @using (Html.BeginForm("UpdateSettings", "SystemPara"))
+    {
+        <div class="x_panel">
+            <div class="x_title clearfix">
+                <h2>@Resource.BypassSteps</h2>
+            </div>
+            <div class="form-group">
+                <label class="checkbox-inline">
+                    @Html.CheckBoxFor(model => model.EditionIsPassed)
+                    @Resource.BypassEdition
+                </label>
+            </div>
+            <div class="form-group">
+                <label class="checkbox-inline">
+                    @Html.CheckBoxFor(t => t.ApprovalIsPassed)
+                    @Resource.BypassApproval
+                </label>
+            </div>
+            <div class="x_title clearfix">
+                <h2>@Resource.EmailSendingSettings</h2>
+            </div>
+            <div class="form-group">
+                <label class="checkbox-inline">
+                    @Html.CheckBoxFor(model => model.AlertIsSent)
+                    @Resource.VerifyMemberRegisters
+                </label>
+            </div>
+            <div class="form-group">
+                <label class="checkbox-inline">
+                    @Html.CheckBoxFor(model => model.MemberEmailIsChecked)
+                    @Resource.SendEmailToInform
+                </label>
+            </div>
+            <div class="x_title clearfix">
+                <h2>@Resource.DisplaySettings</h2>
+            </div>
+            <div class="form-horizontal ">
+                <div class="form-group">
+                    @Html.LabelFor(model => model.RowsPerPage, new { @class = "control-label col-md-4 col-sm-5 col-xs-12" })
+                    <div class="col-md-8 col-sm-7 col-xs-12">
+                        @Html.TextBoxFor(model => model.RowsPerPage, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.RowsPerPage)
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.HeadRankNo, new { @class = "control-label col-md-4 col-sm-5 col-xs-12" })
+                    <div class="col-md-8 col-sm-7 col-xs-12">
+                        @Html.TextBoxFor(model => model.HeadRankNo, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.HeadRankNo)
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.HighRankNo, new { @class = "control-label col-md-4 col-sm-5 col-xs-12" })
+                    <div class="col-md-8 col-sm-7 col-xs-12">
+                        @Html.TextBoxFor(model => model.HighRankNo, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.HighRankNo)
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MaxProductInSlider, new { @class = "control-label col-md-4 col-sm-5 col-xs-12" })
+                    <div class="col-md-8 col-sm-7 col-xs-12">
+                        @Html.TextBoxFor(model => model.MaxProductInSlider, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.MaxProductInSlider)
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.MaxProductPerPage, new { @class = "control-label col-md-4 col-sm-5 col-xs-12" })
+                    <div class="col-md-8 col-sm-7 col-xs-12">
+                        @Html.TextBoxFor(model => model.MaxProductPerPage, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.MaxProductPerPage)
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ContentPerPage, new { @class = "control-label col-md-4 col-sm-5 col-xs-12" })
+                    <div class="col-md-8 col-sm-7 col-xs-12">
+                        @Html.TextBoxFor(model => model.ContentPerPage, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.ContentPerPage)
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ShoppingCartExpireDays, new { @class = "control-label col-md-4 col-sm-5 col-xs-12" })
+                    <div class="col-md-8 col-sm-7 col-xs-12">
+                        @Html.TextBoxFor(model => model.ShoppingCartExpireDays, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.ShoppingCartExpireDays)
+                    </div>
+                </div>
+                <div class="form-group">
+                    @Html.LabelFor(model => model.ProductMenuAppearPosition, new { @class = "control-label col-md-4 col-sm-5 col-xs-12" })
+                    <div class="col-md-8 col-sm-7 col-xs-12">
+                        @Html.TextBoxFor(model => model.ProductMenuAppearPosition, new { @class = "form-control" })
+                        @Html.ValidationMessageFor(model => model.ProductMenuAppearPosition)
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-md-offset-1 col-sm-offset-1 col-md-11 col-sm-11 col-xs-12">
+                        <input type="submit" value="@Resource.Update" class="btn btn-primary"/>
+                        @Html.ActionLink(@Resource.Skip, "Index", null, new { @class = "btn btn-default" })
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+

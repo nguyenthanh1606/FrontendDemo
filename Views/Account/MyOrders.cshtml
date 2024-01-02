@@ -1,0 +1,49 @@
+﻿@model IEnumerable<Frontend.Models.CustomerOrderViewModel>
+@using Store.Service.Helper.ExtensionMethod
+
+@{
+    ViewBag.Title = "MyOrder";
+}
+
+<div class="wrapper">
+    <div class="index_middle">
+
+        <div class="Co_LC_L">
+            <div class="left_block">
+                @Html.Partial("_AccountLayoutMenu")
+            </div>
+        </div>
+        <div class="Co_LC_Ce">
+            <div class="clearfix">
+                <h4 class="title_item3 pull-left">@Resource.MyOrder</h4>
+            </div>
+            <div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th class="col-xs-1">@Resource.ID</th>
+                            <th class="col-xs-2">@Resource.OrderDate</th>
+                            <th class="col-xs-4">@Resource.SendTo</th>
+                            <th class="col-xs-2">@Resource.Total</th>
+                            <th class="col-xs-2">@Resource.Status</th>
+                            <th class="col-xs-1"></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach(var order in Model)
+                        {
+                            <tr>
+                                <td>@Html.ActionLink(order.OrderID.ToString(), "OrderDetails", new { id = order.OrderID })</td>
+                                <td>@order.OrderDate.Value.ToShortDateString()</td>
+                                <td>@order.ReceiverName</td>
+                                <td>@order.Total.ToString("N0")</td>
+                                <td>@order.Status.GetDescription()</td>
+                                <td></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>

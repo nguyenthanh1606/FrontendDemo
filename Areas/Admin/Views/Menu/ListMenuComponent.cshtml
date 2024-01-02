@@ -1,0 +1,55 @@
+﻿@model TreeNode<MenuItem>
+@using Store.Service.Models
+@using Store.Service.Service
+
+
+@DrawMenu(Model)
+
+
+@helper DrawMenu(TreeNode<MenuItem> nodes)
+{
+
+    if (nodes.Value != null)
+    {  
+        <li class="list-group-item">
+            @if (nodes.HasChild())
+            {
+                <a name="dropdown" data-toggle="collapse" href="#component-@nodes.Value.MenuID">
+                    @nodes.Value.MenuName
+                    <i class="fa fa-chevron-down" aria-hidden="true"></i>
+                </a>             
+            }
+            else
+            {
+                @nodes.Value.MenuName;
+            }
+
+            <a class="icon" href="@Url.Action("Remove", "Menu", new { id = ViewBag.MenuID, ComponentID = nodes.Value.MenuID })"><i class="fa fa-times" aria-hidden="true"></i></a>
+            <a class="icon" data-toggle="modal" href="#editComponentModal" onclick="vmEditMenu.GetMenuComponent(@nodes.Value.MenuID)"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></a>
+         
+
+            @if (nodes.HasChild())
+            {
+                <ul class="list-group collapse" id="component-@nodes.Value.MenuID">
+                    @foreach (var item in nodes.GetAllChilds())
+                    {
+                        @DrawMenu(item);
+                    }
+                </ul>
+            }
+                
+        </li>
+    }
+    else
+    {
+        <ul class="list-group">
+            @foreach (var item in nodes.GetAllChilds())
+            {
+                @DrawMenu(item);
+            }
+        </ul>
+
+    }
+
+}
+

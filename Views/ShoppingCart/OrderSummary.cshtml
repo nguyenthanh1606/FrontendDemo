@@ -1,0 +1,25 @@
+﻿@model List<Frontend.Models.CartItemViewModel>
+
+<div class="panel">
+    <div class="panel-title clearfix">
+        <span>@Resource.OrderSummary</span>
+        @Html.ActionLink(Resource.Edit, "List", "ShoppingCart", null, new { @class = "pull-right btn btn-default"})
+    </div>
+    <div class="panel-body">
+        @foreach(var item in Model)
+        {
+            <div class="item">
+                <p><strong>@item.Quantity x </strong>@item.Title</p>
+                <p>
+                    @foreach (var property in item.ListProperties)
+                    {
+                        <span>@property.Item1: @property.Item2</span>
+                    }
+                </p>
+                <p class="item-price">
+                    @item.OriginalPrice
+                </p>
+            </div>
+        }
+    </div>
+</div>

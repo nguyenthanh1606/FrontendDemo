@@ -1,0 +1,34 @@
+﻿@model Frontend.Models.HomePageGroupViewModel
+
+@if (Model.DefaultName != "")
+            {
+    <a href="@Url.CustomAction(Store.Service.SystemService.RoutingType.Group, Model.Group.GroupID)"><h5>@Model.DefaultName</h5></a>
+}
+else
+{
+    <a href="@Url.CustomAction(Store.Service.SystemService.RoutingType.Group, Model.Group.GroupID)">
+        <h5>@Model.Group.Title</h5>
+    </a>
+}
+
+@if (Model.ListItem.Any())
+{
+    foreach (var item in Model.ListItem)
+    {
+        <div class="content" style="border-right: 0">
+            <div class="img-content">
+                <a href="@item.Url">
+                    <figure>
+                        <img src="@item.PictureUrl" class="mx-auto d-block" width="100%" alt="content 1">
+                    </figure>
+                </a>
+            </div>
+            <div class="detail-content">
+                <a href="@item.Url"><h5>@item.Headline</h5></a>
+                <span class="user-create">@item.AuthorName</span>
+                <span class="date-create">@item.PublishDate.Value.ToShortDateString()</span>
+                <p class="detail">@item.Summary.RemoveHtml().Truncate(140)</p>
+            </div>
+        </div>
+    }
+}

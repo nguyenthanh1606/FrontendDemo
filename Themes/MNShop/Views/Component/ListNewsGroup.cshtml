@@ -1,0 +1,29 @@
+﻿@model Frontend.Models.HomePageGroupViewModel
+
+@if (Model.ListItem.Any())
+{
+    var index = 0;
+    foreach (var itemContent in Model.ListItem)
+    {
+        var classItem = index % 2 == 0 ? "" : "template_two__right";
+        <div class="home-news_item template_two template_two template_two__outline @classItem">
+            <div class="template_two__thumbnail">
+                <a href="@itemContent.Url"><img src="@itemContent.PictureUrl" alt="@itemContent.Headline" loading="lazy" /></a>
+            </div>
+            <div class="template_two__content">
+                <a href="@itemContent.Url" class="template_two__title">
+                    <h3>@itemContent.Headline</h3>
+                </a>
+                <div class="template_two__desc">
+                    <p>
+                        @itemContent.Summary.RemoveHtml()
+                    </p>
+                </div>
+                <div class="template_two__action">
+                    <a href="@itemContent.Url">XEM TIẾP </a>
+                </div>
+            </div>
+        </div>
+        index++;
+    }
+}

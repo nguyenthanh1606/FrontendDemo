@@ -1,0 +1,58 @@
+﻿@using Store.Service.Helper
+@using Frontend.LocalResource
+@model TreeNode<MenuItem>
+
+<link href="~/Content/css/MenuMobile2.css" rel="stylesheet" />
+
+@if (@Model != null)
+{
+    <div class="xMMenu-wrap-left">
+        <div class="xMMenu-Top">
+            <section class="buttonsetleft">
+                <div id="nav_list"></div>
+                <nav class="pushmenu">
+                    <h3 style="font-size: 18px">Menu</h3>
+                    <ul>
+                        @foreach (var child in @Model.GetAllChilds())
+                        {
+                            @DrawMenu(child)
+                        }
+                    </ul>
+                </nav>
+            </section>
+            
+        </div>
+        
+    </div>
+}
+
+
+
+
+
+
+
+
+@helper DrawMenu(TreeNode<MenuItem> nodes)
+{
+    if (!string.IsNullOrEmpty(nodes.Value.Url) && !string.IsNullOrEmpty(nodes.Value.Title))
+    {
+        bool hasChild = @nodes.GetAllChilds().Count != 0;
+        <li>
+            @if (!hasChild)
+            {
+                <a href="@Url.Content(@nodes.Value.Url)"><span>@nodes.Value.Title</span></a>
+            }
+            else
+            {
+                <a data-toggle="collapse" href="#submenumobile_@nodes.Value.GroupID"><span>@nodes.Value.Title</span><i class="fa fa-caret-right"></i></a>
+                <ul id="submenumobile_@nodes.Value.GroupID" class="collapse">
+                    @foreach (var item in nodes.GetAllChilds())
+                    {
+                        @DrawMenu(item)
+                    }
+                </ul>
+            }
+        </li>
+    }
+}

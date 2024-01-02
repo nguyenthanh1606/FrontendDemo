@@ -1,0 +1,292 @@
+﻿@model Frontend.Models.ProductDetailsViewModel
+@using Store.Service.ProductServices
+@using Frontend.Infrastructure.Helpers
+@using Admin.Infrastructure.Helpers
+
+@{
+    ViewBag.Title = Model.Title;
+    ViewBag.Description = Model.Summary.RemoveHtml();
+    if (!string.IsNullOrEmpty(Model.DefaultImageUrls))
+    {
+        ViewBag.Image = Url.Content(Model.DefaultImageUrls, true);
+    }
+
+    string themeComponentViewPath = "~/Themes/" + TabWeb.GetCurrentTheme() + "/Views/Component/{0}.cshtml";
+    string themeHomeViewPath = "~/Themes/" + TabWeb.GetCurrentTheme() + "/Views/Home/{0}.cshtml";
+}
+
+@section css{
+}
+<main class="product-detail">
+    <div class="banner-page">
+        <div class="picture-page">
+            <img class="img-fluid w-100" src="@Model.ProductGroup.BannerUrl" alt="@Model.ProductGroup.Title" />
+        </div>
+        <div class="wrapper">
+            <div class="banner-page--content">
+                <img src="~/Themes/MNShop/Images/Logo-white.png" alt="MN Shop">
+                <h2 class="title">In lại các tác phẩm nghệ thuật đẹp như bản gốc</h2>
+            </div>
+        </div>
+    </div> 
+    @{Html.RenderAction(MVC.Component.Display(5, "AvsNotify"));}
+    <div class="container breadcrumb-ds">
+        @Html.Breadcrumb(Frontend.Infrastructure.Utility.BreadcrumbType.ProductGroup, Model.ProductGroup.GroupID, new { @class = "breadcrumb" })
+    </div>
+    <div class="product--detail_container container">
+        <div class="product--detail_left">
+            <div class="pr-top_thumbnail">
+                <div thumbsSlider="" class="swiper thumbsSlider">
+                    <div class="swiper-wrapper">
+                        @foreach (var item in Model.ListImages)
+                        {
+                            <div class="swiper-slide">
+                                <div class="slider-banner-image">
+                                    <div class="thumnails-template">
+                                        <div class="thumnails-content">
+                                            <img src="@item" class="img-fluid" alt="MN Shop">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div style="--swiper-navigation-color: #fff; --swiper-pagination-color: #fff" class="swiper previewSwiper">
+                    <div class="swiper-wrapper">
+                        @foreach (var item in Model.ListImages)
+                        {
+                            <div class="swiper-slide">
+                                <div class="thumbnail-image">
+                                    <div class="thumnails-template">
+                                        <div class="thumnails-content">
+                                            <img src="@item" class="img-fluid" alt="MN Shop">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                    <div class="swiper-button-next"></div>
+                    <div class="swiper-button-prev"></div>
+                </div>
+            </div>
+            <div class="pr-top_content">
+                <h3 class="pr-top_content__title">@Model.Title</h3>
+                <div class="pr-top_content__body">
+                    @Html.Raw(Model.Body)
+                </div>
+            </div>
+            <hr style="border-top: 1px solid #D1D1D1" />
+            @{Html.RenderAction(MVC.Component.GetContentForGroupID(string.Format(themeHomeViewPath, "ListCamNang"), ThemeConfig.GetComponent("GroupCamNang"), Store.Service.Service.DistributionOrder.Lastest, true, ""));}
+
+
+            <hr style="border-top: 1px solid #D1D1D1" />
+            @{Html.RenderAction("ListProductSameGroup", new { id = Model.ProductID });}
+        </div>
+        <div class="product--detail_right">
+            <div class="product-buy only-pc" id="price-app">
+                <h3 class="title">@Model.Title</h3>
+                <div class="product-info">
+                    @Html.Raw(Model.Specification)
+                </div>
+                <div class="product-type">
+                    <h3 class="title">Chọn quy cách theo nhu cầu của bạn</h3>
+                    <span>Quam id leo in vitae turpis massa sed. Velit sed ullamcorper morbi tincidunt ornare. </span>
+                    <div class="product-type--item">
+                        <div class="form-group">
+                            <label for="thanhPhamList">Chọn thành phẩm:</label>
+                            <select v-model="selectedType" v-on:change="handleSelectType" class="form-control">
+                                <option value="type1">Tranh làm quà tặng</option>
+                                <option value="type2">Chỉ in tranh</option>
+                                <!-- Other options -->
+                            </select>
+                        </div>
+                    </div>
+                    <div class="product-type--item">
+                        <div class="form-group">
+                            <label for="kichThuocList">Chọn khổ thành phẩm:</label>
+                            <select v-if="selectedType" v-model="selectedSize" v-on:change="handleSelectType" class="form-control">
+                                <option v-for="item in filteredItems" :key="item.id" :value="item.size">
+                                    {{ item.size }}
+                                </option>
+                            </select>
+                            <p class="sub">
+                                <ul>
+                                    <li>Kích thước nội dung tranh: <span> {{ priceSelected.sizeDefault }}</span></li>
+                                    <li>Loại khung dùng cho tranh: <span> {{ priceSelected.frameType }}</span></li>
+                                </ul>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="product-type--item">
+                        <div class="form-group">
+                            <label for="printTypeList">Chọn chất liệu in:</label>
+                            <select v-if="selectedType" v-model="selectedDG" v-on:change="handleSelectType" class="form-control">
+                                <option v-for="item in filteredLoaiDongGoi" :key="item.id" :value="item.key">
+                                    {{ item.value }}
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="product-type--item">
+                        <div class="form-group">
+                            <small><i>Tranh in canvas làm quà tặng sẽ được đóng khung và kèm hộp quà cao cấp từ MN ArtHouse</i></small>
+                        </div>
+                    </div>
+                </div>
+                @using (Ajax.BeginForm("VersionDetails", "Product", null,
+new AjaxOptions { HttpMethod = "POST", OnSuccess = "vmProduct.SelectVersionSuccess" }, new { id = "version_form" }))
+                {
+                    @Html.HiddenFor(m => m.ProductID)
+                    @Html.AntiForgeryToken()
+                    <div class="product-card">
+
+
+                        @Html.TextBox("Quantity", 1, new { name = "Quantity", @class = "form-control text-center d-none" })
+
+                        <div class="product-card--price">
+                            <span>Giá thành phẩm</span>
+                            <h3>@string.Format("{0:n0}", "{{ priceSelected.price[selectedDG] }}") <span>VNĐ</span></h3>
+                        </div>
+                        <button class="text-uppercase btn btn-1" id="mySizeChart" onclick="AddToCart(AddToCartSuccess)">
+                            Đặt in
+                        </button>
+                    </div>
+                }
+
+
+                <div class="product-plugin">
+                    <ul>
+                        <li>
+                            <div class="icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="29" height="29" viewBox="0 0 29 29">
+                                    <image id="frame_1_" data-name="frame (1)" width="29" height="29" xlink:href="data:img/png;base64,iVBORw0KGgoAAAANSUhEUgAAAB0AAAAdCAYAAABWk2cPAAABkUlEQVRIie2WOUsEQRCFv1kHvFZBFsHIxEAQDAxNjTwwk13wBxj7L4xNNDDQxEhMPDEwVwwU1EDYSAMFERUVVLwoqIG2XGZ2Z3uM9sHQ9aa76vVRPVNBqVjEwSiw5vApYI/asQ+MqNcZMOhGCE24FiBveBq0OT7t1t+KfifwajEcN05Ex4EA2AaeTf+LthM1it4D745GQW3RuQxVTJADro3zrbZb6RZcEZs587bJcNvvAw826FcC94HO6ExzmkQ9Jmi3trWe6aM50y615Uyv5MWuMzhvnKN03/G5VLu9Hwm8WsgkX/U5sj72nvqCbGezxirYmFlkJ+a+P/2XaCwaog3RTEQ7ErgX2I/DMTCv3+FAeeaiF8BsFkJWdANoVV6pPAmqjCXj1oFFEyeyS8CM/GBEdLLOibu4UdFKGNIK8c139sb9lT6jMbLSA6dkrGd7BecxfWXgFDgJk8rFlHAnGtnL+vzJ3l5g2rkyq1Je+J6RFR0D5hx+ByyliNvn2P1JonK+Kw4/TCEoWAAG1P69U8APZ3BDtzngjXcAAAAASUVORK5CYII="></image>
+                                </svg>
+                            </div>
+                            <span>Tranh luôn chuẩn bị sẵn khung (nếu có chọn khung) &amp; móc khi giao</span>
+                        </li>
+                        <li>
+                            <div class="icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="43" height="25" viewBox="0 0 43 25">
+                                    <image id="free-shipping" width="43" height="25" xlink:href="data:img/png;base64,iVBORw0KGgoAAAANSUhEUgAAACsAAAAZCAYAAACo79dmAAADpUlEQVRYhc2XeYhOYRTGf2bsS8JkyS5LQhlEylKWLCH7liiSJiERIsq+/TFFsmcrFFmyL2UpS7YJkVHImn3fmaEzPR+n67vf983UaJ56u/ee973nfe55z3YLDRo4EIcmQC+gCJBF4igE/NJqe7ewZNnAT41vwBfgs65PgJO52CNHaQQpwJWALL9xChgEPEtknyR3n/yfiRraAycSXezJ2dc1A7roCLNk7QlA0fzhmoOGQA/ghlzpA/AqHllDhoaH+VZ6PpI17IvCYyOwzAsTOfaUwLMFyn0FTw2gJJCpIGrk1j0C3ui+sU7rpk6sNFDbrf0gfcmaS9XopvGHbDFgrkjMBGoB00SinI4ogo9AXZGwqN+gINmk9YbLwC5gMlBRLrQDmARcB4rLV7dq/Vd99FtnnMHAcqArMAuYYxOWuqYD87WwHZAGDAmx8j6ltiwFp7lIVZEw61XQxz0E6gGr9Z4FUQfgPVAmoPOODBDEcBnBUAV4ahtec4seA+dDiEasYGgJrAfK6/kscFw5tKNkm4H6+pA6kjWVQbKdzkche22WXsNa5Ab7gTYicldOfVnHamQWOv/K0DG1AKrLV03HPFlzriwyBlgK1JTV0qUjXa7lU+bDGMYZCdzSaTWIBNiZwCL/bIGzU/drVOVW6bmffPABUFbpzyz1VUTN/18DB1S16sr6HxVIhosxyGbqBEeZIeJlg1LAUPfcF2jtnlOdvy2R/5nVWgETgR86qanAbEV2SblMabdHqrKFh7lKCbOoZD0twKYAY3WcvwKLy0tZQcAXI7i4gJCJh9tJCo6XwDvlTz9y03n9F7JWCCppVHajkvLbwQJA1HAjEmDZqmBBvFA0do8yZ8F0GHiuAtAnj/5t7x8C7slQlqaqxSIbRD1FtZXLBVHmxyiNeUSi3GeLeJgRRX+aDDQyID+XFBAY+aPmH0rGp13qiKCXiA5QGb2ktGT5s63yaiIYLaL2zl4VopV6z/LqVafDeDwOWtaajs4xNlqv/mC2GowImisnTlE9nxiH7BFgnUitc/JmMk4HVc7tjjzBfzBDbzUyyVE2GaHc+yDK3HtVMVO4JQ7ZBupDvofMl1PRWKSynWPlaD67RyMM40Pkn3S19vBYHLKWFvvHmC+lsj3MC/Pyz3UvRL5CV+sl3oSs8XgZIt8tq/+DYIAlgh1quD22uZ44UdhvuOnyOKeuLSryYlmrap2AcSoaF1xXlluYf1tWsL7XMpAFm+9P/gL4DTST1vayGVB3AAAAAElFTkSuQmCC"></image>
+                                </svg>
+
+                            </div>
+                            <span>Miễn phí giao hàng trong phạm vi Đồng Nai &amp; Tp. Hồ Chí Minh</span>
+                        </li>
+                        <li>
+                            <div class="icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="35" height="34" viewBox="0 0 35 34">
+                                    <image id="package" width="35" height="34" xlink:href="data:img/png;base64,iVBORw0KGgoAAAANSUhEUgAAACMAAAAiCAYAAADVhWD8AAADtklEQVRYhb3YeYhWZRQG8J+jVmq2SUkKuWaW9keQCWXQTtoepSUZQVKUFWXZXtAe7VSEkYJU1PwhbZZtQoUaUREVRCuV2B8WaZsV0cobzwdfn99yZ3J8YLhz55733Oee9zznnHf6zZo5Uy+xHS7B6fgdD+D+/N4rdPVi0QDMx2e4BqMwHnfhU5wfmx6jJ2S2xdl54Z3YuYlNIXZvbOb1FZmyJU9iIUZXsB+dLfsY51Yl03/ypEntnu+B9fgNb+MX7FfWVfQ/DEfhlPh4p51xq8gcgBX4CCtxGD7EpdgN91UkU8NEPBQfc6uS2RvdWIVD87dpeBnPYF+swwWYgMd7SeoDnNaKzHQ8hfcxq4WjY/AWHovTkqSzsQ+e7iGpvfAIPsFVGFlPpkTkuIqOTk24y1YNx7s4HofglR6S2j2qG1ZP5rZI9/okaRWchy9wK4aESCF0At6ssL7k4okYkR35V00v4vvs46t4EAMxFf06OByYnDonhW5lkn4RPsfk2lfX4fVE44rYFtyOg0tkjsAyvID9I+X5qRULK0ZpR9yItUluyYkJqTPrIuvpUeqy2CzImtJWppTe9COG1jleGsfv5X5Cyv4m2d8Ga7AkX/wztk6dkWiXj70Yu9a5WNzVZCtOSlI+HCIl4+ck5EsrkhmVQjcy94XIVrg8UbqjgUhBV7t2MCflvJT1Mcmpk5Mjz7ZZ93y2fmI+pIazcAt2abWwSm+al2S8O8m4OjXn8AYpL8dBmJEiOShjxQ153kkMPeraFyYXbo6UV0TKpe4cmx70WkpEIfBVVDYi6zvOOT2dZ4ZEkkUBV6ZhdkcdQ5L4hcTV2Clr1ub6ayfnvRqCIuWbUuCmYHBI7NDEdvtcB/cVmRrG5TqwBZGCM1M6ZnRy1mybSn24qO6+tIfLsCdearBdn+tf+WmGoSHUKOVN0Cwy1+FLjE2dOSO1oeDbTg7/D5pFpjY4lbJ+ZIhMjVxn9zWZxhHy6PQoUUjpT29k2utL9B+Q4tSIJzJszWqTmJsbg7rSrRsxPMeSLUWkYHlX+k33FnxpI9ZkSF9SyGxMSZ/WIkp9hXWZZ8ppdLEGNa3O8FMSeFUfkvgmR57xGSX+qD1oJu3ncGDd4L258F1OAuPqhq7/oF2j7M6RYm4G795iQ5rrmHT8ja38VOnai3OkWJAQ1+PvNus2ZJQYmxPED51eVHWE+DP7W0JcXlA7ztT+E1FI1Xz9lFGi2F5bhURPydRQQlxeUCL1aF2ktsHXuCckygBfjj/VgX8ARUHEVPkwWNsAAAAASUVORK5CYII="></image>
+                                </svg>
+
+                            </div>
+                            <span>Tranh được đóng góp cẩn thận theo tiểu chuẩn &amp; kích thước in</span>
+                        </li>
+                        <li>
+                            <div class="icon">
+                                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="34" height="36" viewBox="0 0 34 36">
+                                    <image id="warranty" width="34" height="36" xlink:href="data:img/png;base64,iVBORw0KGgoAAAANSUhEUgAAACIAAAAkCAYAAADsHujfAAAFAklEQVRYhb2YeWxVRRTGfzyfVgUbIwaXxLhFUWOqEQVRXMCooFCtVlqj1q0uqIHg8gfukgBxwwUDURRFGrWCFK3SJlBxLS4FFRFL3aIkWkQDdaENVDBHvjHH6b2vtFW/5GXunDvL986cbW6vktGj6QEGA7OAj4ELe7JQpgdzJwL1wGFAKfA5MOz/JDJcGrgjkhuhOuARYN//gkhW7XXA+0ANcJRkLwOHAqOAnyUbC3wN3A/s828RGQAs0XN/YKCev9Pm52oNI7cnMFnv84Cbga+AqcCR3SViWjhchjgEeAwYJxu4ATgYeBV4DmgE2oEy4DagLzBH6+wCjAc+BRYBVwKHJG1oXpMPHA285eR2xsuBvZzsWeBS1x8JVEfrfQuUA4vVvxu4EdgtGrdS+y0FVtjPiNTIAL8A1gAN2nRHoAo4AKgALtHxnAWcABwH7J+iUVv8TtmQ4XRgDFCUMn5UVnaAVGa/z3S2bdLAfSJhC01PWShGAbAAaAYeAh7X0RhO1rpXuDkDMjpHpJEdZPUXSQtvA8fLM7aXhMfewL3ABtnSBOAH2cr5blwfI9JbnUeBLcBW4EmRGaJ3Y7pBIkZ/eVWT/tR8oMUT6aXOr45UwKlqB3Vz89Uy6C2R/Ai1gUied1/z/a3RBIsbB+nMu4oXFW0LgX7AOjc/EAj7ZzwR08amaLORMtxYU51hHlACXCuttMkpNmveRrV91LYbkbC5xYz2bvzzGC8BF8jGZsjQGxQaVmnsWrW7q201IuvVCRHvxxybrKej1jwWAsVyzQonD8Z+oFrT0s7ufYsR+V6dkA8aUza5FdhDtvR6wnuLpmdLE085uRn8GyoZ8iVbEQXDtUbkS3VMhYZ3EzaZBEyR+9lGpwG1kSYsep4TacIM9U0RGezky6N+k0XWT3Smhnyd8QQ3yI7idkXYWyT7HRgh0hlpokixwZOoVukw0MnNY1qBoZ5YVokn4DzgmUgbwbP8uCqRP1F9q9Ced++LRaImIoFCP8pvyBTWZXR2wZ3Gq/U2kFWmrIrq0rmKFZURiRJpdYHbzGOKbK2fZIvDv20Tc0OBjHFsNPkkjXlBWgswrfjq+3KRq5W9xNggj5ns5JU4tc92Lx5UBm6OFhmutG6auSxhk6t1rKaJMxPeowBnldw16luoeMcTqXYh+Hq1SfeMQhnkbLdYIDFT8iRNoOOvFJGAh8ODD/FWTQXMVQlQn7BgkdT/hAJXuUhUqlxMQ9Bio4prVM/+hfiCtdHVJ2btH9IxEQbMc24/P0f1hWrYMlV29fqTbYo9HTRiGOee69Qem7J4sZLYpk5ILBWJu5TJUcgv94NiIjPFFhW8FuyWuXgRI6vaNg0fSQv36AZQoVSxUoV2KhF0X2nVc4FCdL2K5c2pW3bEEs2xcnEn4BRdRSbJe/6BJCItrjJDxe4ypfK8hCtEjD/kecP03KyUYXekaRpr5cHTugOlasTwAXCG6x8D/CZShUp6qxPmzdFxTVdQLNMdqa8KrIB2Xbr+LimyCYsFLFJie02EeyuLWnS9WGXgIKWFb/R1oFVzZulIAq7SkaySh1mkfs9v1tndt1YX7gYnK9U/miq1l0r1Q2VLCyMSMyRDUXlETIKEOJILDwA3JbxfI9XvGsmb9AWhLvey29CV7yN2u7eY8kok3y8i8ZM0FL6XbBdy2UgSzHssl9gZmyFaQRQqcftiZNHWrpe/dGlV4E8U0CYEbJImXQAAAABJRU5ErkJggg=="></image>
+                                </svg>
+
+                            </div>
+                            <span>Sản phẩm tranh được bảo hành và đổi trả, hoàn tiền trong 30 ngày</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="product-policy text-center">
+                    <p>Tìm hiểu thêm về</p>
+                    <a href="#!">Chính sách bán hàng</a>
+                </div>
+            </div>
+            @{Html.RenderAction(MVC.Component.GetContentForGroupID(string.Format(themeHomeViewPath, "ListHuongDan"), ThemeConfig.GetComponent("GroupHuongDan"), Store.Service.Service.DistributionOrder.Lastest, true, ""));}
+
+        </div>
+    </div>
+
+</main>
+
+@section scripts{
+    <script>
+        var swiper = new Swiper(".thumbsSlider", {
+            direction: "vertical",
+            autoHeight: true,
+            loop: true,
+            spaceBetween: 17,
+            slidesPerView: 4,
+            freeMode: true,
+            watchSlidesProgress: true,
+        });
+        var swiper2 = new Swiper(".previewSwiper", {
+            loop: true,
+            spaceBetween: 10,
+            navigation: {
+                nextEl: ".swiper-button-next",
+                prevEl: ".swiper-button-prev",
+            },
+            thumbs: {
+                swiper: swiper,
+            },
+        });
+    </script>
+    <script>
+        new Vue({
+            el: '#price-app',
+            data: {
+                priceSelected: {},
+                selectedType: 'type1',
+                selectedSize: '18cm x 26cm',
+                selectedDG: 1,
+                priceData: [
+                    { id: 1, type: 'type1', size: '18cm x 26cm', sizeDefault: '16cm x 24cm', price: [380000, 410000], frameType: "Khung nẹp" },
+                    { id: 2, type: 'type1', size: '22cm x 32cm', sizeDefault: '20cm x 30cm', price: [510000, 550000], frameType: "Khung nẹp" },
+                    { id: 3, type: 'type1', size: '27cm x 39.5cm', sizeDefault: '25cm x 37,5cm', price: [690000, 750000], frameType: "Khung nẹp" },
+                    { id: 4, type: 'type1', size: '32cm x 47cm', sizeDefault: '30cm x 45cm', price: [870000, 960000], frameType: "Khung nẹp" },
+                    { id: 5, type: 'type1', size: '45cm x 60cm', sizeDefault: '30cm x 45cm', price: [1280000, 1450000], frameType: "Khung bản" },
+                    { id: 6, type: 'type1', size: '60cm x 80cm', sizeDefault: '40cm x 60cm', price: [2130000, 2470000], frameType: "Khung bản" },
+                    { id: 7, type: 'type1', size: '70cm x 95cm', sizeDefault: '50cm x 75cm', price: [2800000, 3280000], frameType: "Khung bản" },
+                    { id: 8, type: 'type1', size: '80cm x 110cm', sizeDefault: '80cm x 110cm', price: [3580000, 4240000], frameType: "Khung bản" },
+                    { id: 9, type: 'type1', size: '22cm x 22cm', sizeDefault: '20cm x 20cm', price: [390000, 420000], frameType: "Khung nẹp" },
+                    { id: 10, type: 'type1', size: '32cm x 32cm', sizeDefault: '30cm x 30cm', price: [670000, 720000], frameType: "Khung nẹp" },
+                    { id: 11, type: 'type1', size: '40cm x 40cm', sizeDefault: '25cm x 25cm', price: [880000, 980000], frameType: "Khung bản" },
+                    { id: 12, type: 'type1', size: '50cm x 50cm', sizeDefault: '35cm x 35cm', price: [1210000, 1370000], frameType: "Khung bản" },
+                    { id: 13, type: 'type1', size: '60cm x 60cm', sizeDefault: '40cm x 40cm', price: [1700000, 1800000], frameType: "Khung bản" },
+                    { id: 14, type: 'type2', size: '16cm x 24cm', sizeDefault: '16cm x 24cm', price: [110000, 110000], frameType: "Khung nẹp" },
+                    { id: 15, type: 'type2', size: '20cm x 30cm', sizeDefault: '20cm x 30cm', price: [140000, 140000], frameType: "Khung nẹp" },
+                    { id: 16, type: 'type2', size: '25cm x 37.5cm', sizeDefault: '25cm x 37.5cm', price: [180000, 190000], frameType: "Không" },
+                    { id: 17, type: 'type2', size: '30cm x 45cm', sizeDefault: '30cm x 45cm', price: [230000, 230000], frameType: "Không" },
+                    { id: 18, type: 'type2', size: '40cm x 60cm', sizeDefault: '40cm x 60cm', price: [340000, 340000], frameType: "Không" },
+                    { id: 19, type: 'type2', size: '50cm x 75cm', sizeDefault: '50cm x 75cm', price: [460000, 460000], frameType: "Không" },
+                    { id: 20, type: 'type2', size: '20cm x 20cm', sizeDefault: '20cm x 20cm', price: [110000, 110000], frameType: "Không" },
+                    { id: 21, type: 'type2', size: '30cm x 30cm', sizeDefault: '30cm x 30cm', price: [180000, 180000], frameType: "Không" },
+                    { id: 22, type: 'type2', size: '25cm x 25cm', sizeDefault: '25cm x 25cm', price: [140000, 140000], frameType: "Không" },
+                    { id: 23, type: 'type2', size: '35cm x 35cm', sizeDefault: '35cm x 35cm', price: [220000, 220000], frameType: "Không" },
+                    { id: 24, type: 'type2', size: '40cm x 40cm', sizeDefault: '40cm x 40cm', price: [260000, 260000], frameType: "Không" },
+                ],
+                loaiDongGoi: [
+                    { id: 1, type: "type1", value: "Canvas (có hộp quà)", key: 0 },
+                    { id: 2, type: "type1", value: "Giấy (có khung kính)", key: 1 },
+                    { id: 1, type: "type2", value: "Tranh in canvas đựng trong ống cuộn", key: 0 },
+                    { id: 2, type: "type2", value: "Tranh in giấy đựng trong ống cuộn", key: 1 }
+                ]
+            },
+            computed: {
+                filteredItems() {
+                    var listItem = this.priceData.filter(item => item.type === this.selectedType);
+                    this.selectedSize = listItem[0].size;
+                    this.priceSelected = listItem[0];
+                    return listItem;
+                },
+                filteredLoaiDongGoi() {
+                    return this.loaiDongGoi.filter(item => item.type === this.selectedType);
+                }
+            },
+            methods: {
+                handleSelectType() {
+                    this.priceSelected = this.priceData.find(item => item.type === this.selectedType && item.size === this.selectedSize);
+                },
+            },
+        });
+    </script>
+}

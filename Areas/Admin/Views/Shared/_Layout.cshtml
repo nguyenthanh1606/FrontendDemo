@@ -1,0 +1,133 @@
+﻿@using Store.Service.Helper;
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    @Styles.Render("~/Areas/Admin/Content/css/site")
+    @RenderSection("css", required: false)
+    @Styles.Render("~/Areas/Admin/Content/css/admin")
+</head>
+@{
+    bool isAdmin = bool.Parse(Session["IsAdmin"].ToString());
+}
+<body class="nav-md">
+    <div class="container body">
+        <div class="main_container">
+            <div class="col-md-3 left_col menu_fixed">
+                <div class="left_col scroll-view">
+                    <div class="navbar nav_title" style="border: 0;">
+                        <a href="@Url.Action("Index", "Home")" class="site_title"><i class="fa fa-paw"></i> <span>@ViewBag.SiteTitle</span></a>
+                        <a class="your_site" href="@string.Format("https://{0}", @ViewBag.WebSite)" target="_blank">@ViewBag.WebSite</a>
+                    </div>
+                    <div class="clearfix"></div>
+                    <br />
+                    <!-- sidebar menu -->
+                    <div id="sidebar-menu" class="main_menu_side hidden-print main_menu">
+                        @if (isAdmin)
+                        {
+                            Html.RenderAction("AdminSideMenu", "Layout");
+                        }
+                        else
+                        {
+                            Html.RenderAction("SideMenu", "Layout");
+                        }
+                    </div>
+                    <!-- /sidebar menu -->
+                    <!-- /menu footer buttons -->
+                    <div class="sidebar-footer hidden-small">
+                        <a data-toggle="tooltip" data-placement="top" title="Settings">
+                            <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+                        </a>
+                        <a data-toggle="tooltip" data-placement="top" title="FullScreen">
+                            <span class="glyphicon glyphicon-fullscreen" aria-hidden="true"></span>
+                        </a>
+                        <a data-toggle="tooltip" data-placement="top" title="Lock">
+                            <span class="glyphicon glyphicon-eye-close" aria-hidden="true"></span>
+                        </a>
+                        <a data-toggle="tooltip" data-placement="top" title="Logout" href="@Url.Action("Logout", "Account")">
+                            <span class="glyphicon glyphicon-off" aria-hidden="true"></span>
+                        </a>
+                    </div>
+                    <!-- /menu footer buttons -->
+                </div>
+            </div>
+            <!-- top navigation -->
+            <div class="top_nav">
+                <div class="nav_menu">
+                    <nav class="" role="navigation">
+                        <div class="nav toggle">
+                            <a id="menu_toggle"><i class="fa fa-bars"></i></a>
+                        </div>
+                        <ul class="nav navbar-nav navbar-right">
+                            <li class="">
+                                <a href="javascript:;" class="user-profile dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
+                                    <img src="~/Content/Images/img.jpg" alt="">@Session["UserName"].ToString()
+                                    <span class="fa fa-angle-down"></span>
+                                </a>
+                                <ul class="dropdown-menu dropdown-usermenu pull-right">
+                                    <li>
+                                        <a href="@Url.Action("ChangeInformation", "Manage")">
+                                            <i class="fa fa-pencil pull-right"></i>@Resource.ChangeInformation
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="@Url.Action("ChangePassword", "Manage")">
+                                            <i class="fa fa-key pull-right"></i>@Resource.ChangePassword
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="javascript:;">Help</a>
+                                    </li>
+                                    <li>
+                                        <a href="@Url.Action("Logout", "Account")">
+                                            <i class="fa fa-sign-out pull-right"></i>@Resource.Logout
+                                        </a>
+                                    </li>
+                                </ul>
+                            </li>
+                            <li class="dropdown">
+                                <a href="javascript:;" class="dropdown-toggle info-number" data-toggle="dropdown" aria-expanded="false">
+                                    <img src="@Url.Content(String.Format("~/Content/Images/flags/{0}.png", Request.Cookies["lang"].Value))" />
+                                    <span class="fa fa-angle-down"></span>
+                                </a>
+                                <ul class="dropdown-menu dropdown-language pull-right">
+                                    <li>
+                                        @Ajax.ImageActionLink(Url.Content("~/Content/Images/flags/vi-VN.png"), "vi-VN", "ChangeLanguage", "Home", new { lang = "vi-VN", ReturnUrl = Request.RawUrl.ToString(), Area = "" }, new AjaxOptions { HttpMethod = "Post", OnSuccess = "window.location.reload()" }, Resource.Vietnamese)
+                                    </li>
+                                    <li>
+                                        @Ajax.ImageActionLink(Url.Content("~/Content/Images/flags/en-US.png"), "en-US", "ChangeLanguage", "Home", new { lang = "en-US", ReturnUrl = Request.RawUrl.ToString(), Area = "" }, new AjaxOptions { HttpMethod = "Post", OnSuccess = "window.location.reload()" }, Resource.English)
+                                    </li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+            <!-- /top navigation -->
+            <!-- page content -->
+            <div class="right_col" role="main" id="main-body">
+                @RenderBody()
+                @Html.AlertModal("")
+            </div>
+            <!-- /page content -->
+            <!-- footer content -->
+            <footer>
+                <div class="pull-right">
+                    Responsive - <a href="http://honrang.com/">Powered by HON RANG.</a>
+                </div>
+                <div class="clearfix"></div>
+            </footer>
+            <!-- /footer content -->
+        </div>
+    </div>
+
+    @Scripts.Render("~/bundles/site")
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/admin")
+    @Scripts.Render("~/bundles/admin/default")
+
+    @RenderSection("scripts", required: false)
+</body>
+</html>

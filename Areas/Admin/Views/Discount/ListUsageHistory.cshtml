@@ -1,0 +1,65 @@
+﻿@model IPagedList<UsageHistoryViewModel>
+
+@using Admin.Models;
+@using PagedList;
+@using PagedList.Mvc;
+@using Store.Service.Service;
+
+
+<div class="form-horizontal">
+    <table class="table table-hover">
+        <thead class="thead-inverse">
+            <tr>
+                <th class="width-3">
+                    @Resource.OrderID
+                </th>
+                <th class="width-7">
+                    @Resource.Name
+                </th>
+                <th class="width-6">
+                    @Resource.Total
+                </th>
+                <th class="width-4">
+                    @Resource.Action
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.OrderID</td>
+                    <td>@item.OrderName</td>
+                    <td>@item.OrderTotal</td>
+                    <td>
+                        <div class="btn-group">
+                            @Ajax.FontawsomeActionLink("fa-trash-o", @Resource.Delete, "DeleteItemApplied", new { id = @item.ID, DiscountID = @item.DiscountID },
+                            new AjaxOptions { UpdateTargetId = "usage_history", InsertionMode = InsertionMode.Replace, HttpMethod = "Post" }, new { @class = "btn btn-default" })
+
+                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                <span class="caret"></span>
+                                <span class="sr-only">Toggle Dropdown</span>
+                            </button>
+                        </div>
+
+                    </td>
+                </tr>
+            }
+        </tbody>
+
+        @if (Model.Count != 0)
+        {
+            <tfoot>
+                <tr>
+                    <td colspan="2" style="border: none">
+                        <div class="pull-right">
+                            @Html.PagedListPager(Model, page => Url.Action("ListUsageHistory", new { page, @Model.First().DiscountID }),
+PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() { HttpMethod = "GET", UpdateTargetId = "usage_history" }))
+                        </div>
+                    </td>
+                </tr>
+            </tfoot>
+        }
+    </table>
+    <hr />
+</div>

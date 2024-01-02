@@ -1,0 +1,84 @@
+﻿@model Admin.Models.BrandAddPopupViewModel
+
+@using PagedList.Mvc;
+
+<link href="~/Content/css/PagedList.css" rel="stylesheet" />
+@Styles.Render("~/Content/css/site")
+@Styles.Render("~/Content/admin")
+<div class="container body" style="background: white;">
+    <div class="modal-header">
+        <h4 class="modal-title">@Resource.Brand</h4>
+    </div>
+
+    <div class="container-fluid">
+        <div class="form-horizontal row">
+            @using (Ajax.BeginForm("ListBrandAddPopup", null, new AjaxOptions { HttpMethod = "POST", InsertionMode = InsertionMode.Replace, UpdateTargetId = "listBrands"}, new { id = "filter_div" }))
+            {
+                @Html.HiddenFor(model => Model.UpdateTargetId)
+                @Html.HiddenFor(model => Model.RemoveBrands)
+                <div class="clearfix">
+                    <div class="col-md-12 col-sm-12 col-xs-12 form-group">
+                        <label class="control-label">@Resource.Brand</label>
+                        <div class="input-group">
+                            @Html.TextBoxFor(model => Model.StartWith, null, new { @class = "form-control", @placeholder = @Resource.SearchPlaceholder, @aria_describedby = "basic-addon2" })
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" style="height: 34px;" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            }
+
+            <div id="listBrands">
+                @{Html.RenderAction("ListBrandAddPopup", new { @Model });}
+            </div>
+
+        </div>
+
+        <button type="submit" class="btn btn-primary" id="Save">@Resource.Save</button>
+    </div>
+
+</div>
+
+@Scripts.Render("~/bundles/site")
+@Scripts.Render("~/bundles/jqueryval")
+@Scripts.Render("~/bundles/admin")
+
+<script>
+    var checkedBrands = "";
+
+    $("#@Html.IdFor(model => model.StartWith)").change(function () {
+        $('#filter_div').submit();
+    });
+
+    $(document).ready(function () {
+        $('select').select2({
+            theme: "bootstrap",
+            language: '@Request.Cookies["lang"].Value.Substring(0, 2)'
+        });
+    });
+
+    // make checkAll product
+    $("#checkAll").change(function () {
+        $("table tbody input[type='checkbox']").prop("checked", this.checked);
+    });
+
+    $("#Save").click(function () {
+
+        $("input.checkbox:checked").each(function () {
+            checkedBrands += $(this).attr("id") + ",";
+        });
+
+        var $opener = window.opener.$("#@Model.UpdateTargetId");
+        $opener.val(checkedBrands).change();
+        window.close();
+    });
+
+    $("body").keydown(function (e) {
+        if (e.keyCode == 116)
+            e.preventDefault();
+    });
+
+</script>
+
+

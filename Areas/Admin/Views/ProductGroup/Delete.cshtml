@@ -1,0 +1,53 @@
+﻿@model Admin.Models.ProductGroupViewModel
+
+
+@{
+    ViewBag.Title = Resource.ProductGroup;
+}
+
+<div class="page-title">
+    <div class="title_left">
+        <h3>
+            @Resource.ProductGroup
+            <small>@Resource.Delete</small>
+        </h3>
+    </div>
+    <div class="title_right">
+        <div class="pull-right">
+            <div class="onoffswitch">
+                <input type="checkbox" class="onoffswitch-checkbox" id="myonoffswitch" value="true" onchange="$('#properties_container').toggleClass('showAdvance')">
+                <label class="onoffswitch-label" for="myonoffswitch">
+                    <span class="onoffswitch-inner" data-locale-basic="@Resource.Basic" data-locale-advanced="@Resource.Advance"></span>
+                    <span class="onoffswitch-switch"></span>
+                </label>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="main-content">
+    <div class="form-horizontal" id="properties_container">
+        @Html.ValidationSummary(true)
+        <div class="alert alert-danger fade in">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <span><i class="fa fa-bullhorn" style="padding-right: 7px" aria-hidden="true"></i>@Resource.AlertDelete</span>
+        </div>
+
+        @Html.DisplayForModel()
+
+        @using (Html.BeginForm("Delete", "ProductGroup", FormMethod.Post))
+        {
+            @Html.AntiForgeryToken()
+            @Html.HiddenFor(m => m.GroupID)
+            @Html.Hidden("ReturnUrl", (string)ViewBag.ReturnUrl)
+            <div class="form-group">
+                <div class="col-md-offset-2 col-sm-offset-3 col-md-10 col-sm-9 col-xs-12">
+                    <input type="submit" value="@Resource.Delete" class="btn btn-primary" />
+                    <a href="@(ViewBag.ReturnUrl?? @Url.Action("Index"))" class="btn btn-default">@Resource.BackToList</a>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+

@@ -1,0 +1,124 @@
+//
+.card-news {
+  .thumnails-template {
+    @include thumnails-template(57.65%);
+    border-radius: 15px;
+    border: 1px solid $color-border;
+    box-shadow: 0 0 10px 1px $color-border;
+  }
+
+  &--content {
+    h4 {
+      margin-top: 0.5;
+      margin-bottom: 0.5;
+
+      a {
+        font-size: 1.15rem;
+        color: $color-main;
+        text-decoration: none;
+        @include maxline(2, 1.2);
+
+        &:hover {
+          color: $color-active;
+        }
+      }
+    }
+
+    .desc {
+      @include maxline(5, 1.2);
+    }
+
+    .link {
+      font-weight: bolder;
+      margin-top: 1rem;
+      font-family: $font-default;
+      font-weight: 800;
+      padding-left: 0;
+    }
+    .category {
+      margin-top: 1rem;
+      color: #dc0000;
+      font-family: Mulish;
+      font-size: 14px;
+      font-style: normal;
+      font-weight: 700;
+      line-height: normal;
+      text-decoration-line: underline;
+      border-left: 3px solid #dc0000;
+      padding-left: 1rem;
+    }
+  }
+}
+
+.card-product {
+  .thumnails-template {
+    @include thumnails-template(100%);
+    margin: 10px;
+    padding: 10px;
+    background: #ccc;
+    box-shadow: 0 0 10px 1px #ccc;
+
+    .thumnails-content {
+      border: 10px solid #fff;
+      display: flex;
+      align-items: center;
+
+      img {
+        width: auto;
+        height: 100%;
+        margin: auto;
+        object-fit: contain;
+      }
+    }
+  }
+
+  &--content {
+    margin-top: 1.5rem;
+  }
+  &--name {
+    padding-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    padding-left: 10px;
+    padding-right: 10px;
+
+    a {
+      color: $color-main;
+      text-decoration: none;
+      font-weight: bold;
+
+      &:hover {
+        color: $color-active;
+      }
+      min-height: calc(2 * 1.2rem);
+      @include maxline(2, 1.2);
+    }
+  }
+
+  &--author,
+  &--type {
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
+    font-weight: bold;
+    padding-top: 0.5rem;
+    padding-left: 10px;
+    padding-right: 10px;
+    font-size: 15px;
+  }
+
+  &--price {
+    font-size: 1.25rem;
+    margin-top: 0.25rem;
+    margin-bottom: 0.25rem;
+  }
+
+  &--author {
+    font-weight: 400;
+    padding-top: 0.5rem;
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .button_link {
+    margin-left: 10px;
+  }
+}

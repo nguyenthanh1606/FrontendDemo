@@ -1,0 +1,231 @@
+﻿@model Admin.Models.ProductGeneralInfo
+
+@Html.HiddenFor(m => m.ProductID)
+@Html.HiddenFor(m => m.DisplayCurrentStockQuantity)
+@Html.HiddenFor(m => m.Properties)
+
+<div class="form-group">
+    @Html.LabelFor(model => model.Title, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10">
+        @Html.TextBoxFor(model => model.Title, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.Title)
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.FriendlyUrl, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextBoxFor(model => model.FriendlyUrl, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.FriendlyUrl)
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.ProductGroupID, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.DropDownListFor(model => model.ProductGroupID, new SelectList(@ViewBag.ProductGroups, "Value", "Text"),
+            String.Format(Resource.SelectPlaceHolder, Resource.ProductGroup), new { @class = "form-control ddl_select2", @id = "productGroup" })
+        @Html.ValidationMessageFor(model => model.ProductGroupID)
+    </div>
+</div>
+<div class="form-group">
+    <div class="control-label col-md-2 col-sm-3 col-xs-12">@Resource.Property</div>
+    <div class="col-md-10 col-sm-9 col-xs-12" id="listProperties">
+        @foreach (var GroupProperties in Model.ProductGroupProperties)
+        {
+            <div class="GroupProperties">
+                <h5>@GroupProperties.Title</h5>
+                @foreach (var property in GroupProperties.ListProductProperty)
+                {
+                    <input type="checkbox" onclick="UpdatePP(this, @property.ProductPropertyID)" name="@property.Title" value="@property.ProductPropertyID"><span>@property.Title</span><br>
+                    
+                }
+               
+            </div>
+        }
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.BrandId, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.DropDownListFor(model => model.BrandId, new SelectList(@ViewBag.Brands, "Value", "Text"),
+            String.Format(Resource.SelectPlaceHolder, Resource.Brand), new { @class = "form-control ddl_select2" })
+        @Html.ValidationMessageFor(model => model.BrandId)
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.DefaultPrice, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10">
+        @Html.TextBoxFor(model => model.DefaultPrice, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.DefaultPrice)
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.OriginalPrice, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10">
+        @Html.TextBoxFor(model => model.OriginalPrice, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.OriginalPrice)
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.ImageUrl, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10">
+        @Html.FilesManagerTextboxFor(model => model.ImageUrl, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.ImageUrl)
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.IconUrl, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10">
+        @Html.FilesManagerTextboxFor(model => model.IconUrl, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.IconUrl)
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.BannerUrl, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10">
+        @Html.FilesManagerTextboxFor(model => model.BannerUrl, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.BannerUrl)
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.Summary, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10">
+        @Html.TextAreaFor(model => model.Summary, new { @class = "form-control ck_editor" })
+        @Html.ValidationMessageFor(model => model.Summary)
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.Body, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextAreaFor(model => model.Body, new { @class = "form-control ck_editor" })
+        @Html.ValidationMessageFor(model => model.Body)
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.Specification, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextAreaFor(model => model.Specification, new { @class = "form-control ck_editor" })
+        @Html.ValidationMessageFor(model => model.Specification)
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.Note, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextAreaFor(model => model.Note, new { @class = "form-control ck_editor" })
+        @Html.ValidationMessageFor(model => model.Note)
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.Priority, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextBoxFor(model => model.Priority, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.Priority)
+    </div>
+</div>
+
+<div class="form-group">
+    <label for="GeneralInfo_Value1" class="control-label col-md-2 col-sm-3 col-xs-12">@ResourceAdmin.Warranty</label>
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextBoxFor(model => model.Value1, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.Value1)
+    </div>
+</div>
+<div class="form-group">
+    <label for="GeneralInfo_Value2" class="control-label col-md-2 col-sm-3 col-xs-12">@Resource.Promotion</label>
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextAreaFor(model => model.Value2, new { @class = "form-control ck_editor" })
+        @Html.ValidationMessageFor(model => model.Value2)
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.Value3, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextAreaFor(model => model.Value3, new { @class = "form-control ck_editor" })
+        @Html.ValidationMessageFor(model => model.Value3)
+    </div>
+</div>
+
+
+
+
+@*<div class="form-group">
+        @Html.LabelFor(model => model.DisplayCurrentStockQuantity, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+        <div class="col-md-10 col-sm-9 col-xs-12">
+            <div class="radio-inline">
+                <label>@Html.RadioButtonFor(m => m.DisplayCurrentStockQuantity, "false")@Resource.Invisible</label>
+            </div>
+            <div class="radio-inline">
+                <label>@Html.RadioButtonFor(m => m.DisplayCurrentStockQuantity, "true")@Resource.Visible</label>
+            </div>
+            @Html.ValidationMessageFor(model => model.Priority)
+        </div>
+    </div>*@
+<div class="form-group">
+    @Html.LabelFor(model => model.DefaultImageUrls, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        <span class="btn btn-primary" onclick="CloneTableRow('#default-images-table')">@Resource.AddNewRow</span>
+    </div>
+    <div class="col-md-10 col-sm-9 col-xs-12 col-md-offset-2 col-sm-offset-3">
+        <table class="table table-bordered" id="default-images-table">
+            <thead class="thead-blue">
+                <tr>
+                    <th class="width-16">@Html.LabelFor(m => m.ListImages)</th>
+                    <th class="width-4">@Resource.Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.ListImages.Count(); i++)
+                {
+                    <tr>
+                        <td>
+                            @Html.FilesManagerTextboxFor(model => model.ListImages[i], new { @class = "form-control" })
+                        </td>
+                        <td>
+                            <span class="btn btn-primary" onclick="DeleteTableRow(this)">@Resource.Delete</span>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        @Html.ValidationMessageFor(model => model.ListImages)
+    </div>
+</div>
+
+<div class="form-group">
+    @Html.LabelFor(model => model.ListDownload, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        <button type="button" class="btn btn-primary" onclick="CloneTableRow('#download-table')">@Resource.AddNewRow</button>
+    </div>
+    <div class="col-md-10 col-sm-9 col-xs-12 col-md-offset-2 col-sm-offset-3">
+        <table class="table table-bordered" id="download-table">
+            <thead class="thead-blue">
+                <tr>
+                    <th class="width-8">@Html.LabelFor(m => m.ListDownload.FirstOrDefault().Name)</th>
+                    <th class="width-8">@Html.LabelFor(m => m.ListDownload.FirstOrDefault().Url)</th>
+                    <th class="width-4">@Resource.Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int i = 0; i < Model.ListDownload.Count(); i++)
+                {
+                    <tr>
+                        <td>
+                            @Html.HiddenFor(m => m.ListDownload[i].DownloadID)
+                            @Html.TextBoxFor(model => model.ListDownload[i].Name, new { @class = "form-control" })
+                        </td>
+                        <td>
+                            @Html.FilesManagerTextboxFor(model => model.ListDownload[i].Url, new
+                       {
+                           @class = "form-control",
+                           onchange = string.Format("SetFileName(this, '#{0}')", Html.IdFor(m => m.ListDownload[i].Name))
+                       })
+                        </td>
+                        <td>
+                            <span class="btn btn-primary" onclick="DeleteTableRow(this)">@Resource.Delete</span>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+        @Html.ValidationMessageFor(model => model.ListDownload)
+    </div>
+</div>

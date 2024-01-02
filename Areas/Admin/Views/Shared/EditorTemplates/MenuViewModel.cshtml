@@ -1,0 +1,89 @@
+﻿@model Admin.Models.MenuViewModel
+@using Store.Service.Service;
+
+@Html.HiddenFor(m => m.MenuID, new { v_model = "menuComponent.MenuID" })
+@Html.HiddenFor(m => m.Authorizations, new { v_model = "menuComponent.Authorizations" })
+@Html.HiddenFor(m => m.MenuOrder, new { v_model = "menuComponent.MenuOrder" })
+
+<div class="form-group">
+    @Html.LabelFor(model => model.EntityType, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.DropDownListFor(model => model.EntityType, ViewBag.EntityTypes as SelectList, new { @class = "form-control ", v_model = "menuComponent.EntityType" })
+        @Html.ValidationMessageFor(m => m.EntityType)
+    </div>
+</div>
+<div class="form-group" v-show="MenuEntityTypeSelect('@MenuEntityType.Group.ToString()')">
+    @Html.LabelFor(model => model.GroupID, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12" name="list-group">
+        @Html.DropDownListFor(model => model.GroupID, ViewBag.ListEntityValue as SelectList, string.Format(Resource.SelectPlaceHolder, Resource.Groups),
+        new { @class = "form-control ddl_select2" })
+        @Html.ValidationMessageFor(model => model.GroupID)
+    </div>
+</div>
+<div class="form-group" v-show="MenuEntityTypeSelect('@MenuEntityType.PostedContent.ToString()')">
+    @Html.LabelFor(model => model.ContentID, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12" name="list-content">
+        @Html.DropDownListFor(model => model.ContentID, ViewBag.ListEntityValue as SelectList, string.Format(Resource.SelectPlaceHolder, Resource.PublishedContents),
+        new { @class = "form-control ddl_select2" })
+        @Html.ValidationMessageFor(model => model.ContentID)
+    </div>
+</div>
+<div class="form-group" v-show="MenuEntityTypeSelect('@MenuEntityType.Link.ToString()')">
+    @Html.LabelFor(model => model.Link, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextBoxFor(model => model.Link, new { @class = "form-control", v_model = "menuComponent.Link" })
+        @Html.ValidationMessageFor(model => model.Link)
+    </div>
+</div>
+<div class="form-group" v-show="MenuEntityTypeSelect('@MenuEntityType.ProductGroup.ToString()')">
+    @Html.LabelFor(model => model.ProductGroupID, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.DropDownListFor(model => model.ProductGroupID, ViewBag.ListProductGroup as SelectList, string.Format(Resource.SelectPlaceHolder, Resource.ProductGroup),
+        new { @class = "form-control ddl_select2" })
+        @Html.ValidationMessageFor(model => model.ProductGroupID)
+    </div>
+</div>
+
+<div class="form-group">
+    @Html.LabelFor(model => model.MenuName, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextBoxFor(model => model.MenuName, new { @class = "form-control", v_model = "menuComponent.MenuName" })
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.ParentMenuID, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        <select class="form-control ddl_select2" id="@Html.IdFor(model => model.ParentMenuID)" name="@Html.NameFor(model => model.ParentMenuID)" v-model="menuComponent.ParentMenuID">
+            <option value="null">@string.Format(Resource.SelectParentPlaceHolder, Resource.Menu)</option>
+            <option v-for="item in listMenu" v-bind="{ value: item.Value}">
+                {{item.Text}}
+            </option>
+        </select>
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.Priority, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextBoxFor(model => model.Priority, new { @class = "form-control", v_model = "menuComponent.Priority" })
+        @Html.ValidationMessageFor(m => m.Priority)
+    </div>
+</div>
+<div class="form-group">
+    <label class="control-label col-md-2 col-sm-3 col-xs-12">Icon</label>
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.FilesManagerTextboxForM(model => model.ImageUrl, "ImageUrl", new { @class = "form-control" })
+    </div>
+</div>
+<div class="form-group">
+    <label class="control-label col-md-2 col-sm-3 col-xs-12">Image 1</label>
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.FilesManagerTextboxForM(model => model.NormalCss, "NormalCss", new { @class = "form-control" })
+    </div>
+</div>
+<div class="form-group">
+    <label class="control-label col-md-2 col-sm-3 col-xs-12">Image 2</label>
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.FilesManagerTextboxForM(model => model.SelectedCss, "SelectedCss", new { @class = "form-control" })
+    </div>
+</div>
+

@@ -1,0 +1,120 @@
+﻿@model Admin.Models.DiscountInfoViewModel
+@using Store.Service.ProductServices;
+
+@Html.HiddenFor(m => m.ID)
+
+<div class="form-group">
+    @Html.LabelFor(model => model.Name, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10">
+        @Html.TextBoxFor(model => model.Name, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.Name)
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.DiscountTypeId, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.DropDownListFor(model => model.DiscountTypeId, new SelectList(@ViewBag.DiscountTypes, "Key", "Value"), new { @class = "form-control", v_model = "discountType" })
+    </div>
+</div>
+<div class="form-group" v-show="DiscountTypeSelect(@((int)DiscountType.AssignedToCategories))">
+    @Html.LabelFor(model => model.AppliedToSubCategories, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10">
+        @Html.CheckBoxFor(model => model.AppliedToSubCategories, new { @class = "control_text" })
+        <input type="hidden" name="@Html.NameFor(model => model.AppliedToSubCategories)" value="false" />
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.UsePercentage, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10">
+        @Html.CheckBoxFor(model => model.UsePercentage, new { @class = "control_text", v_model = "usePercentage" })
+        <input type="hidden" name="@Html.NameFor(model => model.UsePercentage)" value="false" />
+    </div>
+</div>
+<div class="form-group" v-show="usePercentage">
+    @Html.LabelFor(model => model.DiscountPercent, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-4">
+        <div class='input-group'>
+            @Html.TextBoxFor(model => model.DiscountPercent, new { @class = "form-control col-md-4 col-sm-4 col-xs-12", Value = @Model.DiscountPercent.ToPercentage() })
+            <span class="input-group-addon">
+                <span class="fa fa-percent"></span>
+            </span>
+        </div>
+        @Html.ValidationMessageFor(model => model.DiscountPercent)
+    </div>
+</div>
+<div class="form-group" v-show="usePercentage">
+    @Html.LabelFor(model => model.MaximumDiscountAmount, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-4">
+        <div class='input-group'>
+            @Html.TextBoxFor(model => model.MaximumDiscountAmount, new { @class = "form-control col-md-4 col-sm-4 col-xs-12" })
+            <span class="input-group-addon">
+                <span class="">đ</span>
+            </span>
+        </div>
+        @Html.ValidationMessageFor(model => model.MaximumDiscountAmount)
+    </div>
+</div>
+
+<div class="form-group" v-show="!usePercentage">
+    @Html.LabelFor(model => model.DiscountAmount, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-4">
+        <div class='input-group'>
+            @Html.TextBoxFor(model => model.DiscountAmount, new { @class = "form-control col-md-4 col-sm-4 col-xs-12" })
+            <span class="input-group-addon">
+                <span class="">đ</span>
+            </span>
+        </div>
+        @Html.ValidationMessageFor(model => model.DiscountAmount)
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.CouponCode, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10">
+        @Html.TextBoxFor(model => model.CouponCode, new { @class = "form-control col-md-4 col-sm-4 col-xs-12" })
+        @Html.ValidationMessageFor(model => model.CouponCode)
+    </div>
+</div>
+
+<div class="form-group">
+    @Html.LabelFor(model => model.StartDate, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-4">
+        <div class='input-group date' name="datetimepicker">
+            @Html.TextBoxFor(model => model.StartDate, new { @class = "form-control" })
+            <span class="input-group-addon">
+                <span class="glyphicon glyphicon-calendar"></span>
+            </span>
+        </div>
+        @Html.ValidationMessageFor(model => model.StartDate)
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.EndDate, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-4">
+        <div class='input-group date' name="datetimepicker">
+            @Html.TextBoxFor(model => model.EndDate, new { @class = "form-control" })
+            <span class="input-group-addon">
+                <span class="glyphicon glyphicon-calendar"></span>
+            </span>
+        </div>
+        @Html.ValidationMessageFor(model => model.EndDate)
+    </div>
+</div>
+@*<div class="form-group">
+    @Html.LabelFor(model => model.IsCumulative, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10">
+        @Html.CheckBoxFor(model => model.IsCumulative)
+    </div>
+</div>*@
+<div class="form-group">
+    @Html.LabelFor(model => model.DiscountLimitationId, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.DropDownListFor(model => model.DiscountLimitationId, new SelectList(@ViewBag.DiscountLimitations, "Key", "Value"), new { @class = "form-control", v_model = "discountLimitation" })
+    </div>
+</div>
+<div class="form-group" v-show="LimitationSelect()">
+    @Html.LabelFor(model => model.LimitationTimes, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-4">
+        @Html.TextBoxFor(model => model.LimitationTimes, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.LimitationTimes)
+    </div>
+</div>

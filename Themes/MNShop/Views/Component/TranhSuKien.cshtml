@@ -1,0 +1,30 @@
+﻿@model List<Frontend.Models.BannerViewModel>
+
+@if (Model.Count() > 0)
+{
+    var first = Model.FirstOrDefault();
+    <section class="home-sk">
+        <h2 class="home-about_title">@first.AdName</h2>
+        <div class="home-sk_desc">
+            <p>@first.Content.RemoveHtml()</p>
+        </div>
+        <div class="home-sk_list">
+            @foreach (var item in Model.Skip(1))
+            {
+                <div class="home-sk_item card-product">
+                    <a href="@item.Url" class="thumnails-template hover-ef-1">
+                        <div class="thumnails-content thumb-img">
+                            <img src="@item.ImageUrl" class="img-fluid" alt="@item.AdName">
+                        </div>
+                    </a>
+                    <div class="card-product--name text-center">
+                        <a href="@item.Url">@item.AdName</a>
+                    </div>
+                </div>
+            }
+        </div>
+        <div class="home-sk_link m-auto">
+            <a href="@first.Url" class="text-uppercase">XEM THÊM TRANH CHO CÁC DỊP KHÁC <i class="fas fa-caret-right"></i></a>
+        </div>
+    </section>
+}

@@ -1,0 +1,57 @@
+﻿
+@{
+    ViewBag.Title = @Resource.SearchResult;
+}
+
+@section css{
+<link href="~/Content/css/jquery-ui.css" rel="stylesheet" />
+}
+
+@using Store.Service.SystemService
+@model Frontend.Models.SearchViewModel
+
+<div class="wrapper">
+    @Html.Breadcrumb(Frontend.Infrastructure.Utility.BreadcrumbType.Brand, (int)ViewBag.FilterBrand)
+
+    <div class="ProductContent">
+        <div class="ProductContentLeft">
+            @Html.Hidden("filterBrand")
+            @Html.Hidden("filterPrice")
+            @Html.Hidden("currentQuery")
+            @{Html.RenderPartial("_ProductCategory", Model.ListCategory);}
+        </div>
+        <div class="ProductContentRight">
+            <div class="SearchBox">
+                <div id="SearchTitle" class="SearchTitle full">@Model.Brand.Name (@Model.TotalCount)</div>
+                <div class="searchLitem">
+                    <ul class="listItem" id="SearchBar">
+                        @foreach (var filter in Model.ListFilter)
+                        {
+                            <li>
+                                @filter.Item1
+                                <span class="cancelFilter" onclick="location.href='@filter.Item2'">X</span>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+            <div id="Result" style="float:left" class="clearfix row">
+                @for (int i = 0; i < Model.ListProduct.Count; i++)
+                {
+                    <div class="col-md-3 col-sm-4 col-xs-6 product-block">
+                        @Html.DisplayFor(m => m.ListProduct[i])
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script src="~/Scripts/productCategories.js"></script>
+    <script src="~/Scripts/jquery-ui.js"></script>
+    <script>
+        var minPrice = @Model.MinPrice;
+        var maxPrice = @Model.MaxPrice;
+    </script>
+}

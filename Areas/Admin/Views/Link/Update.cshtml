@@ -1,0 +1,44 @@
+﻿
+@model Admin.Models.LinkViewModel
+
+@{
+    ViewBag.Title = Resource.Link;
+}
+@section css{
+    @Styles.Render("~/Content/css/elFinder")
+}
+
+<div class="page-title">
+    <div class="title_left">
+        <h3>
+            @Resource.Link
+            <small>@Resource.Update</small>
+        </h3>
+    </div>
+</div>
+
+<div class="main-content">
+    @using (Html.BeginForm("Update", "Link", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true)
+        @Html.Hidden("ReturnUrl", (string)ViewBag.ReturnUrl)
+        <div class="form-horizontal">
+            @Html.EditorForModel()
+            <div class="form-group">
+                <div class="col-md-offset-2 col-sm-offset-3 col-md-10 col-sm-9 col-xs-12">
+                    <input type="submit" value="@Resource.Update" class="btn btn-primary" />
+                    <button class="btn btn-default" type="reset">@Resource.Reset</button>
+                    <a href="@(ViewBag.ReturnUrl?? @Url.Action("Index"))" class="btn btn-default">@Resource.BackToList</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section Scripts {
+    @Scripts.Render("~/bundles/elFinder")
+    <script>
+        InitElf('@Url.Action("GetFile", "Files")', '@Request.Cookies["lang"].Value.Substring(0, 2)');
+    </script>
+}

@@ -1,0 +1,132 @@
+﻿@model Frontend.Models.ShoppingCartViewModel
+@{
+    ViewBag.Title = Resource.ShoppingCart;
+}
+
+<main class="page-checkout" id="cartPage">
+    <div class="container">
+        <div class="breadcrumb">
+            <ul>
+                <li class="breadcrumb-home">
+                    <a href="#" class="breadcrumb-link">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 15 15" fill="none">
+                            <g clip-path="url(#clip0_165_109)">
+                                <path d="M11.5447 3.02196L7.94593 0.156331C7.8192 0.0554279 7.66199 0.000488281 7.49999 0.000488281C7.338 0.000488281 7.18079 0.0554279 7.05406 0.156331L3.45531 3.02196L0.687493 5.22602C0.594848 5.29972 0.527419 5.40041 0.494547 5.51413C0.461675 5.62786 0.464988 5.749 0.504027 5.86076C0.543066 5.97252 0.615898 6.06937 0.712432 6.13789C0.808966 6.20642 0.924423 6.24322 1.04281 6.24321H1.19249V14.2845C1.19249 14.3785 1.21101 14.4715 1.247 14.5584C1.28298 14.6452 1.33572 14.7241 1.40221 14.7906C1.46869 14.857 1.54762 14.9098 1.63448 14.9457C1.72134 14.9816 1.81443 15.0001 1.90843 15.0001H4.79062C4.88458 15.0001 4.97762 14.9816 5.06443 14.9456C5.15123 14.9096 5.2301 14.8569 5.29653 14.7905C5.36296 14.724 5.41564 14.6451 5.45157 14.5583C5.4875 14.4715 5.50597 14.3784 5.50593 14.2845V9.97633C5.50601 9.78659 5.58145 9.60465 5.71564 9.47051C5.84984 9.33637 6.03181 9.26102 6.22156 9.26102H8.96874C9.06271 9.26098 9.15576 9.27945 9.24258 9.31538C9.3294 9.35131 9.40829 9.40399 9.47475 9.47042C9.5412 9.53685 9.59392 9.61571 9.62989 9.70252C9.66586 9.78933 9.68437 9.88237 9.68437 9.97633V14.2845C9.68437 14.3785 9.7029 14.4716 9.7389 14.5585C9.7749 14.6453 9.82767 14.7242 9.89419 14.7907C9.96071 14.8572 10.0397 14.9099 10.1266 14.9458C10.2135 14.9817 10.3066 15.0002 10.4006 15.0001H13.2412C13.431 15.0001 13.6131 14.9247 13.7473 14.7905C13.8815 14.6563 13.9569 14.4743 13.9569 14.2845V6.24321C14.0753 6.24329 14.1908 6.20653 14.2874 6.13803C14.3839 6.06953 14.4568 5.97268 14.4959 5.8609C14.535 5.74913 14.5383 5.62796 14.5055 5.51421C14.4726 5.40045 14.4052 5.29973 14.3125 5.22602L11.5447 3.02196Z"
+                                      fill="#D3D1D1" />
+                            </g>
+                            <defs>
+                                <clipPath id="clip0_165_109">
+                                    <rect width="15" height="15" fill="white" />
+                                </clipPath>
+                            </defs>
+                        </svg>
+                    </a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="" class="breadcrumb-link">
+                        CỬA HÀNG ONLINE
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="page-checkout--body container">
+        @{Html.RenderPartial("Checkout", new Frontend.Models.CheckoutViewModel());}
+        <div class="page-checkout-detail box-container">
+            <div class="box-cart">
+                <div class="box-header">
+                    <div class="box-icon">
+                        <img src="~/Themes/KhaiTamShop/images/icons/money 3.png" />
+                    </div>
+                    <h3 class="box-title">THÔNG TIN NHẬN HÀNG</h3>
+                </div>
+                <div class="box-body">
+                    @using (Ajax.BeginForm("UpdateCart", "ShoppingCart", new AjaxOptions
+                    {
+                        HttpMethod = "POST",
+                        OnFailure = "ShowAlertMessage()",
+                        OnSuccess = "UpdateCartSuccessful"
+                    }))
+                    {
+                        <div class="box-cart--list">
+                            <div class="box-cart--item" v-for="(item, index) in cart">
+                                <div class="box-cart--item_thumbnail">
+                                    <a v-bind:href="'/' + item.Url">
+                                        <img v-bind:src="item.ImageUrl" alt="">
+                                    </a>
+                                </div>
+                                <div class="box-cart--item_detail">
+                                    <h4 class="box-cart--item_title">{{item.Title}}</h4>
+                                    <div class="box-cart--item_price">
+                                        <span>{{item.Price |formatMoney }} VND</span>
+                                        <input type="number" v-model="item.Quantity" v-bind:value="item.Quantity" max="1000" min="0" v-bind:name="'ListItems[' + index + '].Quantity'">
+                                    </div>
+                                </div>
+                                <div class="box-cart--item_total">
+                                    <h4>{{item.Price * item.Quantity |formatMoney }}</h4>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                    <div class="box-cart--total">
+                        <span>Tổng tiền:</span>
+                        <strong>{{sumMoney | formatMoney}} VND</strong>
+                    </div>
+                    <div class="box-cart--deleveryPrice">
+                        <span>Phí vận chuyển:</span>
+                        <span>@Html.Raw(Model.ShippingNote.Description != null ? Model.ShippingNote.Description : "0") VND</span>
+                    </div>
+                    <div class="box-cart--totalPrice">
+                        <span>Tổng tiền cần thanh toán:</span>
+                        <strong>{{getTotalPrice | formatMoney}} VND</strong>
+                    </div>
+                    <div class="box-cart--call">
+                        <div class="box-cart--call_icon">
+                            <img src="~/Themes/KhaiTamShop/images/icons/customer-service 1.png" alt="">
+                        </div>
+                        <div class="box-cart--call_info">
+                            <p>ĐẶT HÀNG QUA ĐIỆN THOẠI</p>
+                            <a href="tel:@Model.Hotline.ParaValue">@Model.Hotline.ParaValue</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="box-footer">
+                    @Html.ActionLink("ĐẶT HÀNG", "Checkout", "ShoppingCart", null, new { @class = "btn btn-danger btn-default" })
+                    <button type="button" onclick="window.location.href='/'" class="btn btn-info btn-default">TIẾP TỤC MUA HÀNG</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+@section scripts{
+    <script>
+        var vmCart = new Vue({
+            mixins: [vmShoppingCart],
+            el: '#cartPage',
+            data: {
+                cart: null,
+                discountValue: @Model.DiscountValue,
+            },
+            filters: {
+                formatMoney: function (value) {
+                    return value.toLocaleString("@Request.Cookies["lang"].Value", { minimumFractionDigits: 0 });
+                }
+            },
+        });
+
+        function checkCouponCode($this) {
+            $.post($this.attr('action'), $this.serialize(), function (response) {
+                if (response != null) {
+                    vmCart.discountValue = response.DiscountPrice;
+                    if (response.Message != null && response.Message != '') {
+                        $("#couponCodeMessage").text(response.Message);
+                    }
+                }
+            });
+
+            return false;
+        }
+    </script>
+}

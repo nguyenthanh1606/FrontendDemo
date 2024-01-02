@@ -1,0 +1,52 @@
+﻿@model Admin.Models.BrandViewModel
+
+<div class="form-group">
+    @Html.LabelFor(model => model.Name, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextBoxFor(model => model.Name, new { @class = "form-control", @readonly = true })
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.FriendlyUrl, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextBoxFor(model => model.FriendlyUrl, new { @class = "form-control", @readonly = true })
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.Slogan, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        <input class="form-control" readonly value="@Model.Slogan" />
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.Description, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        <div class="form-control html-area" readonly>
+            @Html.Raw(Model.Description)
+        </div>
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.Priority, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        <input class="form-control" readonly value="@Model.Priority" />
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.ImageUrl, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @if (!string.IsNullOrEmpty(Model.ImageUrl))
+        {
+            <img src=@Model.ImageUrl title="@Resource.FileImage" alt="@Resource.FileImage" class="img-responsive" />
+        }
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.BannerUrl, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @if (!string.IsNullOrEmpty(Model.BannerUrl))
+        {
+            <img src=@Model.BannerUrl title="@Resource.Banner" alt="@Resource.Banner" class="img-responsive" />
+        }
+    </div>
+</div>

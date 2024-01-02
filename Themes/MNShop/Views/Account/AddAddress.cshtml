@@ -1,0 +1,33 @@
+﻿@model Frontend.Models.CustomerAddressViewModel
+@{
+    ViewBag.Title = string.Format(Resource.CreatePlaceholder, Resource.Address);
+}
+
+<div class="breadcum_main">
+    <div class="container">
+        @Html.Breadcrumb(Frontend.Infrastructure.Utility.BreadcrumbType.Custom, customMenuName: string.Format(Resource.CreatePlaceholder, Resource.Address), customUrl: Url.Action("AddAddress", "Account"), htmlAttributes: new { @class = "breadcrumb" })
+    </div>
+</div>
+
+<div class="container account-account">
+    <aside class="account-side-menu">
+        @Html.Partial("_AccountLayoutMenu")
+    </aside>
+    <button type="button" class="btn-toggle-menu" id="btn-toggle-menu" data-toggle="show"><i class="fa fa-chevron-right"></i></button>
+
+    <div class="account-body">
+        @using (Html.BeginForm("AddAddress", "Account"))
+        {
+            <div class="form-horizontal">
+                @Html.AntiForgeryToken()
+                @Html.EditorForModel()
+                <div class="form-group">
+                    <div class="pull-right">
+                        <input type="submit" value='@Resource.Create' class="btn btn-primary btn btn-danger sm-signUp submit-style" />
+                        @Html.ActionLink(Resource.Skip, "Info", null, new { @class = "btn btn-default" })
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

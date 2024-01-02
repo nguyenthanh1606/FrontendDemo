@@ -1,0 +1,58 @@
+﻿@model Frontend.Models.CustomerAddressViewModel
+@Html.HiddenFor(m => m.Id)
+<div class="form-group">
+    <span class="control-label col-md-4 col-sm-5 col-xs-12">@Html.DisplayNameFor(m => m.CustomerName)<font class="other_color_star">*</font>:</span>
+    <div class="col-md-8 col-sm-7 col-xs-12">
+        @Html.TextBoxFor(m => m.CustomerName, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.CustomerName)
+    </div>
+</div>
+<div class="form-group">
+    <span class="control-label col-md-4 col-sm-5 col-xs-12">@Html.DisplayNameFor(m => m.Phone)<font class="other_color_star">*</font>:</span>
+    <div class="col-md-8 col-sm-7 col-xs-12">
+        @Html.TextBoxFor(m => m.Phone, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Phone)
+    </div>
+</div>
+<div class="form-group">
+    <span class="control-label col-md-4 col-sm-5 col-xs-12">@Html.DisplayNameFor(m => m.Province)<font class="other_color_star">*</font>:</span>
+    <div class="col-md-8 col-sm-7 col-xs-12">
+        @Html.DropDownListFor(m => m.Province, ViewBag.ListCity as SelectList,
+                                        string.Format(Resource.SelectPlaceHolder, Resource.City),
+                                        new { @class = "form-control", onChange = string.Format("ChangeSelectedCity(this,'#{0}','{1}')", Html.IdFor(m => m.District), string.Format(Resource.SelectPlaceHolder, Resource.District)) })
+        @Html.ValidationMessageFor(m => m.Province)
+    </div>
+</div>
+<div class="form-group">
+    <span class="control-label col-md-4 col-sm-5 col-xs-12">@Html.DisplayNameFor(m => m.District)<font class="other_color_star">*</font>:</span>
+    <div class="col-md-8 col-sm-7 col-xs-12">
+        @Html.DropDownListFor(m => m.District, ViewBag.ListDistrict as SelectList,
+                                            string.Format(Resource.SelectPlaceHolder, Resource.District),
+                                            new { @class = "form-control", onChange = string.Format("ChangeSelectedDistrict(this,'#{0}','{1}')", Html.IdFor(m => m.Ward), string.Format(Resource.SelectPlaceHolder, Resource.Ward )) })
+        @Html.ValidationMessageFor(m => m.District)
+    </div>
+</div>
+<div class="form-group">
+    <span class="control-label col-md-4 col-sm-5 col-xs-12">@Html.DisplayNameFor(m => m.Ward)<font class="other_color_star">*</font>:</span>
+    <div class="col-md-8 col-sm-7 col-xs-12">
+        @Html.DropDownListFor(m => m.Ward, ViewBag.ListWard as SelectList,
+                                        string.Format(Resource.SelectPlaceHolder, Resource.Ward), new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Ward)
+    </div>
+</div>
+<div class="form-group">
+    <span class="control-label col-md-4 col-sm-5 col-xs-12">@Html.DisplayNameFor(m => m.Address)<font class="other_color_star">*</font>:</span>
+    <div class="col-md-8 col-sm-7 col-xs-12">
+        @Html.TextBoxFor(m => m.Address, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Address)
+    </div>
+</div>
+<div class="form-group">
+    <span class="control-label col-md-4 col-sm-5 col-xs-12">@Html.DisplayNameFor(m => m.AddressType)<font class="other_color_star">*</font>:</span>
+    <div class="col-md-8 col-sm-7 col-xs-12">
+        @Html.DropDownListFor(m => m.AddressType, ViewBag.ListAddressType as SelectList,
+                                            string.Format(Resource.SelectPlaceHolder, Resource.AddressType),
+                                        new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Province)
+    </div>
+</div>

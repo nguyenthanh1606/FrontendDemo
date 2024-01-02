@@ -1,0 +1,180 @@
+﻿@model Frontend.Models.ShoppingCartViewModel
+
+@{
+    ViewBag.Title = Resource.ShoppingCart;
+}
+
+<div class="wrapper">
+    <div class="cartlayout" id="cartPage">
+        <div class="titlepage">Mua hàng</div>
+        @using (Ajax.BeginForm("UpdateCart", "ShoppingCart", new AjaxOptions
+        {
+            HttpMethod = "POST",
+            OnFailure = "ShowAlertMessage()",
+            OnSuccess = "UpdateCartSuccessful"
+        }))
+        {
+            @Html.AntiForgeryToken()
+            <div id="dialog">
+                <div id="cart" class="cart-table" border="1" cellpadding="1" cellspacing="1">
+                    <div class="header_checkout row">
+                        <div class="row">
+                            <div class="col-md-3 col-xs-3"></div>
+
+                            <div class="col-md-9 col-xs-8 header_checkout_label">
+                                <div class="row">
+                                    <div class="col-md-6 col-xs-3">
+                                        @Html.DisplayNameFor(m => m.ListItems.FirstOrDefault().Title)
+                                    </div>
+                                    <div class="col-md-3 col-xs-2">@Html.DisplayNameFor(m => m.ListItems.FirstOrDefault().OriginalPrice)</div>
+                                    <div class="col-md-3 col-xs-2 nopaddingright row">@Html.DisplayNameFor(m => m.ListItems.FirstOrDefault().Quantity)</div>
+                                </div>
+                            </div>
+                        </div>
+                        @*<div class="col-md-1 col-xs-6">@Resource.Total</div>
+                            <div class="col-md-1 col-xs-6"></div>*@
+                    </div>
+
+                    <div id="cartBody">
+                        <div v-for="(item, index) in cart" class="row">
+                            <div class="row col-md-3 col-xs-3 pull-left">
+                                <img v-bind:src="item.ImageUrl" class="cart-img img-responsive" />
+                                <input type="hidden" v-bind:value="item.ProductVersionID" v-bind:name="'ListItems[' + index + '].ProductVersionID'" />
+                            </div>
+                            <div class="row">
+                                <div class="col-md-9 col-xs-9 pull-left">
+                                    <div class="row">
+                                        <div class="col-md-12 col-xs-12 pull-left">
+                                            <div class="row">
+                                                <div class="col-md-8 col-xs-12 pull-left">
+                                                    <a v-bind:href="'/' + item.Url">{{item.Title}}</a>
+                                                </div>
+                                                <div class="col-md-6 col-xs-12 pull-left">
+                                                    <div class="product-properties">
+                                                        <div v-for="property in item.ListProperties">
+                                                            <strong>{{property.Item1}}</strong>: {{property.Item2}}<br />
+                                                        </div>
+                                                    </div>
+
+                                                </div>
+
+                                                <div class="col-md-3 col-xs-8 pull-left"> {{item.OriginalPrice | formatMoney}} VNĐ</div>
+                                                <div class="row col-md-3 col-xs-4 pull-left nopaddingright"><input v-model="item.Quantity" type="number" min="1" value="item.Quantity" class="form-control" name="'ListItems[' + index + '].Quantity'" /></div>
+                                                <div class="col-md-12 col-xs-12">
+                                                    <button type="submit" name="deleteBtn" v-bind:value="item.ProductVersionID" class="checkout_delete_cart">
+                                                        @Resource.Delete @*<i class="fa fa-trash" aria-hidden="true"></i>*@
+                                                    </button>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    </div>
+                                @*<div class="col-md-3 col-xs-6 pull-left">{{item.OriginalPrice * item.Quantity |formatMoney }}</div>*@
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="tooldiv">
+                    <button class="updatecart toolBtn" id="updatec" type="submit">
+                        <i class="fa fa-refresh" aria-hidden="true"></i>@Resource.UpdateCart
+                    </button>
+                    <a class="ctn-shopping" href="/san-pham/"></a>
+                    <div class="checkout" id="checkout" onclick="checkout()"></div>
+                </div>
+            </div>
+        }
+        <div class="col-right">
+            <div class="discountdiv">
+                @using (Ajax.BeginForm("ApplyCoupon", "ShoppingCart", new AjaxOptions
+                {
+                    HttpMethod = "POST",
+                    OnBegin = "checkCouponCode($(this))",
+                }))
+                {
+                    @Html.Label(@Resource.Inputvoucher, new { @class = "lb_voucher" })
+                    <div class="input-group">
+                        
+                        @Html.TextBoxFor(m => m.CouponCode, new { @class = "form-control" })
+                        <span class="input-group-btn">
+                            <button class="btn btn-default btn-coupon" id="checkCouponCode" type="submit">
+                                @Resource.Acccept
+                            </button>
+                        </span>
+                    </div>
+                    @Html.ValidationMessageFor(model => model.CouponCode, null, new { id = "couponCodeMessage" })
+                }
+
+            </div>
+
+            <div class="subtotalnum"><span class="total-txt">@Resource.Subtotal: </span>{{sumMoney | formatMoney}} VNĐ</div>
+            <div id="txtdiscountvalue"><span class="total-txt">@Resource.Discount: </span>{{discountValue | formatMoney}} VNĐ</div>
+            <div id="ltotal"><span class="total-txt">@Resource.Total: </span>{{getTotalPrice | formatMoney}} VNĐ</div>
+            @Html.ActionLink(Resource.Checkout, "Checkout", "ShoppingCart", null, new { @class = "btn btn-primary btn-block" })
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        var vmCart = new Vue({
+            el: '#cartPage',
+            data: {
+                cart: null,
+                discountValue: @Model.DiscountValue,
+            },
+            created: function () {
+                this.GetCart();
+            },
+            filters: {
+                formatMoney: function (value) {
+                    return value.toLocaleString("@Request.Cookies["lang"].Value", { minimumFractionDigits: 0 });
+                }
+            },
+            methods:{
+                GetCart: function () {
+                    var xhr = new XMLHttpRequest();
+                    var self = this;
+                    xhr.open('GET', "/ShoppingCart/ListJson");
+                    xhr.onload = function () {
+                        var data = JSON.parse(xhr.responseText);
+                        self.cart = data.cart;
+                    }
+                    xhr.send();
+                }
+            },
+            computed: {
+                sumMoney: function () {
+                    var key1 = 'OriginalPrice';
+                    var key2 = 'Quantity';
+                    var self = this;
+                    if (self.cart !== null) {
+                        return self.cart.reduce(function (total, item) {
+                            return total + item[key1] * item[key2]
+                        }, 0)
+                    }
+                    else {
+                        return 0;
+                    }
+                },
+                getTotalPrice: function(){
+                    return this.sumMoney - this.discountValue;
+                }
+            }
+        });
+
+        function checkCouponCode($this) {
+            $.post($this.attr('action'), $this.serialize(), function (response) {
+                if (response != null) {
+                    vmCart.discountValue = response.DiscountPrice;
+                    if (response.Message != null && response.Message != '') {
+                        $("#couponCodeMessage").text(response.Message);
+                    }
+                }
+            });
+
+            return false;
+        }
+
+    </script>
+}

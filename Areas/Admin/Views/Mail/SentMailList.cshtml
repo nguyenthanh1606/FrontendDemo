@@ -1,0 +1,37 @@
+﻿@using PagedList.Mvc
+@model PagedList.IPagedList<Admin.Models.MailDetailViewModel>
+
+@foreach (var item in Model)
+{
+    <div class="mail_list ajax-div">
+        @Ajax.ActionLink(" ", "MailDetail", new { id = item.MailID }, new AjaxOptions
+           {
+               HttpMethod = "Get",
+               InsertionMode = InsertionMode.Replace,
+               UpdateTargetId = "mail_detail",
+               OnSuccess = "HideFull"
+           })
+        <div class="left">
+            <i class="fa fa-circle"></i>
+            <i class="fa fa-edit"></i>
+        </div>
+        <div class="right">
+            <h3 class="bold">
+                @foreach (var receiver in item.Receivers)
+                {
+                    @(receiver.ReceiverFullName + ", ") 
+                }
+                <small>@item.CreationDate.ToShortTimeString()</small></h3>
+            <h3>
+                @item.Title
+            </h3>
+            <p>@item.Content.Unformat().Truncate(30)</p>
+        </div>
+    </div>
+}
+
+<div class="span-center">
+    @Html.PagedListPager(Model, page => Url.Action("SentMailList",
+        new { page, searchString = @ViewBag.SearchString }),
+        PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() { HttpMethod = "GET", UpdateTargetId = "mail_list" }))
+</div>

@@ -1,0 +1,67 @@
+﻿@using PagedList.Mvc
+@model PagedList.IPagedList<Admin.Models.BrandOverviewViewModel>
+
+@Styles.Render("~/Content/pagedList")
+
+<table class="table table-hover">
+    <thead class="thead-inverse">
+        <tr>
+            <th class="width-10">@Html.DisplayNameFor(model => model.FirstOrDefault().Name)</th>
+            <th class="width-5">@Html.DisplayNameFor(model => model.FirstOrDefault().ImageUrl)</th>
+            <th class="width-2">@Html.DisplayNameFor(model => model.FirstOrDefault().Priority)</th>
+            <th class="width-3">@Resource.Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @for(int i = 0; i < Model.Count; i++)
+        {
+            <tr>
+                <td>
+                    @Html.HiddenFor(m => m[i].Id)
+                    @Model[i].Name
+                </td>
+                <td>
+                    @if(!string.IsNullOrWhiteSpace(Model[i].ImageUrl))
+                    {
+                        <img src="@Model[i].ImageUrl" title="@Resource.FileImage" alt="@Resource.FileImage" class="img-responsive"/>
+                    }
+                </td>
+                <td>@Html.TextBoxFor(m => m[i].Priority, new { @class = "form-control"})</td>
+                <td>
+                    <div class="btn-group">
+                        <a href="@Url.Action("Update", new { id = Model[i].Id })" class="btn btn-default">
+                            <i class="fa fa-pencil" aria-hidden="true"></i> @Resource.Edit
+                        </a>
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                            <span class="caret"></span>
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+
+                        <ul class="dropdown-menu btn-dropdown-menu" role="menu">
+                            <li>
+                                <a href="@Url.Action("Details", new { id = Model[i].Id })">
+                                    <i class="fa fa-eye" aria-hidden="true"></i> @Resource.View
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("Delete", new { id = Model[i].Id })">
+                                    <i class="fa fa-trash-o" aria-hidden="true"></i> @Resource.Delete
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+            }
+    </tbody>
+</table>
+
+<div class="pull-left">
+    @string.Format(Resource.PaginationTxt, Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber, @Model.PageCount)
+</div>
+<div class="pull-right">
+    @Html.PagedListPager(Model, page => Url.Action("ListProductGroup",
+        new { page, SearchString = ViewBag.SearchString }),
+        PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() {
+            HttpMethod = "GET", UpdateTargetId = "list", OnSuccess = string.Format("UpdatePagingAjaxUrl(this)") }))
+</div>

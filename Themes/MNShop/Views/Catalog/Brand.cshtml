@@ -1,0 +1,85 @@
+﻿@model Frontend.Models.SearchViewModel
+@using Frontend.Infrastructure.Helpers
+
+@{
+    ViewBag.Title = Model.Brand.Name;
+    ViewBag.Description = Model.Brand.Description.RemoveHtml();
+    if (!string.IsNullOrEmpty(Model.Brand.ImageUrl))
+    {
+        ViewBag.Image = Url.Content(Model.Brand.ImageUrl, true);
+    }
+}
+@{
+    string themeCatalogViewPath = "~/Themes/" + TabWeb.GetCurrentTheme() + "/Views/Catalog/{0}.cshtml";
+
+    ViewBag.Title = Model.ProductGroup.Title;
+    ViewBag.Description = Model.ProductGroup.Description.RemoveHtml();
+    if (!string.IsNullOrEmpty(Model.ProductGroup.ImageUrl))
+    {
+        ViewBag.Image = Url.Content(Model.ProductGroup.ImageUrl, true);
+    }
+    var bannerUrl = Model.Brand.BannerUrl;
+    if (bannerUrl == null)
+    {
+        bannerUrl = "https://placehold.co/1440x432";
+    }
+}
+
+<main class="product-category">
+    <div class="banner-page">
+        <div class="picture-page">
+            <img class="img-fluid w-100" src="@bannerUrl" alt="@Model.Brand.Name" />
+        </div>
+        <div class="wrapper">
+            <div class="banner-page--content">
+                <img src="~/Themes/MNShop/Images/Logo-white.png" alt="MN Shop">
+                <h2 class="title">In lại các tác phẩm nghệ thuật đẹp như bản gốc</h2>
+            </div>
+        </div>
+    </div>
+    @{Html.RenderAction(MVC.Component.Display(5, "AvsNotify"));}
+    <div class="container breadcrumb-ds" style="padding-bottom: 1.5rem; border-bottom: 1px solid #dadada; ">
+        @Html.Breadcrumb(Frontend.Infrastructure.Utility.BreadcrumbType.Brand, Model.Brand.Id, new { @class = "breadcrumb" })
+
+        <h2 class="page-category_title">Tìm kiếm tác phẩm nghệ thuật cho nhu cầu quà tặng của bạn</h2>
+        <div class="page-category_desc w-80">
+            <p>@Model.Brand.Description.RemoveHtml()</p>
+        </div>
+    </div>
+    <div class="pr-category page-brand container">
+        @if (Model.ListProduct.TotalItemCount == 0)
+        {
+            <p style="text-align: center; font-size: 2rem; font-weight: 600; width: 100%">@Resources.Resource.Updating</p>
+        }
+        else
+        {
+            <div class="pr-body">
+                <div class="pr-body--action">
+                    @Html.DropDownList("Order", ViewBag.ListSortOrder as SelectList, new { @class = "form-select action-sort" })
+                    <div class="pr-total">
+                        <span>@Model.ListProduct.TotalItemCount sản phẩm</span>
+                    </div>
+                </div>
+                @{Html.RenderPartial("_ProductList", Model);}
+            </div>
+        }
+    </div>
+</main>
+    @section scripts{
+        <script>
+            $(document).ready(function () {
+                // Assuming "Order" is the ID of your dropdown list
+                $("#Order").change(function () {
+                    // Your custom JavaScript code here
+                    var selectedValue = $(this).val();
+                    console.log("Selected value: " + selectedValue);
+
+                    // Add more code to handle the selected value change
+                    var currentURL = window.location.href;
+                    currentURL = replaceUrlParam(currentURL, 'order', selectedValue)
+                    window.location.href = currentURL;
+
+                });
+            });
+        </script>
+    }

@@ -1,0 +1,229 @@
+﻿@model Frontend.Models.AccountInfo
+
+@using Frontend.Infrastructure.ExtensionMethod
+
+@{
+    ViewBag.Title = "Info";
+}
+
+<div class="wrapper">
+    
+    <div class="index_middle">
+
+        <div class="Co_LC_L">
+            <div class="left_block">
+                @Html.Partial("_AccountLayoutMenu")
+            </div>
+        </div>
+        <div class="icon_menu_left">
+            <i class="fa fa-align-justify"></i>
+        </div>
+
+        <div class="Co_LC_Ce">
+            <div id="divAccountInfo">
+                <div class="clearfix">
+                    <h4 class="title_item3 pull-left">Thông tin tài khoản</h4>
+                    <h4 class="title_item3 pull-right" style="cursor:pointer" v-show="!isEdited" v-on:click="StartEdit">
+                        <i class="fa fa-pencil" aria-hidden="true"></i> @Resource.Edit
+                    </h4>
+                </div>
+                <div>
+                    @using (Ajax.BeginForm("EditBasicInfo", "Account", new AjaxOptions
+                    {
+                        HttpMethod = "POST",
+                        OnSuccess = "UpdateAccountInfoSuccess",
+                        OnFailure = "UpdateAccountInfoFailed"
+                    }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <div class="account_info form-horizontal">
+                            <div class="form-group">
+                                <span class="control-label col-md-4 col-sm-5 col-xs-12">@Html.DisplayNameFor(m => m.CustomerInfo.Fullname):</span>
+                                <div class="col-md-8 col-sm-7 col-xs-12">
+                                    @Html.TextBoxFor(m => m.CustomerInfo.Fullname, new
+                                   {
+                                       @class = "form-control",
+                                       v_if = "isEdited",
+                                       v_model = "customerInfo.Fullname"
+                                   })
+                                    <span class="row_R" v-else>{{customerInfo.Fullname}}</span>
+                                    @Html.ValidationMessageFor(m => m.CustomerInfo.Fullname)
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <span class="control-label col-md-4 col-sm-5 col-xs-12">@Html.DisplayNameFor(m => m.CustomerInfo.Phone):</span>
+                                <div class="col-md-8 col-sm-7 col-xs-12">
+                                    @Html.TextBoxFor(m => m.CustomerInfo.Phone, new
+                           {
+                               @class = "form-control",
+                               v_if = "isEdited",
+                               v_model = "customerInfo.Phone"
+                           })
+                                    <span class="row_R" v-else>{{customerInfo.Phone}}</span>
+                                    @Html.ValidationMessageFor(m => m.CustomerInfo.Phone)
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <span class="control-label col-md-4 col-sm-5 col-xs-12">@Html.DisplayNameFor(m => m.CustomerInfo.Gender):</span>
+                                <div class="col-md-8 col-sm-7 col-xs-12">
+                                    <div v-if="isEdited">
+                                        <label class="radio-inline">
+                                            <input type="radio" name="@Html.NameFor(m => m.CustomerInfo.Gender)" :value="0" v-model="customerInfo.Gender" /> @Resource.Male
+                                        </label>
+                                        <label class="radio-inline">
+                                            <input type="radio" name="@Html.NameFor(m => m.CustomerInfo.Gender)" :value="1" v-model="customerInfo.Gender" /> @Resource.Female
+                                        </label>
+                                    </div>
+                                    <span class="row_R" v-else>{{customerInfo.Gender | formatGender}}</span>
+                                    @Html.ValidationMessageFor(m => m.CustomerInfo.Gender)
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <span class="control-label col-md-4 col-sm-5 col-xs-12">@Html.DisplayNameFor(m => m.CustomerInfo.Birthday):</span>
+                                <div class="col-md-8 col-sm-7 col-xs-12">
+                                    @Html.TextBoxFor(m => m.CustomerInfo.Birthday, new
+                           {
+                               @class = "form-control",
+                               v_if = "isEdited",
+                               v_model = "customerInfo.Birthday"
+                           })
+                                    <span v-else>{{customerInfo.Birthday}}</span>
+                                    @Html.ValidationMessageFor(m => m.CustomerInfo.Birthday)
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <span class="control-label col-md-4 col-sm-5 col-xs-12">@Html.DisplayNameFor(m => m.CustomerInfo.Email):</span>
+                                <div class="col-md-8 col-sm-7 col-xs-12">
+                                    @Html.TextBoxFor(m => m.CustomerInfo.Email, new
+                           {
+                               @class = "form-control",
+                               v_if = "isEdited",
+                               @readonly = "readonly"
+                           })
+                                    <span class="row_R" v-else>{{customerInfo.Email}}</span>
+                                    @Html.ValidationMessageFor(m => m.CustomerInfo.Email)
+                                </div>
+                            </div>
+                            <div class="form-group" v-show="isEdited">
+                                <div class="pull-right">
+                                    <input type="submit" value='@Resource.Save' class="btn btn-primary" />
+                                    <button type="button" class="btn btn-default" v-on:click="FormCancel">@Resource.Skip</button>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+                
+            </div>
+
+            <div id="customerAddress">
+                <div class="clearfix">
+                    <h4 class="title_item3 pull-left">Thông tin tài khoản</h4>
+                    <h4 class="title_item3 pull-right">
+                        @Html.ActionLink(string.Format(Resource.CreatePlaceholder, Resource.Address), "AddAddress", "Account")
+                    </h4>
+                </div>
+                
+                <div class="listAddress">
+                    <table id="cart" class="cart-table">
+                        <thead>
+                            <tr>
+                                <th>@Resource.Fullname</th>
+                                <th>@Resource.Phone</th>
+                                <th>@Resource.Address</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="cartBody">
+                            @foreach(var address in Model.CustomerAddress)
+                            {
+                                <tr>
+                                    <td>@address.CustomerName</td>
+                                    <td>@address.Phone</td>
+                                    <td>@address.Address</td>
+                                    <td>
+                                        <a href="@Url.Action("EditAddress",new{id = address.Id })">
+                                            <i class="fa fa-pencil"></i>
+                                        </a>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+
+        var initCustomerInfo = @Html.Raw(Json.Encode(Model.CustomerInfo));
+
+        var vmInfo = new Vue({
+            el: '#divAccountInfo',
+            data: {
+                isEdited: false,
+                customerInfo: @Html.Raw(Json.Encode(Model.CustomerInfo)),
+            },
+            filters: {
+                formatGender: function (value) {
+                    switch(value){
+                        case 0:
+                            return '@Html.Raw(Resource.Male)';
+                        case 1:
+                            return '@Html.Raw(Resource.Female)';
+                        default:
+                            return '@Html.Raw(Resource.Unknown)';
+                    };
+                }
+            },
+            watch: {
+                isEdited: function(val){
+                    if(val === true){
+                        this.$nextTick(function(){
+                            $('#@Html.IdFor(m => m.CustomerInfo.Birthday)').datetimepicker({
+                                locale: 'vi',
+                                format: 'DD/MM/YYYY'
+                            });
+                        })
+                    }
+                }
+            },
+            methods:{
+                FormCancel: function () {
+                    this.customerInfo = initCustomerInfo;
+                    this.isEdited = false;
+                },
+                StartEdit: function(){
+                    this.isEdited = true;
+                },
+            }
+        });
+
+        $(".icon_menu_left").click(function(){
+            if($('.Co_LC_L').hasClass("active"))
+            {
+                $('.Co_LC_L').removeClass("active");
+                $('.icon_menu_left').css("margin-left","10px");
+                $('.Co_LC_Ce').css("transform","inherit");
+                $('.Co_LC_Ce').css("padding-left","40px");
+                $('.icon_menu_left').children('i').removeClass('fa-align-right');
+                $('.icon_menu_left').children('i').addClass('fa-align-justify');
+            }
+            else
+            {              
+               
+                $('.Co_LC_L').addClass("active");
+                $('.icon_menu_left').css("margin-left","215px");
+                $('.Co_LC_Ce').css("transform"," translateX(260px)");
+                $('.Co_LC_Ce').css("padding-left","0"); 
+                $('.icon_menu_left').children('i').removeClass('fa-align-justify');
+                $('.icon_menu_left').children('i').addClass('fa-align-right');
+            }
+
+        });
+    </script>
+}

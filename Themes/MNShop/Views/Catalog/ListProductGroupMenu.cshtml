@@ -1,0 +1,14 @@
+﻿@model Frontend.Models.ProductGroupViewModel
+
+@if (@Model.ChildGroup.Any())
+{
+<div class="pr-sidebar--category_body">
+    @foreach (var productgroup in Model.ChildGroup)
+    {
+        <div class="pr-sidebar--category_item">
+            <a href="@Url.CustomAction(Store.Service.SystemService.RoutingType.ProductGroup, productgroup.GroupID)">@productgroup.Title</a>
+            @*<i>@productgroup.Count</i>*@
+        </div>
+    }
+</div>
+}

@@ -1,0 +1,18 @@
+﻿@model List<Frontend.Models.BannerViewModel>
+
+@if (Model != null)
+{
+    <div id="banner_page_0" class="banner_page">
+        <ul>
+            @foreach (var banner in Model.Take(2))
+            {
+                <li class="item b-stripe oll">
+                    <a href="@banner.Url" target="@(banner.OpenInNewTab? "_blank" : "_self")">
+                        <img src="@banner.ImageUrl" alt="@banner.AdName" class="img-responsive" />
+                    </a>
+                </li>
+            }
+        </ul>
+        <div class="clear"></div>
+    </div>
+}

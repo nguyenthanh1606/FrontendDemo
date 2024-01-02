@@ -1,0 +1,20 @@
+﻿@model Frontend.Models.ProductCategoryViewModel
+@using Frontend.Models;
+@using Store.Service.ProductServices;
+
+<div class="cate_panel">@Resource.Category</div>
+<ul class="list-group cate_ul">
+    @foreach (var item in Model.ListProductGroup)
+    {
+        @DrawProductGroup(item)
+    }
+</ul>
+
+
+@helper DrawProductGroup(ProductGroupViewModel group)
+{
+if (group.Title != null)
+{
+        <li><a href="@(Url.CustomAction(Store.Service.SystemService.RoutingType.ProductGroup, group.GroupID) + "?" + ViewBag.QueryString)" class="list-group-item">@group.Title (@group.Count)</a></li>
+    }
+}

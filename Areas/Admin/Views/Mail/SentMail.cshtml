@@ -1,0 +1,166 @@
+﻿
+@model Admin.Models.ComposeMailViewModel
+@{
+    Layout = Request.IsAjaxRequest() ? null : "~/Areas/Admin/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = Resource.SentMail;
+}
+
+<div class="page-title clearfix">
+    <div class="title_left">
+        <h3>
+            @Resource.MailBox
+            <small>
+                @Resource.SentMail
+            </small>
+        </h3>
+    </div>
+    <div class="title_right">
+        <div class="pull-right">
+            <button id="compose" class="btn btn-primary" type="button">@Resource.Compose</button>
+            @Html.ActionLink(Resource.Inbox, "Index", null, new { @class = "btn btn-default " })
+        </div>
+    </div>
+</div>
+
+<div class="main-content">
+    <div class="row">
+        <div class="col-sm-3 mail_list_column">
+            @using(Ajax.BeginForm("SentMailList", new AjaxOptions { HttpMethod = "Get", InsertionMode = InsertionMode.Replace,
+                UpdateTargetId = "mail_list"}))
+            {
+                <div class="input-group">
+                    @Html.TextBox("searchString", null, new { @class = "form-control", @placeholder = @Resource.SearchPlaceholder, @aria_describedby = "basic-addon2" })
+                    <span class="input-group-addon" id="basic-addon2"><i class="fa fa-search" aria-hidden="true"></i></span>
+                </div>
+            }
+            <div id="mail_list">
+                @{Html.RenderAction("SentMailList");}
+            </div>
+        </div>
+        <!-- /MAIL LIST -->
+        <!-- CONTENT MAIL -->
+        <div class="col-sm-9 mail_view" id="mail_detail">
+            @if (!string.IsNullOrEmpty(ViewBag.MailId))
+            {
+                Html.RenderAction("MailDetail", new { id = (int)ViewBag.MailId });
+            }
+        </div>
+        <!-- /CONTENT MAIL -->
+    </div>
+</div>
+
+@{ Html.RenderAction("Compose"); }
+
+@Html.AlertModal("");
+
+@section scripts{
+    <script type="text/javascript" src="~/Scripts/ckeditor/ckeditor.js"></script>
+    <script type="text/javascript" src="~/Scripts/ckeditor/adapters/jquery.js"></script>
+
+    <script>
+        $('#compose, .compose-close').click(function(){
+            $('.compose').slideToggle();
+        });
+
+        CKEDITOR.config.toolbar = [
+           ['Bold', 'Italic', 'Underline', 'StrikeThrough', '-', 'Undo', 'Redo', '-', 'Cut', 'Copy', 'Paste', 'Find', 'Replace', '-', 'Outdent', 'Indent', '-', 'Print'],
+           ['NumberedList', 'BulletedList', '-', 'JustifyLeft', 'JustifyCenter', 'JustifyRight', 'JustifyBlock'],
+           ['Image', 'Table', '-', 'Link', 'Flash', 'Smiley', 'TextColor', 'BGColor']
+        ];
+
+        function ResetCKEditor() {
+            for (instance in CKEDITOR.instances) {
+                CKEDITOR.instances[instance].updateElement();
+                CKEDITOR.instances[instance].setData('');
+            }
+        }
+
+        $(document).ready(function () {
+            var pageSize = 20;
+
+            CKEDITOR.replace('Content');
+
+            $("#ReceiverID").select2({
+                theme: "bootstrap",
+                ajax: {
+                    url: '@Url.Action("SearchAccount", "Account")',
+                    type: "GET",
+                    dataType: 'json',
+                    delay: 250,
+                    data: function (params) {
+                        return {
+                            username: params.term, // search term
+                            pageSize: pageSize,
+                            pageNum: params.page
+                        };
+                    },
+                    processResults: function (data, params) {
+                        params.page = params.page || 1;
+                        var more = (params.page * pageSize) < data.Total;
+
+                        return { results: data.Results, more: more };
+                    },
+                    cache: true
+                },
+                minimumInputLength: 1,
+                language: '@Request.Cookies["lang"].Value.Substring(0, 2)'
+            });
+
+            //mail detail
+            $(".child-mail .full").hide();
+            $("#replyForm").hide();
+
+            $('body').on('click', '.mail-head', function (e) {
+                if ($(e.target).is('.actionBtn')) {
+                    e.preventDefault();
+                    return;
+                }
+                $(this).closest(".child-mail").children().slideToggle("fast");
+            });
+
+            //tooltip
+            $('[data-toggle="tooltip"]').tooltip();
+
+            $("#replyBtn").click(function (e) {
+                e.preventDefault();
+                ChangeSelect2($("#Receiver").val());
+                $("#replyForm").show();
+                return false;
+            });
+        });
+
+        //compose
+        function AlertSuccess() {
+            $('.compose').slideToggle();
+            $('#composeForm').trigger("reset");
+            ResetCKEditor();
+            $('#ReceiverID').select2('data', null);
+            ShowAlertDialog('@Html.Raw(Resource.SentMailSuccessfully)');
+        };
+
+        function ClearForm() {
+            $('#replyForm').trigger("reset");
+            ResetCKEditor();
+            $('#ReceiverID').select2('data', null);
+            ShowAlertDialog('@Html.Raw(Resource.SentMailSuccessfully)');
+        }
+
+        function AlertFailure() {
+            ShowAlertDialog('@Html.Raw(Resource.UnknowErrorMessage)');
+        };
+
+        function HideFull() {
+            $(".child-mail .full").hide();
+        };
+
+        function InitReplyForm(id) {
+            CKEDITOR.replace(id + 'Content');
+            InitSelect2($("#" + id + "Receiver").val(), "#" + id + 'ReceiverID', "@Url.Action("SearchAccount", "Mail")", '@Request.Cookies["lang"].Value.Substring(0, 2)');
+        };
+
+        function CompleteDelete(message) {
+            HideFull();
+            ShowAlertDialog(message);
+        }
+    </script>
+}

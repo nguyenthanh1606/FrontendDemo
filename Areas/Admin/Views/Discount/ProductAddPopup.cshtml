@@ -1,0 +1,92 @@
+﻿@model Admin.Models.ProductAddPopupViewModel
+           
+@using PagedList.Mvc;
+<body id="updateTarget">
+    <link href="~/Content/css/PagedList.css" rel="stylesheet" />
+    @Styles.Render("~/Content/css/site")
+    @Styles.Render("~/Content/admin")
+    <div class="container body" style="background: white;">
+        <div class="modal-header">
+            <h4 class="modal-title">@Resource.AddProduct</h4>
+        </div>
+
+        <div class="container-fluid">
+            <div class="form-horizontal row">
+                @using (Ajax.BeginForm("ListProductAddPopup", null, new AjaxOptions { HttpMethod = "POST", InsertionMode = InsertionMode.Replace, UpdateTargetId = "listProducts" }, new { id = "filter_div" }))
+                {
+                    @Html.HiddenFor(model => Model.UpdateTargetId)
+                    @Html.HiddenFor(model => Model.RemoveProducts)
+                    <div class="clearfix">
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 form-group">
+                            <label class="control-label">@Resource.ProductGroup</label>
+                            @Html.DropDownListFor(model => Model.ProductGroup, new SelectList(@Model.listProductGroups, "Key", "Value"), @Resource.All, new { @class = "form-control" })
+                        </div>
+                        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 form-group">
+                            <label class="control-label">@Resource.Brand</label>
+                            @Html.DropDownListFor(model => Model.Brand, new SelectList(@Model.listBrands, "Id", "Name"), @Resource.All, new { @class = "form-control" })
+                        </div>
+                        <div class="col-md-12 col-sm-12 col-xs-12 form-group">
+                            <label class="control-label">@Resource.ProductName</label>
+                            <div class="input-group">
+                                @Html.TextBoxFor(model => Model.ProductName, null, new { @class = "form-control", @placeholder = @Resource.SearchPlaceholder, @aria_describedby = "basic-addon2" })
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" style="height: 34px;" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                }
+
+                <div id="listProducts">
+                    @{Html.RenderAction("ListProductAddPopup", new { @Model});}
+                </div>
+
+            </div>
+
+            <button type="submit" class="btn btn-primary" id="Save">@Resource.Save</button>
+        </div>
+
+    </div>
+
+    @Scripts.Render("~/bundles/site")
+    @Scripts.Render("~/bundles/jqueryval")
+    @Scripts.Render("~/bundles/admin")
+
+    <script>
+        var checkedProducts = "";
+
+        $('#ProductName, #Brand, #ProductGroup').change(function () {
+            $('#filter_div').submit();
+        });
+
+        $(document).ready(function () {
+            $('select').select2({
+                theme: "bootstrap",
+                language: '@Request.Cookies["lang"].Value.Substring(0, 2)'
+            });
+        });
+
+        // make checkAll product
+        $("#checkAll").change(function () {
+            $("table tbody input[type='checkbox']").prop("checked", this.checked);
+        });
+
+        $("#Save").click(function () {
+
+            $("input.checkbox:checked").each(function () {
+                checkedProducts += $(this).attr("id") + ",";
+            });
+
+            var $opener = window.opener.$("#@Model.UpdateTargetId");
+            $opener.val($opener.val() + checkedProducts).change();
+            window.close();
+        });
+
+        $("body").keydown(function (e) {
+            if (e.keyCode == 116)
+                e.preventDefault();
+        });
+
+    </script>
+
+</body>

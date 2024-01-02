@@ -1,0 +1,67 @@
+﻿@model Admin.Models.ContentViewModel
+@using Store.Service.Service
+@using Store.Service.Helper.ExtensionMethod
+
+@{
+    ViewBag.Title = string.Format(Resource.ContentStatusPlaceholder, @Model.Status.GetDescription());
+}
+
+<div class="page-title">
+    <div class="title_left">
+        <h3>
+            @string.Format(Resource.ContentStatusPlaceholder, @Model.Status.GetDescription())
+            <small>@Resource.Detail</small>
+        </h3>
+    </div>
+    <div class="title_right">
+        <div class="pull-right">
+            <div class="onoffswitch">
+                <input type="checkbox" class="onoffswitch-checkbox" id="myonoffswitch" value="true" onchange="$('#properties_container').toggleClass('showAdvance')">
+                <label class="onoffswitch-label" for="myonoffswitch">
+                    <span class="onoffswitch-inner" data-locale-basic="@Resource.Basic" data-locale-advanced="@Resource.Advance"></span>
+                    <span class="onoffswitch-switch"></span>
+                </label>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="main-content">
+    <div class="form-horizontal" id="properties_container">
+        @Html.DisplayForModel()
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-sm-offset-3 col-md-10 col-sm-9 col-xs-12">
+                @if (string.IsNullOrEmpty(ViewBag.ReturnUrl))
+                {
+                    switch (Model.Status)
+                    {
+                        case ContentStatus.WaitPublishing:
+                        case ContentStatus.Rejected:
+                            @Html.ActionLink(Resource.Ignore, "Waitting", null, new { @class = "btn btn-default" })
+                            break;
+                        case ContentStatus.WaitApproval:
+                            @Html.ActionLink(Resource.Ignore, "ApproveContent", null, new { @class = "btn btn-default" })
+                            break;
+                        case ContentStatus.Published:
+                            @Html.ActionLink(Resource.Ignore, "PublishedContent", null, new { @class = "btn btn-default" })
+                            break;
+                    }
+                }
+                else
+                {
+                    <a href="@ViewBag.ReturnUrl" class="btn btn-default">@Resource.Ignore</a>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        var vmContent = new Vue({
+            mixins: [contentMixin],
+            el: '#main-body'
+        });
+    </script>
+}

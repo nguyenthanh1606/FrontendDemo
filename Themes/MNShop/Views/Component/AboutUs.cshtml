@@ -1,0 +1,33 @@
+﻿@model List<Frontend.Models.BannerViewModel>
+
+@if (Model.Any())
+{
+    var index = 0;
+    <div class="home-about--item container">
+        @foreach (var item in Model)
+        {
+            var className = index % 2 == 0 ? "home-about--item_right" : "home-about--item_left";
+            <div class="home-about--item_wrapper @className template">
+                <div class="home-about--item_content template-content">
+                    <div class="template-content--wrapper">
+                        <h3 class="template-title">
+                            @item.AdName
+                        </h3>
+                        <div class="template-desc">
+                            @Html.Raw(item.Content)
+                        </div>
+                        <div class="template-action">
+                            <a href="@item.Url" class="btn btn-outline">@item.Note</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="home-about--item_thumbnail template-thumbnail">
+                    <a href="@item.Url">
+                        <img src="@item.ImageUrl" alt="Khai Tâm Montessori" loading="lazy" />
+                    </a>
+                </div>
+            </div>
+            index++;
+        }
+    </div>
+}

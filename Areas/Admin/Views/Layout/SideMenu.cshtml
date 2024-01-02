@@ -1,0 +1,89 @@
+﻿@model Admin.Models.SideMenuViewModel
+@using Store.Service.Authorize
+
+<div class="menu_section">
+    <h3>@Resource.Content</h3>
+    <ul class="nav side-menu">
+        <li>
+            <a href="@Url.Action("Index", "Home")">
+                <i class="fa fa-home"></i>@Resource.MainPage
+            </a>
+        </li>
+        @foreach (var group in Model.ListGroupFunction)
+        {
+            <li>
+                @switch (group.Key)
+                {
+                    case GroupFunctionType.Group:
+                        <a><i class="fa fa-object-group"></i>@Resource.Groups<span class="fa fa-chevron-down"></span></a>
+                        break;
+                    case GroupFunctionType.Content:
+                        <a><i class="fa fa-share-square-o"></i>@Resource.Contents<span class="fa fa-chevron-down"></span></a>
+                        break;
+                    case GroupFunctionType.Product:
+                        <a><i class="fa fa-shopping-bag"></i>@Resource.Product<span class="fa fa-chevron-down"></span></a>
+                        break;
+                    case GroupFunctionType.Sales:
+                        <a><i class="fa fa-truck"></i>@Resource.Sale<span class="fa fa-chevron-down"></span></a>
+                        break;
+                    case GroupFunctionType.Advertisement:
+                        <a><i class="fa fa-picture-o"></i>@Resource.Advertisement<span class="fa fa-chevron-down"></span></a>
+                        break;
+                    case GroupFunctionType.Layout:
+                        <a><i class="fa fa-cubes"></i>@Resource.Layout<span class="fa fa-chevron-down"></span></a>
+                        break;
+                    case GroupFunctionType.Menu:
+                        <a><i class="fa fa-bars"></i>@Resource.Menu<span class="fa fa-chevron-down"></span></a>
+                        break;
+                    case GroupFunctionType.Others:
+                        <a><i class="fa fa-cubes"></i>@Resource.Other<span class="fa fa-chevron-down"></span></a>
+                        break;
+                }
+                <ul class="nav child_menu"> 
+                    @foreach (var item in group.Value)
+                    {
+                        <li>
+                            @Html.ActionLink(item.DisplayName, item.Action, item.Controller)
+                        </li>
+                    }
+                </ul>
+            </li>
+        }
+    </ul>
+</div>
+
+<div class="menu_section">
+    <h3>@Resource.System</h3>
+    <ul class="nav side-menu">
+        @foreach (var group in Model.ListSystemFunction)
+        {
+            <li>
+                @switch (group.Key)
+                {
+                    case GroupFunctionType.Account:
+                        <a><i class="fa fa-users"></i>@Resource.Account<span class="fa fa-chevron-down"></span></a>
+                        break;
+                    case GroupFunctionType.System:
+                        <a><i class="fa fa-cogs"></i>@Resource.System<span class="fa fa-chevron-down"></span></a>
+                        break;
+                    default:
+                        break;
+                }
+                <ul class="nav child_menu">
+                    @foreach (var item in group.Value)
+                    {
+                        <li>
+                            @Html.ActionLink(item.DisplayName, item.Action, item.Controller)
+                        </li>
+                    }
+                </ul>
+            </li>
+        }
+        <li>
+            <a href="@Url.Action("Index", "Home", new { Area = "" })">
+                <i class="fa fa-home"></i> @Resource.MainPage
+                <span class="label label-success pull-right">@Resource.Link</span>
+            </a>
+        </li>
+    </ul>
+</div>

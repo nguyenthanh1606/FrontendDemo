@@ -1,0 +1,52 @@
+﻿@model Admin.Models.BankAccountViewModel
+@using Resources;
+
+@Html.HiddenFor(m => m.Id)
+
+<div class="form-group">
+    @Html.LabelFor(model => model.BankName, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-7 col-sm-6 col-xs-12">
+        @Html.TextBoxFor(model => model.BankName, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.BankName)
+    </div>
+    <div class="col-md-3 col-sm-3 col-xs-12">
+        @Html.TextBoxFor(model => model.Alias, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.Alias)
+    </div>
+</div>
+
+<div class="form-group">
+    @Html.LabelFor(model => model.AccountNumber, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextBoxFor(model => model.AccountNumber, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.AccountNumber)
+    </div>
+</div>
+
+<div class="form-group">
+    @Html.LabelFor(model => model.AccountName, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextBoxFor(model => model.AccountName, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.AccountName)
+    </div>
+</div>
+
+
+<div class="form-group">
+    @Html.Label(@Resource.City, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-5 col-sm-9 col-xs-12">
+        @Html.DropDownListFor(model => model.City, @ViewBag.Cities as SelectList, new { @class = "form-control ddl_select2", onChange = string.Format("ChangeSelectedCity(this,'#{0}','{1}')", Html.IdFor(m => m.District), string.Format(Resource.SelectPlaceHolder, Resource.District)) })
+    </div>
+    <div class="col-md-5">
+        @Html.DropDownListFor(model => model.District, ViewBag.ListDistrict as SelectList,
+                                            string.Format(Resource.SelectPlaceHolder, Resource.District),
+                                            new { @class = "form-control ddl_select2"})
+    </div>
+</div>
+<div class="form-group">
+    @Html.Label(@ResourceAdmin.Agency, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextBoxFor(model => model.AgencyName, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.AgencyName)
+    </div>
+</div>

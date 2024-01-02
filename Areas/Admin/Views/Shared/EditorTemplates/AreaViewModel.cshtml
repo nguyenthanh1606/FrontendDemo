@@ -1,0 +1,34 @@
+﻿@model Admin.Models.AreaViewModel
+@using Resources;
+
+@Html.HiddenFor(m => m.AreaID)
+
+<div class="form-group">
+    @Html.LabelFor(model => model.Name, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextBoxFor(model => model.Name, new { @class = "form-control", @readonly = true })
+        @Html.ValidationMessageFor(model => model.Name)
+    </div>
+</div>
+
+
+<div class="form-group">
+    @Html.LabelFor(model => model.Coords, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextAreaFor(model => model.Coords, new { @class = "form-control", @rows = "5" })
+        @Html.ValidationMessageFor(model => model.Coords)
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.Value1, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextAreaFor(model => model.Value1, new { @class = "form-control ck_editor" })
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.Map, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.FilesManagerTextboxFor(model => model.Map, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.Map)
+    </div>
+</div>

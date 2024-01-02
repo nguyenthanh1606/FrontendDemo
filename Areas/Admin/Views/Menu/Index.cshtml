@@ -1,0 +1,44 @@
+﻿@using Resources
+@using Admin.Models
+@using Store.Service.Helper.ExtensionMethod;
+@model Admin.Models.MenuViewModel
+
+<div class="page-title">
+    <div class="title_left">
+        <h3>@Resource.Menu</h3>
+    </div>
+    <div class="title_right">
+        <div class="pull-right">
+            <a data-toggle="collapse" class="btn btn-primary" href="#menuForm">@Resource.Create</a>
+        </div>
+    </div>
+</div>
+
+<div class="main-content">
+    @using (Html.BeginForm("CreateComponent", "Menu", new { isRootMenu = true }, FormMethod.Post, new { @class = "collapse", id = "menuForm"}))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true)
+
+        <div class="form-group">
+            <div class="col-md-4 col-sm-6 col-xs-12">
+                @Html.TextBoxFor(model => model.MenuName, new { @class = "form-control", @placeholder = Resource.MenuName, required = "true" })
+                @Html.ValidationMessageFor(model => model.MenuName)
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+                <input type="submit" value="@Resource.Save" class="btn btn-primary" />
+                <button type="button" class="btn btn-default" data-target="#menuForm" data-toggle="collapse">@Resource.Cancel</button>
+            </div>
+        </div>
+    }
+
+
+    <div id="list">
+        @{Html.RenderAction("ListRootMenu", "Menu");}
+    </div>
+</div>
+
+
+@section scripts
+{
+}

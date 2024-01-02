@@ -1,0 +1,43 @@
+﻿@model Admin.Models.DeployedAdFilterViewModel
+
+@{
+    ViewBag.Title = Resource.DeployedAd;
+}
+
+<div class="page-title">
+    <div class="title_left">
+        <h3>@Resource.DeployedAd</h3>
+    </div>
+</div>
+
+<div class="main-content">
+    @using (Ajax.BeginForm("ListDeployedAd", "Advertisement", new AjaxOptions { InsertionMode = InsertionMode.Replace, UpdateTargetId = "list", HttpMethod = "Get" }, new { id = "filter_div" }))
+    {
+        <div class="form-group clearfix">
+            <div class="col-md-6 col-sm-6 col-xs-12">
+                <label class="control-label">@Resource.AdDeployingAt</label>
+                @Html.DropDownListFor(m => m.Position, ViewBag.ListPositions as SelectList, @Resource.All, new { @class = "form-control ddl_select2" })
+            </div>
+        </div>
+    }
+
+    <div id="list">
+        @{Html.RenderAction("ListDeployedAd", "Advertisement", new { Position = ViewBag.Position, page = ViewBag.Page });}
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $('#Position').change(function () {
+            $('#filter_div').submit();
+        });
+
+        $('#filter_div').submit(function () {
+            ChangeUrl({ Position: $('#Position').val() });
+        });
+
+        $(document).ready(function () {
+            ReplaceSelect2('@Request.Cookies["lang"].Value.Substring(0, 2)');
+        });
+    </script>
+}

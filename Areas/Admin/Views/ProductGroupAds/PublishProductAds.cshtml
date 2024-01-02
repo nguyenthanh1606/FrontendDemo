@@ -1,0 +1,80 @@
+﻿@model Admin.Models.ProductAdsPublishViewModel
+
+@{
+    ViewBag.Title = Resource.ProductAds;
+}
+
+<div class="page-title">
+    <div class="title_left">
+        <h3>
+            @Resource.ProductAds
+            <small>@Resource.Publish</small>
+        </h3>
+    </div>
+</div>
+
+<div class="main-content">
+    @using (Html.BeginForm("PublishProductAds", "ProductGroupAds", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true)
+        @Html.HiddenFor(model => model.ProductAdID)
+        <div class="form-horizontal">
+            @Html.EditorForModel()
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-sm-offset-3 col-md-10 col-sm-9 col-xs-12">
+                    <input type="submit" class="btn btn-primary" value="@Resource.Publish" />
+                    <a href="@(ViewBag.ReturnUrl ?? @Url.Action("ProductAds", new { productGroupID = @ViewBag.ProductGroupID }))" class="btn btn-default">@Resource.Skip</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section scripts
+{
+    <script>
+        (function ($) {
+            $.fn.cascade = function (options) {
+                var defaults = {};
+                var opts = $.extend(defaults, options);
+
+                return this.each(function () {
+                    $(this).change(function () {
+                        var selectedValue = $(this).val();
+                        var params = {};
+                        params[opts.paramName] = selectedValue;
+                        $.getJSON(opts.url, params, function (items) {
+                            opts.childSelect.empty();
+                            $.each(items, function (index, item) {
+                                opts.childSelect.append(
+                                    $('<option />')
+                                        .attr('value', item.Id)
+                                        .text(item.Name)
+                                );
+                            });
+                        });
+                    });
+                });
+            };
+        })(jQuery);
+
+        $(function () {
+            $('#Position').cascade({
+                url: '@Url.Action("ListOrder")',
+                paramName: 'position',
+                childSelect: $('#Order')
+                });
+        });
+
+        $(document).ready(function () {
+            $('#Position').trigger("change");
+
+            $('select').select2({
+                theme: "bootstrap",
+                language: '@Request.Cookies["lang"].Value.Substring(0, 2)'
+            });
+        });
+    </script>
+}

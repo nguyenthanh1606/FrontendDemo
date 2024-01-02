@@ -1,0 +1,15 @@
+﻿@model Frontend.Models.HomePageGroupViewModel
+@using Frontend.Infrastructure.Helpers
+
+
+@if (Model.ListItem.Any())
+{
+    <div class="news-title--list">
+        @foreach (var item in Model.ListItem.OrderBy(m => m.PublishDate))
+        {
+            <div class="new-title--item nav-link">
+                <a href="@item.Url">@item.Headline</a>
+            </div>
+        }
+    </div>
+}

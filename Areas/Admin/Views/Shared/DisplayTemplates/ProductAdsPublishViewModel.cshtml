@@ -1,0 +1,38 @@
+﻿@model Admin.Models.ProductAdsPublishViewModel
+
+<div class="form-group">
+    @Html.LabelFor(model => model.ProductAdID, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextBoxFor(model => model.ProductAdID, new { @class = "form-control", @readonly = "readonly" })
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.AdName, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextBoxFor(model => model.AdName, new { @class = "form-control", @readonly = "readonly" })
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.ImageUrl, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        <img src="@Url.Content(Model.ImageUrl)" alt="@Model.ImageUrl" class="img-responsive" />
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.Position, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextBoxFor(model => model.PositionName, new { @class = "form-control", @readonly = "readonly" })
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.Order, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextBoxFor(model => model.Order, new { @class = "form-control", @readonly = "readonly" })
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.DeployedDays, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextBoxFor(model => model.DeployedDays, new { @class = "form-control", @readonly = "readonly" })
+    </div>
+</div>

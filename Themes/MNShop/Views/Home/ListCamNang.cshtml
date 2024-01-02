@@ -1,0 +1,46 @@
+﻿@model Frontend.Models.HomePageGroupViewModel
+@using Frontend.Infrastructure.Helpers
+@using Admin.Infrastructure.Helpers
+
+@{
+    string themeHomeViewPath = "~/Themes/" + TabWeb.GetCurrentTheme() + "/Views/Home/{0}.cshtml";
+}
+@if (Model.ListItem.Any())
+{
+    <div class="pr-content">
+        <h3 class="pr-top_content__title">
+            @if (Model.DefaultName != "")
+            {
+                @Model.DefaultName
+            }
+            else
+            {
+                @Model.Group.Title
+            }
+        </h3>
+        <div class="pr-content_list">
+            @foreach (var item in Model.ListItem)
+            {
+                <div class="card-news pr-content_item">
+                    <a href="@item.Url" class="thumnails-template hover-ef-1">
+                        <div class="thumnails-content thumb-img">
+                            <img src="@item.PictureUrl" class="img-fluid" alt="@item.Headline">
+                        </div>
+                    </a>
+                    <div class="card-news--content">
+                        <h4>
+                            <a href="@item.Url" class="headline">@item.Headline</a>
+                        </h4>
+                        <div class="desc">
+                            @item.Summary.RemoveHtml()
+                        </div>
+                        <a href="@item.Url" class="link link-active text-decoration text-uppercase text-bold small">@Resource.ReadMore <i class="fas fa-caret-right"></i></a>
+                    </div>
+                </div>
+
+            }
+        </div>
+    </div>
+
+}
+

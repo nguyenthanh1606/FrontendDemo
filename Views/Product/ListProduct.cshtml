@@ -1,0 +1,8 @@
+﻿@model IEnumerable<Frontend.Models.ProductBoxViewModel>
+
+@foreach (var product in @Model)
+{
+    <div class="item">
+        @Html.DisplayFor(m => product)
+    </div>
+}

@@ -1,0 +1,11 @@
+﻿@model List<Frontend.Models.BannerViewModel>
+
+
+@{ 
+    var banner = Model.FirstOrDefault();
+}
+
+<a href="@banner.Url">
+    <img src="@Url.Content(banner.ImageUrl)" alt="@banner.AdName" class="img-responsive">
+</a>
+

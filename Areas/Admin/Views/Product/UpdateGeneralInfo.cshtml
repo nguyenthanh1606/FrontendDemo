@@ -1,0 +1,17 @@
+﻿@model Store.Web.Areas.Admin.Models.ProductGeneralInfo
+
+@using (Ajax.BeginForm("UpdateGeneralInfo", "Product", new AjaxOptions
+{
+    HttpMethod = "Post",
+    InsertionMode = InsertionMode.Replace,
+    UpdateTargetId = "general_form",
+    OnFailure = "AlertFailure"
+}, new { @id = "general_form" }))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-horizontal">
+        @Html.ValidationSummary(true)
+        @Html.EditorForModel()
+    </div>
+}

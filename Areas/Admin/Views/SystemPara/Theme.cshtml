@@ -1,0 +1,224 @@
+﻿@model Admin.Models.ThemeViewModel
+@using Admin.Infrastructure.Helpers
+@using Store.Service.Helper.ExtensionMethod
+@using Store.Service.Service
+
+@{
+    ViewBag.Title = Resource.Theme;
+
+    string userName = @Session["UserName"].ToString();
+}
+@section css{
+    @Styles.Render("~/Content/css/owlCarousel")
+}
+
+<div class="page-title">
+    <div class="title_left">
+        <h3>
+            @Resource.Theme
+        </h3>
+    </div>
+</div>
+
+<div class="main-content">
+    @using (Html.BeginForm())
+    {
+        @Html.ValidationSummary(true)
+
+        <div class="form-horizontal">
+            <div class="form-group">
+                @Html.LabelFor(m => m.CurrentTheme, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+                <div class="col-md-8 col-sm-7 col-xs-10">
+                    @Html.DropDownListFor(m => m.CurrentTheme, ViewBag.ListTheme as SelectList, Resource.DefaultTheme, new { @class = "form-control" })
+                </div>
+            </div>
+
+            <div class="form-group" id="theme_config">
+                <label class="control-label col-md-2 col-sm-3 col-xs-12">Theme config</label>
+                <div class="col-md-10 col-sm-9 col-xs-12 row" v-if="listComponents">
+                    <div class="form-group" v-for="(component, index) in listComponents">
+                        <input type="hidden" v-bind:value="index" name="Components.Index" />
+
+                        <div class="col-lg-3" @Html.Raw(userName == "admin" ? "" : "style=\" display: none\"") style="display:none;">
+                            <label class="control-label">@ResourceAdmin.ComponentName</label>
+                            <input type="text" class="form-control" readonly v-bind:name="'Components[' + index + '].ComponentName'" v-model="listComponents[index].ComponentName" />
+                        </div>
+                        <div class="col-lg-3">
+                            <label class="control-label">@ResourceAdmin.Component</label>
+                            <input type="text" class="form-control" @Html.Raw(userName == "admin" ? "" : "readonly")
+                                   v-bind:name="'Components[' + index + '].Description'" v-model="listComponents[index].Description" />
+                        </div>
+                        <div class="col-lg-3">
+                            <label class="control-label">@ResourceAdmin.GetBasedType</label>
+                            <select class="form-control" v-model="listComponents[index].ComponentType" v-bind:name="'Components[' + index + '].ComponentType'">
+                                <option v-for="item in listComponentType" v-bind:value="item.Value">
+                                    {{ item.Text }}
+                                </option>
+                            </select>
+                        </div>
+                        <div class="col-lg-3">
+                            <template v-if="IsShow(index, @((int)ComponentType.Content)) || IsShow(index, @((int)ComponentType.Group))">
+                                <label class="control-label">@ResourceAdmin.Groups</label>
+                                <select class="form-control" v-model="listComponents[index].EntityID" v-bind:name="'Components[' + index + '].EntityID'">
+                                    <option v-for="item in listGroup" v-bind:value="item.Value">
+                                        {{ item.Text }}
+                                    </option>
+                                </select>
+                            </template>
+                            <template v-else-if="IsShow(index, @((int)ComponentType.ProductGroup))">
+                                <label class="control-label">@ResourceAdmin.ProductGroup</label>
+                                <select class="form-control" v-model="listComponents[index].EntityID" v-bind:name="'Components[' + index + '].EntityID'">
+                                    <option v-for="item in listProductGroup" v-bind:value="item.Value">
+                                        {{ item.Text }}
+                                    </option>
+                                </select>
+                            </template>
+                            <template v-else-if="IsShow(index, @((int)ComponentType.Banner))">
+                                <label class="control-label">@ResourceAdmin.Banner</label>
+                                <select class="form-control" v-model="listComponents[index].EntityID" v-bind:name="'Components[' + index + '].EntityID'">
+                                    <option v-for="item in listBanner" v-bind:value="item.Value">
+                                        {{ item.Text }}
+                                    </option>
+                                </select>
+                            </template>
+                        </div>
+                        <div class="col-lg-3">
+                            <label class="control-label">@ResourceAdmin.ItemsPerComponent</label>
+                            <input type="text" class="form-control" v-bind:name="'Components[' + index + '].TotalItems'" v-model="listComponents[index].TotalItems" />
+                        </div>
+                    </div>
+
+                </div>
+                @*@Ajax.ActionLink(@Resource.Create, "CreateComponent",
+                            new { id = ViewBag.ProductId }, new AjaxOptions
+                            {
+                                UpdateTargetId = "editComponentModal",
+                                InsertionMode = InsertionMode.Replace,
+                                OnComplete = "ShowPopup('#editComponentModal','" + @Request.Cookies["lang"].Value.Substring(0, 2) + "')",
+                                OnFailure = ""
+                            }, new { @class = "btn btn-primary" })*@
+            </div>
+
+            @{ Html.RenderAction("ThemeThumbnail", new { currentTheme = Model.CurrentTheme }); }
+
+            <div class="form-group">
+                <div class="col-md-10 col-sm-9 col-xs-12 col-md-offset-2 col-sm-offset-3">
+                    <input type="submit" value="@Resource.Save" class="btn btn-primary" />
+                </div>
+            </div>
+        </div>
+                }
+</div>
+
+<!-- Modal -->
+<div id="editComponentModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">@Resource.Create</h4>
+            </div>
+            <div class="modal-body">
+                @using (Ajax.BeginForm("CreateComponent", "SystemPara",
+new AjaxOptions { HttpMethod = "Post" }, new { id = "CreateForm" }))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary(true)
+                    <span id="message" class="alert-danger"></span>
+                    <div class="form-horizontal">
+                        @{ var model = new Admin.Models.ComponentViewModel(); }
+                        @Html.EditorFor(m => model, "ComponentViewModel")
+                    </div>
+                            }
+            </div>
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary" onclick="$('form#CreateForm').submit()">@Resource.Save</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">@Resource.Cancel</button>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+
+
+@section scripts{
+    <script src="~/Scripts/owl.carousel.js"></script>
+
+    <script>
+        function InitThemeThumbnail() {
+            $("#theme-images").owlCarousel({
+                slideSpeed: 300,
+                paginationSpeed: 400,
+                singleItem: true,
+                autoPlay: 5000,
+                stopOnHover: true,
+                transitionStyle: "fade"
+            });
+        };
+
+        $('#CurrentTheme').change(function () {
+            $.ajax({
+                url: '@Url.Action("ThemeThumbnail")',
+                data: { "currentTheme": $(this).val() },
+                type: 'GET',
+
+                success: function (data) {
+                    $('#theme_thumbnail').html(data);
+
+                    InitThemeThumbnail();
+                }
+            });
+
+            vmThemeConfig.GetListComponentByTheme($(this).val());
+        });
+
+
+
+        $(document).ready(function () {
+            InitThemeThumbnail();
+        });
+
+        var vmComponent = new Vue({
+            el: '#CreateForm',
+            data: {
+                component: @Html.Raw(Json.Encode(new Admin.Models.ComponentViewModel() { ComponentType = (int)ComponentType.Group})),
+        },
+        methods: {
+            EntityTypeSelect:function(type){
+                return this.component.ComponentType == type;
+            }
+        }
+        })
+
+        var vmThemeConfig = new Vue({
+            el: '#theme_config',
+            data: {
+                listGroup:  @Html.Raw(Json.Encode(ViewBag.ListGroup)),
+                listProductGroup:  @Html.Raw(Json.Encode(ViewBag.ListProductGroup)),
+                listBanner: @Html.Raw(Json.Encode(ViewBag.ListBanner)),
+                listComponentType: @Html.Raw(Json.Encode(ViewBag.ListComponentType)),
+                listComponents: []
+            },
+            created:function(){
+                var self = this;
+                $.post('@Url.Action("GetListComponent")', { theme: '@Model.CurrentTheme' }, function(data){
+                    self.listComponents = data.result;
+                });
+            },
+            methods: {
+                IsShow: function(i, value){
+                    return this.listComponents[i].ComponentType == value;
+                },
+                GetListComponentByTheme: function(theme){
+                    var self = this;
+                    $.post('@Url.Action("GetListComponent")', { theme: theme }, function(data){
+                        self.listComponents = data.result;
+                    });
+                }
+            }
+
+        });
+    </script>
+}

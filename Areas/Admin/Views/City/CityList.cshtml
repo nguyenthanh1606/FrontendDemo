@@ -1,0 +1,70 @@
+﻿@model IPagedList<Admin.Models.CityItemViewModel>
+@using PagedList.Mvc;
+@using PagedList;
+@{
+    ViewBag.Title = "CityList";
+}
+
+<table class="table table-hover">
+    <thead class="thead-inverse">
+        <tr>
+            <th class="width-6">
+               @Resource.City
+            </th>
+            <th class="width-5">
+                @Resource.Type
+            </th>
+            <th class="width-6">
+                @Resource.Area
+            </th>
+            <th class="width-3">
+                @Resource.Action
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Type)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AreaName)
+                </td>
+                <td>
+                    <div class="btn-group">
+                        <a href="@Url.Action("Update", new { id = item.Id })" class="btn btn-default">
+                            <i class="fa fa-pencil" aria-hidden="true"></i> @Resource.Edit
+                        </a>
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                            <span class="caret"></span>
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+
+                        <ul class="dropdown-menu btn-dropdown-menu" role="menu">
+                            <li>
+                                <a href="@Url.Action("Detail", new { id = item.Id })">
+                                    <i class="fa fa-eye" aria-hidden="true"></i> @Resource.View
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+        }
+</table>
+
+<div class="pull-left">
+    @string.Format(Resource.PaginationTxt, Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber, @Model.PageCount)
+</div>
+<div class="pull-right">
+    @Html.PagedListPager(Model, page => Url.Action("CityList",
+        new { page, ViewBag.AreaID, searchString = ViewBag.SearchString }),
+        PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() {
+            HttpMethod = "GET", UpdateTargetId = "list", OnSuccess = string.Format("UpdatePagingAjaxUrl(this)") }))
+</div>
+

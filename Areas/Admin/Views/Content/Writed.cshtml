@@ -1,0 +1,43 @@
+﻿@model Admin.Models.WritedContentFilterViewModel
+
+@{
+    ViewBag.Title = Resource.Contents;
+}
+
+<div class="page-title">
+    <div class="title_left">
+        <h3>
+            @Resource.Contents
+            <small>@Resource.ContentList</small>
+        </h3>
+    </div>
+    <div class="title_right">
+        <div class="pull-right">
+            @Html.ActionLink(@Resource.CreateNew, "Create", null, new { @class = "btn btn-primary" })
+        </div>
+    </div>
+</div>
+
+<div class="main-content">
+    @using (Ajax.BeginForm("ListWrited", "Content", new AjaxOptions { InsertionMode = InsertionMode.Replace, UpdateTargetId = "list", HttpMethod = "Get" }, new { id = "filter_div" }))
+    {
+        <div class="form-group clearfix">
+            <div class="col-md-6 col-sm-6 col-xs-12">
+                <label class="control-label">@Resource.Search</label>
+                @Html.TextBoxFor(model => model.SearchString, null, new { @class = "form-control", @placeholder = @Resource.SearchPlaceholder, @aria_describedby = "basic-addon2" })
+            </div>
+        </div>
+    }
+
+    <div id="list">
+        @{Html.RenderAction("ListWrited", "Content", new { filter = Model, page = ViewBag.Page });}
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $('#filter_div').submit(function () {
+            ChangeUrl({ SearchString: $('#SearchString').val() });
+        });
+    </script>
+}

@@ -1,0 +1,150 @@
+﻿@model Admin.Models.GroupViewModel
+@{
+    string[] listAdvanceProperties = ViewBag.ListAdvanceProp;
+}
+
+<div class="col-lg-7">
+    <div class="x_panel">
+        <div class="x_title clearfix">
+            <h2>
+                @Resource.GeneralInfo
+                <small>@Resource.GroupGeneralInfoDescription</small>
+            </h2>
+
+            <ul class="nav navbar-right panel_toolbox">
+                <li>
+                    <a class="collapse-link"><i class="fa fa-chevron-down"></i></a>
+                </li>
+            </ul>
+        </div>
+        <div class="x_content">
+            <div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.Title))? "advanceProp" : "")">
+                <div>
+                    @Html.LabelFor(model => model.Title, new { @class = "control-label" })
+                </div>
+                @Html.TextBoxFor(model => model.Title, new { @class = "form-control", @readonly = true })
+                @Html.ValidationMessageFor(model => model.Title)
+                <div>@Resource.GroupTitleExplanation</div>
+            </div>
+
+            <div class="form-group  @(listAdvanceProperties.Contains(Html.NameOf(m => m.Description))? "advanceProp" : "")">
+                @Html.LabelFor(model => model.Description, new { @class = "control-label" })
+                <div class="form-control html-area" readonly>
+                    @Html.Raw(Model.Description)
+                </div>
+                <div>@Resource.GroupDescriptionExplanation</div>
+            </div>
+
+            @*<div class="form-group  @(listAdvanceProperties.Contains(Html.NameOf(m => m.Body))? "advanceProp" : "")">
+                    @Html.LabelFor(model => model.Body, new { @class = "control-label" })
+                    @Html.TextAreaFor(model => model.Body, new { @class = "form-control ck_editor" })
+                    @Html.ValidationMessageFor(model => model.Body)
+                    <div>@Resource.GroupDescriptionExplanation</div>
+                </div>*@
+
+            <div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.GroupParentID))? "advanceProp" : "")">
+                @Html.LabelFor(model => model.GroupParentID, new { @class = "control-label" })
+                <input class="form-control" readonly value="@Model.GroupParentName" />
+                <div>@Resource.GroupParentExplanation</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="col-lg-5">
+    <div class="x_panel">
+        <div class="x_title clearfix">
+            <h2>
+                @Resource.SeoOptimized
+                <small>@Resource.SeoOptimizedDescription</small>
+            </h2>
+            <ul class="nav navbar-right panel_toolbox">
+                <li>
+                    <a class="collapse-link"><i class="fa fa-chevron-down"></i></a>
+                </li>
+            </ul>
+        </div>
+
+        <div class="x_content">
+            <div class="form-group">
+                @Html.LabelFor(model => model.FriendlyUrl, new { @class = "control-label" })
+                @Html.TextBoxFor(model => model.FriendlyUrl, new { @class = "form-control", @readonly = true })
+            </div>
+            <div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.CustomizeTitle))? "advanceProp" : "")">
+                @Html.TextBoxFor(model => model.CustomizeTitle, new { @class = "form-control", @readonly = true })
+                <div>@Resource.GroupTitleExplanation</div>
+            </div>
+            <div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.CustomizeDescription))? "advanceProp" : "")">
+                @Html.LabelFor(model => model.CustomizeDescription, new { @class = "control-label" })
+                <div class="form-control html-area" readonly>
+                    @Html.Raw(Model.CustomizeDescription)
+                </div>
+                <div>@Resource.GroupDescriptionExplanation</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="x_panel">
+        <div class="x_title clearfix">
+            <h2>
+                @Resource.Display
+            </h2>
+            <ul class="nav navbar-right panel_toolbox">
+                <li>
+                    <a class="collapse-link"><i class="fa fa-chevron-down"></i></a>
+                </li>
+            </ul>
+        </div>
+        <div class="x_content">
+            <div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.Status))? "advanceProp" : "")">
+                @Html.LabelFor(model => model.Status, new { @class = "control-label" })
+                <input class="form-control" readonly value="@(Model.Status == 0? Resource.Invisible : Resource.Visible)" />
+            </div>
+
+            <div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.Priority))? "advanceProp" : "")">
+                @Html.LabelFor(model => model.Priority, new { @class = "control-label" })
+                @Html.TextBoxFor(model => model.Priority, new { @class = "form-control", @readonly = true })
+            </div>
+        </div>
+    </div>
+
+    <div class="x_panel">
+        <div class="x_title clearfix">
+            <h2>@Resource.Image</h2>
+            <ul class="nav navbar-right panel_toolbox">
+                <li>
+                    <a class="collapse-link"><i class="fa fa-chevron-down"></i></a>
+                </li>
+            </ul>
+        </div>
+        <div class="x_content">
+            <div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.ImageUrl))? "advanceProp" : "")">
+                @Html.LabelFor(model => model.ImageUrl, new { @class = "control-label" })
+                <div class="clearfix">
+                    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                    {
+                        <img src="@Model.ImageUrl" alt="@Model.ImageUrl" class="img-responsive" />
+                    }
+                </div>
+            </div>
+            <div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.BannerUrl))? "advanceProp" : "")">
+                @Html.LabelFor(model => model.BannerUrl, new { @class = "control-label" })
+                <div class="clearfix">
+                    <img id="BannerUrlThumbnail" src="@Model.BannerUrl" class="pull-left quick-thumbnail" />
+                    @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                    {
+                        <img src="@Model.BannerUrl" alt="@Model.BannerUrl" class="img-responsive" />
+                    }
+                </div>
+            </div>
+            <div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.IconUrl))? "advanceProp" : "")">
+                @Html.LabelFor(model => model.IconUrl, new { @class = "control-label" })
+                @if (!string.IsNullOrEmpty(Model.ImageUrl))
+            {
+                    <img src="@Model.IconUrl" alt="@Model.IconUrl" class="img-responsive" />
+                }
+            </div>
+        </div>
+    </div>
+</div>
+

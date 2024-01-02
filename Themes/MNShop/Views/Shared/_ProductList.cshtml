@@ -1,0 +1,46 @@
+﻿@model Frontend.Models.SearchViewModel
+
+@{
+    //grid is default if not set
+    bool isGrid = Request.Cookies["CurrentView"] == null || Request.Cookies["CurrentView"].Value != "list";
+    string classCurrentView = isGrid ?
+         "product-layout product-grid product col-md-3 col-sm-12" : "product col-md-3 col-sm-12";
+    var productFrom = (Model.ListProduct.PageNumber - 1) * Model.ListProduct.PageSize;
+    var productTo = Model.ListProduct.PageNumber * Model.ListProduct.PageSize;
+}
+
+<div class="pr-body--list">
+    @foreach (var product in Model.ListProduct)
+    {
+        @Html.DisplayFor(m => product, "ProductBox")
+    }
+
+    
+</div>
+<div class="pr-body--footer">
+    <div>
+        <strong>@productFrom - @productTo </strong> <span>trong số @Model.ListProduct.TotalItemCount sản phẩm</span>
+    </div>
+    @{
+        var parameters = new Dictionary<string, string>();
+        if (!string.IsNullOrEmpty(@Request.QueryString["order"]))
+        {
+            parameters.Add("order", @Request.QueryString["order"]);
+        }
+
+        if (!string.IsNullOrEmpty(@Request.QueryString["properties"]))
+        {
+            parameters.Add("properties", @Request.QueryString["properties"]);
+        }
+        if (!string.IsNullOrEmpty(@Request.QueryString["itemPerPage"]))
+        {
+            parameters.Add("itemPerPage", @Request.QueryString["itemPerPage"]);
+        }
+
+
+        <nav aria-label="Page navigation example">
+            @Html.GetPageListCustom(Model.ListProduct.PageNumber, Model.ListProduct.PageSize, Model.ListProduct.TotalItemCount, parameters, new { @class = "pagination" })
+        </nav>
+
+    }
+</div>

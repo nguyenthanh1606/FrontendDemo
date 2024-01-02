@@ -1,0 +1,177 @@
+﻿@model Frontend.Models.LayoutContentDetailViewModel
+@using Frontend.Infrastructure.ExtensionMethod;
+@using Frontend.Infrastructure.Utility;
+@using Frontend.Infrastructure.Helpers;
+
+@{
+    ViewBag.Title = Model.Content.Headline;
+    ViewBag.Description = Model.Content.Summary;
+    if (Model.Content.CustomizeTitle != "")
+    {
+        ViewBag.Title = Model.Content.CustomizeTitle;
+    }
+    if (Model.Content.CustomizeDescription != "")
+    {
+        ViewBag.Description = Model.Content.CustomizeDescription.RemoveHtml();
+    }
+    if (Model.Content.PictureUrl != "")
+    {
+        ViewBag.Image = Model.Content.PictureUrl;
+    }
+
+    string ComponentViewPath = "~/Themes/" + TabWeb.GetCurrentTheme() + "/Views/Component/{0}.cshtml";
+}
+
+
+<div id="banner-top">
+    @{Html.RenderAction(MVC.Component.GetChildGroup(Model.LastGroupParentID, "ListGroupMenu", null, true));
+    }
+
+    @{Html.RenderAction(MVC.Component.GetChildGroup(Model.LastGroupParentID, "ListGroupMenu", null, true));
+    }
+</div>
+
+<div class="clearfix"></div>
+<!-- body -->
+<div class="container-fluid main-body">
+    <div class="row wrap-page" style="padding: 120px 85px">
+        <div class="head-new">
+            <h3 style="font-size: 30px;padding-bottom: 2rem;">
+           @Model.Content.Headline</h3>
+            <div class="row sub-new">
+                <div class="col-md-2"><span><i class="far fa-clock" style="margin-right: 1em;"></i></span><span>@Model.Content.PublishDate.ToShortDateString()</span></div>
+                <div class="col-md-8 line"></div>
+                <div class="col-md-2 text-right"><a style="color: #212529" href="javascript:history.back()">@Resource.Return</a></div>
+            </div>
+        </div>
+        @if ((Model.Content.IntValue1 != null) && (Model.Content.IntValue1 > 0))
+        {
+            <div class="note-1" style="margin-top: 2rem; font-size: 18px;">
+                <p>@Model.Content.Summary.RemoveHtml()</p>
+            </div>
+        }
+        <div class="detail">
+           @Html.Raw(@Model.Content.Body)
+
+            @if (Model.Content.ListDownload.Count > 0)
+            {
+                foreach (var item in Model.Content.ListDownload)
+                {
+                    var dataFile = Server.MapPath("~" + @item.Url);
+                    FileInfo file = new FileInfo(dataFile);
+                    long FileInBytes = file.Length;
+                    string sizestr = "";
+                    if (FileInBytes < 1024)
+                    {
+                        sizestr = FileInBytes.ToString() + "B";
+                    }
+                    else if (FileInBytes < 1048576)
+                    {
+                        float FileInKBytes = FileInBytes;
+                        FileInKBytes /= 1024;
+                        sizestr = FileInKBytes.ToString("#.00") + "KB";
+                    }
+                    else
+                    {
+                        float FileInMBytes = FileInBytes;
+                        FileInMBytes /= 1048576;
+                        sizestr = FileInMBytes.ToString("#.##") + "MB";
+                    }
+
+                    <div class="btn_download">
+                        <a class="download col-lg-6 col-md-8 col-xs-6 col-sm-6 df-color" target="_blank" href="@item.Url">
+                            <svg class="tcom-icon tcom-icon-download df-color text-left" xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="-276.2 767.6 32 32"> <path d="M-250.3 777.6v15.9h-20v-15.9h6.4v1h-5.4v13.9h18v-13.9h-5.3v-1h6.3zm-14.3 7.2l4.5 4.5 4.5-4.5-.7-.7-3.3 3.3v-15.1h-1v15.1l-3.3-3.2-.7.6z"></path></svg>
+                            <span>  @item.Name</span>
+                        </a>
+                        <span class="col-lg-2 col-md-2 col-xs-3 col-sm-1">@Ext(@item.Url.Trim())</span>
+                        <span class="col-lg-2 sizeDownload hidden-md col-sm-2 hidden-xs">@sizestr</span>
+                        <a class="btnDownload btn bg-white upper df-color col-lg-2 col-md-2 col-xs-3 col-sm-3" href="@Url.Action(MVC.Layout.DownloadAttached(item.DownloadID))">@Resource.Download</a>
+                    </div>
+                }
+            }
+        </div>
+    </div>
+    <div class="wrap-page text-right">
+        <span>@Resource.Share</span>
+        <div class="line d-inline-block" style="width: 50px;top: -4px;margin-left: 20px;"></div>
+        <div class="d-inline-block share text-right">
+            @{
+                string domain;
+                Uri url = HttpContext.Current.Request.Url;
+                domain = url.AbsoluteUri.Replace(url.PathAndQuery, string.Empty);
+            }
+            <div class="fb-share">
+                @*<div class="fb-share-button" data-href="@Url.CustomAction(Store.Service.SystemService.RoutingType.Content,@Model.Content.ContentID)" data-layout="button" data-size="small" data-mobile-iframe="true"><a class="fb-xfbml-parse-ignore" target="_blank" href="@Url.CustomAction(Store.Service.SystemService.RoutingType.Content,@Model.Content.ContentID)">f</a></div>*@
+                <a target="_blank" href="https://www.facebook.com/sharer?u=@domain@Url.CustomAction(Store.Service.SystemService.RoutingType.Content,@Model.Content.ContentID)">facebook</a>
+                <i class="fab fa-facebook-f"></i>
+            </div>
+            <div class="twittershare">
+                <a target="_blank" href="http://twitter.com/intent/tweet?text=@Model.Content.Headline.Trim()&url=@domain@Url.CustomAction(Store.Service.SystemService.RoutingType.Content,@Model.Content.ContentID)" title="T">
+                   Twitter
+                </a>
+                @*<a href='https://twitter.com/share' class='twitter-share-button' data-url='@Url.CustomAction(Store.Service.SystemService.RoutingType.Content,@Model.Content.ContentID)' data-size="large">Tweet</a>*@
+                <i class="fab fa-twitter"></i>
+            </div>
+            <div class="twittershare">
+                <a data-pin-do="buttonBookmark" data-pin-custom="true" href="https://www.pinterest.com/pin/create/button/">
+                    </a><i class="fab fa-pinterest-p"></i>
+            </div>
+           
+            <div class="twittershare ggplus">
+                <a target="_blank" class="style-scope" href='https://plus.google.com/share?url=@domain@Url.CustomAction(Store.Service.SystemService.RoutingType.Content,@Model.Content.ContentID)'>Google</a>
+                <i class="fab fa-google-plus-g"></i>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end body -->
+
+
+@section scripts{
+}
+
+<script type="text/javascript" src="https://apis.google.com/js/plusone.js"></script>
+<g:page href="https://plus.google.com/{pageId}"></g:page>
+<script>    !function (d, s, id) { var js, fjs = d.getElementsByTagName(s)[0]; if (!d.getElementById(id)) { js = d.createElement(s); js.id = id; js.src = "//platform.twitter.com/widgets.js"; fjs.parentNode.insertBefore(js, fjs); } }(document, "script", "twitter-wjs");</script>
+
+@helper Ext(string url)
+{
+string ext = "";
+if (url.EndsWith(".pdf"))
+{
+    ext = "PDF";
+}
+else if (url.EndsWith(".doc"))
+{
+    ext = "DOC";
+}
+else if (url.EndsWith(".docx"))
+{
+    ext = "DOCX";
+}
+else if (url.EndsWith(".xls"))
+{
+    ext = "XLS";
+}
+else if (url.EndsWith(".xlsx"))
+{
+    ext = "XLSX";
+}
+else if (url.EndsWith(".ppt"))
+{
+    ext = "PPT";
+}
+else if (url.EndsWith(".zip"))
+{
+    ext = "ZIP";
+}
+else if (url.EndsWith(".rar"))
+{
+    ext = "RAR";
+}
+else if (url.EndsWith(".txt"))
+{
+    ext = "TXT";
+}
+    <p>@ext</p>
+}

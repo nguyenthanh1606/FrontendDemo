@@ -1,0 +1,13 @@
+﻿@model Frontend.Models.GroupViewModel
+
+@if (@Model.ListGroup.Count > 0)
+{
+<div class="page-about--nav">
+    @foreach (var group in Model.ListGroup)
+    {
+        <div class="page-about--nav_item">
+            <a href="@Url.CustomAction(Store.Service.SystemService.RoutingType.Group, group.GroupID)">@group.Title</a>
+        </div>
+    }
+</div>
+}

@@ -1,0 +1,77 @@
+﻿@model Admin.Models.ProductAdsViewModel
+@using Store.Service.Helper.ExtensionMethod;
+
+<div class="form-group">
+    @Html.LabelFor(model => model.ProductAdID, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextBoxFor(model => model.ProductAdID, new { @class = "form-control", @readonly = "readonly" })
+        @Html.ValidationMessageFor(model => model.ProductAdID)
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.AdName, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextBoxFor(model => model.AdName, new { @class = "form-control", @readonly = "readonly" })
+        @Html.ValidationMessageFor(model => model.AdName)
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.ImageUrl, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        <img src="@Model.ImageUrl" alt="@Resource.AdImage" title="@Resource.AdImage" class="img-responsive" />
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.OpenInNewTab, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        <input class="form-control" value="@(Model.OpenInNewTab? Resource.Yes : Resource.No)" readonly />
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.Code, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextBoxFor(model => model.Code, new { @class = "form-control", @readonly = "readonly" })
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.Status, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        <input value="@Model.Status.GetDescription()" class="form-control" readonly />
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.Content, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextAreaFor(model => model.Content, new { @class = "form-control", @readonly = "readonly" })
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.Note, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextAreaFor(model => model.Note, new { @class = "form-control", @readonly = "readonly" })
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.ModifiedUser, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextBoxFor(model => model.ModifiedUserName, new { @class = "form-control", @readonly = "readonly" })
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.Author, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextBoxFor(model => model.AuthorName, new { @class = "form-control", @readonly = "readonly" })
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.ModifiedDate, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        <input value="@Model.ModifiedDate.ToShortDateString()" class="form-control" readonly />
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.CreationDate, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        <input value="@Model.CreationDate.ToShortDateString()" class="form-control" readonly />
+    </div>
+</div>

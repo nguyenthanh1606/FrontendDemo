@@ -1,0 +1,102 @@
+﻿@model Admin.Models.ProductGroupViewModel
+@using Store.Service.ProductServices
+
+@{
+    ViewBag.Title = Resource.ProductGroup;
+}
+@section css{
+    @Styles.Render("~/Content/css/elFinder")
+    <link href="~/Content/css/bootstrap-colorpicker.min.css" rel="stylesheet" />
+}
+
+<div class="page-title">
+    <div class="title_left">
+        <h3>
+            @Resource.ProductGroup
+            <small>@Resource.Create</small>
+        </h3>
+    </div>
+    <div class="title_right">
+        <div class="pull-right">
+            <div class="onoffswitch">
+                <input type="checkbox" class="onoffswitch-checkbox" id="myonoffswitch" value="true" onchange="$('#properties_container').toggleClass('showAdvance')">
+                <label class="onoffswitch-label" for="myonoffswitch">
+                    <span class="onoffswitch-inner" data-locale-basic="@Resource.Basic" data-locale-advanced="@Resource.Advance"></span>
+                    <span class="onoffswitch-switch"></span>
+                </label>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="main-content" id="properties_container">
+    @using (Html.BeginForm("Create", "ProductGroup", FormMethod.Post, new { id = "productGroupForm" }))
+    {
+        <div class="form-horizontal">
+            @Html.AntiForgeryToken()
+            @Html.ValidationSummary(true)
+
+            @Html.EditorForModel()
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-sm-offset-3 col-md-10 col-sm-9 col-xs-12">
+                    <input type="button" value="@Resource.Save" class="btn btn-primary" onclick="SubmitProductGroup()" />
+                    <button class="btn btn-default" type="reset">@Resource.Reset</button>
+                    <a href="@(ViewBag.ReturnUrl?? @Url.Action("Index"))" class="btn btn-default">@Resource.BackToList</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section scripts{
+    @Scripts.Render("~/bundles/elFinder")
+    <script type="text/javascript" src="~/Scripts/ckeditor/ckeditor.js"></script>
+    <script type="text/javascript" src="~/Scripts/ckeditor/adapters/jquery.js"></script>
+    <script type="text/javascript" src="~/Scripts/colorPicker/bootstrap-colorpicker.min.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            initCkEl('@Url.Action("GetFile", "Files")', '@Request.Cookies["lang"].Value.Substring(0, 2)');
+            InitElf('@Url.Action("GetFile", "Files")', '@Request.Cookies["lang"].Value.Substring(0, 2)');
+        });
+        var currentProperty = null;
+
+        var vmProductGroup = new Vue({
+            mixins: [productGroupMixin],
+            el: '#productGroup',
+            data: {
+                groupPropertyPrototype: @Html.Raw(Json.Encode(new Admin.Models.ProductGroupPropertyViewModel())),
+                propertyPrototype: @Html.Raw(Json.Encode(new Admin.Models.ProductPropertyViewModel())),
+                propertyType:@Html.Raw(Json.Encode(ViewBag.ListGroupPropertyType)),
+                listGroupProperty: @Html.Raw(Json.Encode(Model.ProductGroupProperties)),
+                parentGroupId:@(Model.GroupParentID?? 0),
+                getParentPropertiesUrl: '@Url.Action("ListGroupAttribute")',
+                friendlyUrl: '@(Model.FriendlyUrl?? "")',
+                originalFriendlyUrl: '@(Model.FriendlyUrl?? "")',
+            }
+        });
+
+        ReplaceSelect2('@Request.Cookies["lang"].Value.Substring(0, 2)');
+        ReplaceCKEditor();
+
+        function ChangeParrentGroup(_this) {
+            vmProductGroup.parentGroupId = $(_this).val();
+        };
+
+        function SubmitProductGroup(){
+            var form = $('#productGroupForm');
+            form.append($("<input>")
+                .attr("type", "hidden")
+               .attr("name", "listProductGroupProperty").val(JSON.stringify(vmProductGroup.GetListDirty())));
+            form.append($("<input>")
+                .attr("type", "hidden")
+               .attr("name", "listDeletedGroupProperties").val(JSON.stringify(vmProductGroup.listDeletedGroupProperties)));
+            form.append($("<input>")
+                .attr("type", "hidden")
+               .attr("name", "listDeletedProductProperties").val(JSON.stringify(vmProductGroup.listDeletedProductProperties)));
+            form.submit();
+        }
+    </script>
+}
+

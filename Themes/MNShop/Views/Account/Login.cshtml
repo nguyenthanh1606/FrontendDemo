@@ -1,0 +1,215 @@
+﻿@using Microsoft.Owin.Security
+@using Frontend.Infrastructure.ExtensionMethod
+@model Frontend.Models.LoginViewModel
+@{
+    ViewBag.Title = @Resource.Login;
+}
+
+@*<link href="~/Themes/AnhNhan/css/User.css" rel="stylesheet" />*@
+
+<div class="breadcum_main">
+    <div class="container">
+        @Html.Breadcrumb(Frontend.Infrastructure.Utility.BreadcrumbType.Custom, customMenuName: Resource.Login, customUrl: Url.Action("Login", "Account"), htmlAttributes: new { @class = "breadcrumb" })
+    </div>
+</div>
+
+<div id="cat">
+    <div class="wrap-page pd-left pd-right row">
+        <div class="cat-name">Đăng nhập vào Anh nhân</div>
+    </div>
+</div>
+
+@*<div class="col-md-8 account-left">
+        <div class="well">
+            <h4 class="title_item">Lần đầu tiên mua hàng?</h4>
+            <p class="title_item_note">Tạo tài khoản Chongtoi.com để dễ dàng quản lý đơn hàng</p>
+            @using (Html.BeginForm("Register", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, null))
+        {
+                @Html.AntiForgeryToken()
+                <div class="form-horizontal clearfix">
+                    <div>
+                        @Html.ValidationMessageFor(m => m.RegisterViewModel)
+                    </div>
+                    <div class="col-md-6 col-xs-12">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.RegisterViewModel.Email, new { @class = "control-label col-md-4 col-xs-12" })
+                            <div class="col-md-8 col-xs-12">
+                                @Html.TextBoxFor(model => model.RegisterViewModel.Email, new
+                       {
+                           @class = "form-control",
+                           @placeholder = Resource.Email
+                       })
+                                @Html.ValidationMessageFor(model => model.RegisterViewModel.Email)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.RegisterViewModel.Password, new { @class = "control-label col-md-4 col-xs-12" })
+                            <div class="col-md-8 col-xs-12">
+                                @Html.PasswordFor(model => model.RegisterViewModel.Password, new
+                       {
+                           @class = "form-control",
+                           @placeholder = Resource.Password
+                       })
+                                @Html.ValidationMessageFor(model => model.RegisterViewModel.Password)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.RegisterViewModel.ConfirmPassword, new { @class = "control-label col-md-4 col-xs-12" })
+                            <div class="col-md-8 col-xs-12">
+                                @Html.PasswordFor(model => model.RegisterViewModel.ConfirmPassword, new
+                       {
+                           @class = "form-control",
+                           @placeholder = Resource.ConfirmPassword
+                       })
+                                @Html.ValidationMessageFor(model => model.RegisterViewModel.ConfirmPassword)
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-xs-12">
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.RegisterViewModel.Fullname, new { @class = "control-label col-md-4 col-xs-12" })
+                            <div class="col-md-8 col-xs-12">
+                                @Html.TextBoxFor(model => model.RegisterViewModel.Fullname, new
+                       {
+                           @class = "form-control",
+                           @placeholder = Resource.Name
+                       })
+                                @Html.ValidationMessageFor(model => model.RegisterViewModel.Fullname)
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.RegisterViewModel.Phone, new { @class = "control-label col-md-4 col-xs-12" })
+                            <div class="col-md-8 col-xs-12">
+                                @Html.TextBoxFor(model => model.RegisterViewModel.Phone, new
+                       {
+                           @class = "form-control",
+                           @placeholder = Resource.Phone
+                       })
+                                @Html.ValidationMessageFor(model => model.RegisterViewModel.Phone)
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.RegisterViewModel.Gender, new { @class = "control-label col-md-4 col-xs-12" })
+                            <div class="col-md-8 col-xs-12">
+                                <label class="radio-inline">
+                                    @Html.RadioButtonFor(m => m.RegisterViewModel.Gender, 0) Nam
+                                </label>
+                                <label class="radio-inline">
+                                    @Html.RadioButtonFor(m => m.RegisterViewModel.Gender, 1) Nữ
+                                </label>
+                                @Html.ValidationMessageFor(model => model.RegisterViewModel.Gender)
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            @Html.LabelFor(model => model.RegisterViewModel.Birthday, new { @class = "control-label col-md-4 col-xs-12" })
+                            <div class="col-md-8 col-xs-12">
+                                @Html.TextBoxFor(model => model.RegisterViewModel.Birthday, new
+                       {
+                           @class = "form-control",
+                           @placeholder = Html.DisplayPlaceHolderFor(model => model.RegisterViewModel.Birthday)
+                       })
+                                @Html.ValidationMessageFor(model => model.RegisterViewModel.Birthday)
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="separator">
+                    <div class="padding-col">
+                        <div class="checkbox">
+                            <label>@Html.CheckBoxFor(m => m.RegisterViewModel.AcceptToS) @Html.Raw(string.Format(Resource.ToSMessage, "#"))</label>
+                        </div>
+                    </div>
+
+                    <div class="padding-col">
+                        <button type="submit" class="btn btn-default">@Resource.Register</button>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>*@
+<div class="">
+    <div class="well">
+        @using (Html.BeginForm("Login", "Account", new { ReturnUrl = ViewBag.ReturnUrl }, FormMethod.Post, new { id = "form-customer", @class = "form-style" }))
+        {
+            <div class="title-form text-center">
+                <span>ĐĂNG NHẬP</span>
+            </div>
+            @Html.AntiForgeryToken()
+
+            <div class="form-horizontal main-form ">
+                <p>Đăng nhập vào trang Anh Nhân nếu bạn đã có tài khoản</p>
+
+                @*<div>
+                    @Html.ValidationMessageFor(m => m.LoginViewModel)
+                </div>*@
+                <div class="form-group">
+                    @Html.TextBoxFor(model => model.Email, new
+               {
+                   @class = "form-control",
+                   @placeholder = Resource.Email
+               })
+                    @Html.ValidationMessageFor(model => model.Email)
+
+                </div>
+                <div class="form-group">
+                    @Html.PasswordFor(model => model.Password, new
+               {
+                   @class = "form-control",
+                   @placeholder = Resource.Password
+               })
+                    @Html.ValidationMessageFor(model => model.Password)
+
+                </div>
+                <div>
+                    <button type="submit" class="btn btn-danger sm-signUp submit-style btn-default">@Resource.Login</button>
+                </div>
+                <div class="save-ps" style="margin-top:10px;">
+                    <label>@Html.CheckBoxFor(m => m.RememberMe) Lưu thông tin đăng nhập</label>
+                </div>
+                <div class="row user-more" style="margin-left: 0;">
+                    <div class="text-right col-md-6" style="border-right: 1px solid #ccc;">@Html.ActionLink(Resource.ForgetPassword, "ForgotPassword", "Account")</div>
+                    <div class="login col-md-6">@Html.ActionLink(Resource.DontHaveAccount, "Register", "Account")</div>
+                </div>
+            </div>
+
+        }
+        <div class="footer-form form-style">
+            <span style="color: #000;">Hoặc đăng nhập bằng các tài khoản</span>
+            <div class="row" style="margin-left: 0; margin-right: 0">
+
+                @{
+                    var loginProviders = Context.GetOwinContext().Authentication.GetExternalAuthenticationTypes();
+                    using (Html.BeginForm("ExternalLogin", "Account", new { ReturnUrl = ViewBag.ReturnUrl }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <div id="socialLoginList" style="width:100%; float:left;">
+                            @foreach (AuthenticationDescription p in loginProviders)
+                            {
+                                <div class="col-md-6" style="padding: 3px; float:left;">
+                                    <div class="btn @GetClass(@p.AuthenticationType) text-center d-block">
+                                        <button type="submit" class="btn btn-default" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Log in using your @p.Caption account">@Resource.Account @p.AuthenticationType</button>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    }
+                }
+            </div>
+           
+               
+            
+        </div>
+
+
+    </div>
+</div>
+
+@functions{
+    public string GetClass(string type)
+    {
+        return type == "Google" ? "btn-danger link-gg" : type == "Facebook" ? "btn-info link-fb" : "";
+    }
+}
+

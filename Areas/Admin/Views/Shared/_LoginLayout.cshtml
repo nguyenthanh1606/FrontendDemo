@@ -1,0 +1,21 @@
+﻿
+@model Admin.Models.LoginViewModel
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title - Responsive</title>
+    @Styles.Render("~/Areas/Admin/Content/css/site")
+    @Styles.Render("~/Areas/Admin/Content/css/admin")
+    @Styles.Render("~/Content/animate")
+</head>
+<body class="login">
+    
+    @RenderBody()
+    
+    @Scripts.Render("~/bundles/site")
+    @Scripts.Render("~/bundles/jqueryval")
+</body>
+</html>

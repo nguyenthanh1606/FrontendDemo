@@ -1,0 +1,29 @@
+﻿@model Admin.Models.ThemeThumbnailViewModel
+@Html.LabelFor(m => m.ThemeThumbnail, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+<div class="col-md-10 col-sm-9 col-xs-12">
+    <div id="myCarousel" class="carousel slide" data-ride="carousel">
+        <!-- Wrapper for slides -->
+        <div class="carousel-inner" role="listbox">
+            @for (int i = 0; i < Model.ThemeThumbnail.Count; i++)
+            {
+                <div class="item @(i == 0 ? "active" : "")" data-slide-number="@i">
+                    <img class="img-responsive center-block" src="@Url.Content(Model.ThemeThumbnail[i])" alt="img">
+                </div>
+            }
+        </div>
+        
+
+        <!-- Left and right controls -->
+        @if (Model.ThemeThumbnail.Count > 1)
+        {
+            <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
+                <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>
+                <span class="sr-only">Previous</span>
+            </a>
+            <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
+                <span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>
+                <span class="sr-only">Next</span>
+            </a>
+        }
+    </div>
+</div>

@@ -1,0 +1,71 @@
+﻿@model Admin.Models.SaleSystemFilterModel
+
+<link href="~/Content/css/PagedList.css" rel="stylesheet" />
+
+@{
+    ViewBag.Title = Resource.SaleSystem;
+}
+
+<div class="page-title">
+    <div class="title_left">
+        <h3>@Resource.SaleSystem</h3>
+    </div>
+    <div class="title_right">
+        <div class="pull-right">
+            @Html.ActionLink(@Resource.Create, "Create", null, new { @class = "btn btn-primary" })
+        </div>
+    </div>
+</div>
+
+<div class="main-content">
+    @using (Ajax.BeginForm("ShowroomList", "SaleSystem", new AjaxOptions { InsertionMode = InsertionMode.Replace, UpdateTargetId = "list", HttpMethod = "Get" }, new { id = "filter_div" }))
+    {
+        <div class="col-md-4 col-sm-6 col-xs-12">
+            <label class="control-label">@Resource.Area</label>
+            @Html.DropDownListFor(model => model.AreaID, ViewBag.Areas as SelectList, @Resource.All, new { @class = "form-control" })
+        </div>
+        <div class="form-group clearfix">
+            <div class="col-md-4 col-sm-6 col-xs-12">
+                <label class="control-label">@Resource.City</label>
+                @Html.DropDownListFor(model => model.CityID, ViewBag.Cities as SelectList, @Resource.All, new { @class = "form-control" })
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+                <label class="control-label">@Resource.Type</label>
+                @Html.DropDownListFor(model => model.TypeID, ViewBag.AgencyTypes as SelectList, @Resource.All, new { @class = "form-control" })
+            </div>
+            <div class="col-md-12 col-sm-6 col-xs-12">
+                <label class="control-label">@Resource.Search</label>
+                <div class="input-group">
+                    @Html.TextBoxFor(model => model.SearchString, null, new { @class = "form-control", @placeholder = @Resource.SearchPlaceholder, @aria_describedby = "basic-addon2" })
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+                    </span>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div id="list">
+        @{Html.RenderAction("ShowroomList", "SaleSystem", new { filter = Model });}
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $('#AreaID, #TypeID, #CityID').change(function () {
+            $('#filter_div').submit();
+        });
+
+        $('#filter_div').submit(function () {
+            ChangeUrl({ AreaID: $('#AreaID').val(), TypeID: $('#TypeID').val(), CityID: $('#CityID').val() });
+        });
+
+        $(document).ready(function () {
+            $('select').select2({
+                theme: "bootstrap",
+                language: '@Request.Cookies["lang"].Value.Substring(0, 2)'
+            });
+        });
+
+    </script>
+}

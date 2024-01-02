@@ -1,0 +1,29 @@
+﻿@model List<Frontend.Models.BannerViewModel>
+
+<div id="owl-banner" class="owl-carousel owl-theme">
+    @* Default *@
+    @if (ViewBag.Type == 0)
+    {
+        foreach (var item in Model)
+        {
+            if (!item.Url.Trim().EndsWith("http://"))
+            {
+                <a href="@item.Url">
+                    <div class="item"><img src="@Url.Content(item.ImageUrl)" alt="@item.AdName" title="@item.AdName" class="img-responsive"></div>
+                </a>
+            }
+            else
+            {
+                <div class="item"><img src="@Url.Content(item.ImageUrl)" alt="@item.AdName" title="@item.AdName" class="img-responsive"></div>
+            }
+        }
+    }
+    @* Img only no link *@
+    @if (ViewBag.Type == 1)
+    {
+        foreach (var item in Model)
+        {
+            <div class="item"><img src="@Url.Content(item.ImageUrl)" alt="@item.AdName" class="img-responsive"></div>
+        }
+    }
+</div>

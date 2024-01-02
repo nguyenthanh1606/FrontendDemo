@@ -1,0 +1,194 @@
+﻿@using Store.Service.SystemService
+@using Store.Service.Helper
+
+@model Frontend.Models.LayoutHomeViewModel
+
+@Styles.Render("~/Content/css/slider")
+
+
+<div class="home-banner">
+    @{ Html.RenderAction("Display", "Banner", new { position = 2 });}
+</div>
+
+<div class="homeContent">
+    <div class="top-content">
+        <div class="main">
+            @foreach (var ad in Model.TopAds)
+            {
+                <div class="top-item top-item-first">
+                    <img id="ppp1" src="@ad.ImageUrl" data-thumb="@ad.ImageUrl" alt="@ad.AdName">
+                    <div class="mask">
+                        <h2>@ad.AdName</h2>
+                        <p>@ad.Content</p>
+                        <a target="_blank" class="info" rel="nofollow" href="@ad.Url">@Resource.ReadMore</a>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+    <div class="product-ct">
+        <div class="wrapper">
+            <div class="product-div">
+                <h2 class="decorated product-title">
+                    <span>
+                        <a href="/">@Resource.Product</a>
+                    </span>    
+                </h2>
+                <div class="">
+                    <div class="productslider">
+                        @for(int i = 0; i < Model.ListProduct.Count; i++)
+                        {
+                            @Html.DisplayFor(m => m.ListProduct[i])
+                        }
+                    </div>
+                </div>
+            </div>
+
+            <div class="product-div">
+                <h2 class="decorated product-title">
+                    <span>
+                        <a href="/">@Resource.BestSeller</a>
+                    </span>
+                </h2>
+                <div class="">
+                    <div class="productslider bestseller">
+                        @for (int i = 0; i < Model.ListHotProduct.Count; i++)
+                        {
+                            @Html.DisplayFor(m => m.ListHotProduct[i])
+                        }
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="bg intro-div" id="bg">
+    <div id="skrollr-body">
+        <div class="parlax_overlay" id="paralax_overlay">
+            <div class="parlax-content">
+                <div class="mask wow slideInUp animated">
+                    <div id="ctl10_ctl00_IntroDiv1_introtitle" class="intro-title">
+                        @Html.CustomActionLink(Model.Introduction.Title, RoutingType.Group, Model.Introduction.GroupID)
+                    </div>
+
+                    <div class="intro-summary">
+                        <div class="wrapper">@Html.Raw(Model.Introduction.Description)</div>
+                    </div>
+                    <div class="intro-more">
+                        @Html.CustomActionLink(Resource.ReadMore, RoutingType.Group, Model.Introduction.GroupID)
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<div class="news-div">
+    <div class="wrapper">
+        <h2 class="news-title decorated">
+            <span><a href="/">@Resource.News</a></span>
+        </h2>
+        <div class="content-area">
+            @for (int i = 0; i < Model.ListContent.Count; i++)
+            {
+                <div class="news-item new-horizontal-block col-50 wow @(i%2 == 0? "slideInLeft" : "slideInRight") animated">
+                    @Html.DisplayFor(m => m.ListContent[i])
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+
+@Scripts.Render("~/bundles/slider")
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#owl-banner").owlCarousel({
+            slideSpeed: 300,
+            paginationSpeed: 400,
+            singleItem: true,
+            autoPlay: 5000,
+            stopOnHover: true,
+            transitionStyle: "fade"
+        });
+
+        $('.productslider').owlCarousel({
+            items: 4,
+            autoPlay: 5000,
+            stopOnHover: true,
+            loop: true,
+            scrollPerPage: true,
+        });
+
+        new WOW().init();
+    });
+
+    var iScrollPos = 0;
+
+    function isOnScreen(item) {
+        var viewport = {};
+        viewport.top = $(window).scrollTop();
+        viewport.bottom = viewport.top + $(window).height();
+        var bounds = {};
+        var introdiv = $(item);
+        if (introdiv.length) {
+            bounds.top = introdiv.offset().top;
+        }
+        bounds.bottom = bounds.top + introdiv.height();
+        if ((bounds.top <= viewport.bottom) && (bounds.bottom >= viewport.top))
+            return true;
+        else
+            return false;
+    }
+
+
+    $(window).scroll(function () {
+        var iCurScrollPos = $(this).scrollTop();
+        if (iCurScrollPos > iScrollPos) {
+            var isVisible = isOnScreen("#intro-div"); // true or false
+
+            if (isVisible == true) {
+                var margintop = $('#intro-img').css('margin-top');
+
+                $('#intro-img').css({
+                    "margin-top": "calc(" + margintop + " + 2px)"
+                });
+
+                $('#intro-div').addClass("active");
+            }
+            else {
+
+                $('#intro-div').removeClass("active");
+            }
+
+            //Scrolling Down
+        } else {
+            //Scrolling Up
+            var isVisible = isOnScreen("#intro-div"); // true or false
+
+            if (isVisible == true) {
+                var margintop = $('#intro-img').css('margin-top');
+                $('#intro-img').css({
+                    "margin-top": "calc(" + margintop + " - 2px)"
+                });
+                $('#intro-div').addClass("active");
+            }
+            else {
+
+                $('#intro-div').removeClass("active");
+            }
+
+        }
+        iScrollPos = iCurScrollPos;
+    });
+
+</script>
+
+}

@@ -1,0 +1,398 @@
+﻿@model Admin.Models.ContentViewModel
+@{
+    string[] listAdvanceProperties = ViewBag.ListAdvanceProp;
+}
+@Html.HiddenFor(model => model.ContentID)
+@Html.HiddenFor(model => model.Status)
+@Html.HiddenFor(model => model.Version)
+@Html.HiddenFor(model => model.OriginalUrl)
+@*@Html.HiddenFor(model => model.FlagUnformat)*@
+
+<div class="col-lg-7">
+    <div class="x_panel">
+        <div class="x_title clearfix">
+            <h2>
+                @Resource.GeneralInfo
+                <small>@Resource.ContentGeneralInfoDescription</small>
+            </h2>
+
+            <ul class="nav navbar-right panel_toolbox">
+                <li>
+                    <a class="collapse-link"><i class="fa fa-chevron-down"></i></a>
+                </li>
+            </ul>
+        </div>
+        <div class="x_content">
+
+            <div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.Headline))? "advanceProp" : "")">
+                <div>
+                    @Html.LabelFor(model => model.Headline, new { @class = "control-label" })
+                    <span class="pull-right">{{content.Headline? content.Headline.length : 0}}/{{contentTitleMaxLength}} @Resource.Characters</span>
+                </div>
+                @Html.TextBoxFor(model => model.Headline, new { @class = "form-control", v_model = "content.Headline" })
+                @Html.ValidationMessageFor(model => model.Headline)
+                <div class="note">@Resource.ContentTitleExplanation</div>
+            </div>
+
+            <div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.Summary))? "advanceProp" : "")">
+                <div>
+                    @Html.LabelFor(model => model.Summary, new { @class = "control-label" })
+                    <span class="pull-right">@Resource.NotInsertImage</span>
+                </div>
+                <div>
+                    @Html.TextAreaFor(model => model.Summary, new { @class = "form-control ck_editor" })
+                    @Html.ValidationMessageFor(model => model.Summary)
+                </div>
+                <div class="note">@Resource.ContentDescriptionExplanation</div>
+            </div>
+
+            <div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.Body))? "advanceProp" : "")">
+                <div>
+                    @Html.LabelFor(model => model.Body, new { @class = "control-label" })
+                </div>
+
+                <div>
+                    @Html.Raw(@Html.TextAreaFor(model => model.Body, new { @class = "form-control ck_editor" }))
+                    @Html.ValidationMessageFor(model => model.Body)
+                </div>
+                <div class="note">@Resource.BodyExplanation</div>
+            </div>
+        </div>
+    </div>
+
+
+    <div class="x_panel">
+        <div class="x_title clearfix">
+            <h2>
+                @Resource.SeoOptimized
+                <small>@Resource.SeoOptimizedDescription</small>
+            </h2>
+
+            <ul class="nav navbar-right panel_toolbox">
+                <li>
+                    <a class="collapse-link"><i class="fa fa-chevron-down"></i></a>
+                </li>
+            </ul>
+        </div>
+        <div class="x_content">
+            <div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.CustomizeTitle))? "advanceProp" : "")">
+                <div>
+                    @Html.LabelFor(model => model.CustomizeTitle, new { @class = "control-label" })
+                    <span class="pull-right">{{content.CustomizeTitle? content.CustomizeTitle.length : 0}}/{{customizeTitleMaxLength}} @Resource.Characters</span>
+                </div>
+                <div>
+                    @Html.TextBoxFor(model => model.CustomizeTitle, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.CustomizeTitle)
+                </div>
+                <div class="note">@Resource.ContentTitleExplanation</div>
+            </div>
+            <div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.CustomizeDescription))? "advanceProp" : "")">
+                <div>
+                    @Html.LabelFor(model => model.CustomizeDescription, new { @class = "control-label" })
+                    <span class="pull-right">@string.Format(Resource.DoesNotContain, "Html")</span>
+                </div>
+
+                <div>
+                    @Html.TextAreaFor(model => model.CustomizeDescription, 5, 5, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.CustomizeDescription)
+                </div>
+                <div class="note">@Resource.ContentDescriptionExplanation</div>
+            </div>
+
+            <div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.FriendlyUrl))? "advanceProp" : "")">
+                <div>
+                    @Html.LabelFor(model => model.FriendlyUrl, new { @class = "control-label" })
+                    <span class="pull-right">@string.Format(Resource.DoesNotContain, Resource.SpecialCharacters.ToLower())</span>
+                </div>
+
+                <div v-show="!isEditUrl">
+                    <div class="input-group">
+                        <input type="text" class="form-control" readonly v-model="currentUrl">
+                        <div class="input-group-btn">
+                            <button class="btn btn-default" type="button" v-on:click="isEditUrl = true">@Resource.EditFriendlyUrl</button>
+                        </div>
+                    </div>
+                </div>
+                <div v-show="isEditUrl">
+                    <div class="input-group">
+                        @Html.TextBoxFor(model => model.FriendlyUrl, new { @class = "form-control", v_model = "friendlyUrl" })
+                        <div class="input-group-btn">
+                            <button class="btn btn-primary" type="button" v-on:click="saveUrl()">@Resource.Save</button>
+                            <button class="btn btn-default" type="button" v-on:click="cancelEdit()">@Resource.Cancel</button>
+                        </div>
+                    </div>
+                    <span>@Html.ValidationMessageFor(model => model.FriendlyUrl)</span>
+                    @Html.HiddenFor(m => m.OriginalUrl)
+                </div>
+                <div class="note">@Resource.FriendlyUrlExplanation</div>
+            </div>
+
+            <div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.Tags))? "advanceProp" : "")">
+                <div>
+                    @Html.LabelFor(model => model.Tags, new { @class = "control-label" })
+                    <span class="pull-right">
+                        @Resource.TagNote
+                    </span>
+                </div>
+                <div>
+                    @Html.ListBoxFor(m => m.Tags, ViewBag.ListTag as MultiSelectList, new { @class = "form-control", multiple = "multiple" })
+                    @Html.ValidationMessageFor(model => model.Tags)
+                </div>
+                <div class="note">@Resource.TagExplanation</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="col-lg-5">
+    <div class="x_panel">
+        <div class="x_title clearfix">
+            <h2>
+                @Resource.Expand
+                <small>@Resource.ContentGeneralInfoDescription</small>
+            </h2>
+
+            <ul class="nav navbar-right panel_toolbox">
+                <li>
+                    <a class="collapse-link"><i class="fa fa-chevron-down"></i></a>
+                </li>
+            </ul>
+        </div>
+        <div class="x_content">
+            <div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.Source))? "advanceProp" : "")">
+                <div>
+                    @Html.LabelFor(model => model.Source, new { @class = "control-label" })
+                    <span class="pull-right">{{content.Source? content.Source.length : 0}}/{{contentTitleMaxLength}} @Resource.Characters</span>
+                </div>
+                @Html.TextBoxFor(model => model.Source, new { @class = "form-control", v_model = "content.Source" })
+                @Html.ValidationMessageFor(model => model.Source)
+            </div>
+
+            <div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.Protected))? "advanceProp" : "")">
+                <div>
+                    @Html.LabelFor(model => model.Protected, new { @class = "control-label" })
+                    <span class="pull-right">@Resource.ProtectedExplanation</span>
+                </div>
+                <div>
+                    <label class="radio-inline">
+                        @Html.RadioButtonFor(m => m.Protected, 0)@Resource.Yes
+                    </label>
+                    <label class="radio-inline">
+                        @Html.RadioButtonFor(m => m.Protected, 1)@Resource.No
+                    </label>
+                </div>
+            </div>
+
+            <div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.AllowcommentFB))? "advanceProp" : "")">
+                @Html.LabelFor(model => model.AllowcommentFB, new { @class = "control-label" })
+                <div>
+                    <div>
+                        <label class="radio-inline">
+                            @Html.RadioButtonFor(model => model.AllowcommentFB, 0)@Resource.Yes
+                        </label>
+                        <label class="radio-inline">
+                            @Html.RadioButtonFor(model => model.AllowcommentFB, 1)@Resource.No
+                        </label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="x_panel">
+        <div class="x_title clearfix">
+            <h2>
+                @Resource.Image
+                <small></small>
+            </h2>
+
+            <ul class="nav navbar-right panel_toolbox">
+                <li>
+                    <a class="collapse-link"><i class="fa fa-chevron-down"></i></a>
+                </li>
+            </ul>
+        </div>
+        <div class="x_content">
+            <div class="form-group  @(listAdvanceProperties.Contains(Html.NameOf(m => m.PictureUrl))? "advanceProp" : "")">
+                @Html.LabelFor(model => model.PictureUrl, new { @class = "control-label" })
+                <div class="clearfix">
+                    <img id="PictureUrlThumbnail" src="@Model.PictureUrl" class="pull-left quick-thumbnail" />
+                    @Html.FilesManagerTextboxFor(model => model.PictureUrl, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.PictureUrl)
+                    <span class="pull-left">@Resource.UploadImageExplanation</span>
+                </div>
+            </div>
+            <div class="form-group  @(listAdvanceProperties.Contains(Html.NameOf(m => m.BannerImages))? "advanceProp" : "")">
+                @Html.LabelFor(model => model.BannerImages, new { @class = "control-label" })
+                <div class="clearfix">
+                    <img id="BannerImagesThumbnail" src="@Model.BannerImages" class="pull-left quick-thumbnail" />
+                    @Html.FilesManagerTextboxFor(model => model.BannerImages, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.BannerImages)
+                    <span class="pull-left">@Resource.UploadImageExplanation <br /> @Resource.BannerExplanation</span>
+                </div>
+            </div>
+            <div class="form-group  @(listAdvanceProperties.Contains(Html.NameOf(m => m.IconUrl))? "advanceProp" : "")">
+                @Html.LabelFor(model => model.IconUrl, new { @class = "control-label" })
+                <div class="clearfix">
+                    <img id="IconUrlThumbnail" src="@Model.IconUrl" class="pull-left quick-thumbnail" />
+                    @Html.FilesManagerTextboxFor(model => model.IconUrl, new { @class = "form-control" })
+                    @Html.ValidationMessageFor(model => model.IconUrl)
+                    <span class="pull-left">@Resource.UploadImageExplanation <br /> @Resource.IconExplanation </span>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="x_panel">
+        <div class="x_title clearfix">
+            <h2>
+                @Resource.DocumentAttached
+                <small>@Resource.AttachedExplanation</small>
+            </h2>
+
+            <ul class="nav navbar-right panel_toolbox">
+                <li>
+                    <a class="collapse-link"><i class="fa fa-chevron-down"></i></a>
+                </li>
+            </ul>
+        </div>
+        <div class="x_content">
+            <div class="@(listAdvanceProperties.Contains(Html.NameOf(m => m.ListDownload))? "advanceProp" : "")">
+                <div class="form-group">
+                    <div>
+                        <button type="button" class="btn btn-primary" onclick="CloneTableRow('#download-table')">@Resource.AddNewRow</button>
+                    </div>
+                    <div>
+                        <table class="table table-bordered" id="download-table">
+                            <thead class="thead-blue">
+                                <tr>
+                                    <th class="width-8">@Html.LabelFor(m => m.ListDownload.FirstOrDefault().Name)</th>
+                                    <th class="width-12">@Html.LabelFor(m => m.ListDownload.FirstOrDefault().Url)</th>
+                                    <th class="width-3"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @for (int i = 0; i < Model.ListDownload.Count(); i++)
+                                {
+                                    <tr>
+                                        <td>
+                                            @Html.HiddenFor(m => m.ListDownload[i].DownloadID)
+                                            @Html.TextBoxFor(m => m.ListDownload[i].Name, new { @class = "form-control" })
+                                        </td>
+                                        <td>
+                                            @Html.FilesManagerTextboxFor(m => m.ListDownload[i].Url, new
+                                       {
+                                           @class = "form-control",
+                                           onchange = string.Format("SetFileName(this, '#{0}')", Html.IdFor(m => m.ListDownload[i].Name))
+                                       })
+
+                                        </td>
+                                        <td>
+                                            <div class="input-group">
+                                                <span class="input-group-btn">
+                                                    <a href="#" onclick="DeleteTableRow(this)" class="btn btn-default">
+                                                        <i aria-hidden="true" class="fa fa-times"></i>
+                                                    </a>
+                                                </span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                        @Html.ValidationMessageFor(model => model.ListDownload)
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
+@*<div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.DisplayInDetail))? "advanceProp" : "")">
+        @Html.LabelFor(model => model.DisplayInDetail, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+        <div class="col-md-10 col-sm-9 col-xs-12">
+            <label class="radio-inline">
+                @Html.RadioButtonFor(m => m.DisplayInDetail, "0")@Resource.Display
+            </label>
+            <label class="radio-inline">
+                @Html.RadioButtonFor(m => m.DisplayInDetail, "1")@Resource.Display
+            </label>
+        </div>
+    </div>*@
+
+
+
+@*
+    <div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.Allowcomment))? "advanceProp" : "")">
+        @Html.LabelFor(model => model.Allowcomment, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+        <div class="col-md-10 col-sm-9 col-xs-12">
+            <div>
+                <label class="radio-inline">
+                    @Html.RadioButtonFor(model => model.Allowcomment, 0)@Resource.NotAllow
+                </label>
+                <label class="radio-inline">
+                    @Html.RadioButtonFor(model => model.Allowcomment, 1)@Resource.Allow
+                </label>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.LayoutStyle))? "advanceProp" : "")">
+        @Html.LabelFor(model => model.LayoutStyle, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+        <div class="col-md-10 col-sm-9 col-xs-12">
+            @Html.DropDownListFor(model => model.LayoutStyle, new SelectList(@ViewBag.ListContentLayout, "ContentLayoutID", "Title"), new { @class = "form-control ddl_select2" })
+            @Html.ValidationMessageFor(model => model.LayoutStyle)
+        </div>
+    </div>
+    <div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.Youtube))? "advanceProp" : "")">
+        @Html.LabelFor(model => model.Youtube, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+        <div class="col-md-10 col-sm-9 col-xs-12">
+            @Html.TextAreaFor(model => model.Youtube, new { @class = "form-control ck_editor" })
+            @Html.ValidationMessageFor(model => model.Youtube)
+        </div>
+    </div>*@
+
+@*<div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.Value1))? "advanceProp" : "")">
+        @Html.LabelFor(model => model.Value1, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+        <div class="col-md-10 col-sm-9 col-xs-12">
+            @Html.TextAreaFor(model => model.Value1, new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.Value1)
+        </div>
+    </div>
+    <div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.Value2))? "advanceProp" : "")">
+        @Html.LabelFor(model => model.Value2, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+        <div class="col-md-10 col-sm-9 col-xs-12">
+            @Html.TextAreaFor(model => model.Value2, new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.Value2)
+        </div>
+    </div>
+    <div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.Value3))? "advanceProp" : "")">
+        @Html.LabelFor(model => model.Value3, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+        <div class="col-md-10 col-sm-9 col-xs-12">
+            @Html.TextAreaFor(model => model.Value3, new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.Value3)
+        </div>
+    </div>*@
+
+
+@*<div class="form-group  @(listAdvanceProperties.Contains(Html.NameOf(m => m.PictureNote))? "advanceProp" : "")">
+        @Html.LabelFor(model => model.PictureNote, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+        <div class="col-md-10 col-sm-9 col-xs-12">
+            @Html.TextBoxFor(model => model.PictureNote, new { @class = "form-control" })
+        </div>
+    </div>*@
+@*<div class="form-group  @(listAdvanceProperties.Contains(Html.NameOf(m => m.Value4))? "advanceProp" : "")">
+        @Html.LabelFor(model => model.Value4, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+        <div class="col-md-10 col-sm-9 col-xs-12">
+            <label class="radio-inline">
+                @Html.RadioButtonFor(model => model.Value4, "1")@Resource.Display
+            </label>
+            <label class="radio-inline">
+                @Html.RadioButtonFor(model => model.Value4, "0")@Resource.NonDisplay
+            </label>
+        </div>
+    </div>*@
+

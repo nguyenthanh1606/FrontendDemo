@@ -1,0 +1,60 @@
+﻿@model Admin.Models.AgencyViewModel
+@using Resources;
+
+@Html.HiddenFor(m => m.AgencyID)
+
+<div class="form-group">
+    @Html.LabelFor(model => model.Name, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextBoxFor(model => model.Name, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.Name)
+    </div>
+</div>
+
+<div class="form-group">
+    @Html.Label(@Resource.City, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.DropDownListFor(model => model.CityID, @ViewBag.Cities as SelectList, new { @class = "form-control ddl_select2" })
+    </div>
+</div>
+<div class="form-group">
+    @Html.Label(@Resource.Type, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.DropDownListFor(model => model.Type, @ViewBag.AgencyTypes as SelectList, new { @class = "form-control ddl_select2" })
+    </div>
+</div>
+<div class="form-group">
+    @Html.Label(@Resource.Priority, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextBoxFor(model => model.Priority, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Priority)
+    </div>
+</div>
+<div class="form-group">
+    @Html.Label(@Resource.Image, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.FilesManagerTextboxFor(model => model.ImagesUrl, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.ImagesUrl)
+    </div>
+</div>
+<div class="form-group">
+    @Html.Label(@Resource.Address, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextAreaFor(model => model.Address, new { @class = "form-control ck_editor" })
+        @Html.ValidationMessageFor(model => model.Address)
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.ImagesMap, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextAreaFor(model => model.ImagesMap, new { @class = "form-control ck_editor" })
+        @Html.ValidationMessageFor(model => model.ImagesMap)
+    </div>
+</div>
+<div class="form-group">
+    @Html.Label(@Resource.Summary, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextAreaFor(model => model.Summary, new { @class = "form-control ck_editor" })
+        @Html.ValidationMessageFor(model => model.Summary)
+    </div>
+</div>

@@ -1,0 +1,130 @@
+﻿@model Admin.Models.ProductViewModel
+
+@{
+    ViewBag.Title = Resource.Product;
+}
+@section css{
+    @Styles.Render("~/Content/css/elFinder")
+}
+
+@using (Html.BeginForm("Create", "Product", FormMethod.Post))
+{
+    <div class="page-title">
+        <div class="title_left">
+            <h3>
+                @Resource.Product
+                <small>@Resource.Create</small>
+            </h3>
+        </div>
+        <div class="title_right">
+            <div class="pull-right">
+                <a href="@(ViewBag.ReturnUrl?? @Url.Action("Index"))" class="btn btn-default">@Resource.BackToList</a>
+                <button type="submit" name="submitButton" value="Create" class="btn btn-primary">
+                    <i class="fa fa-floppy-o"> @Resource.Create</i>
+                </button>
+                <button type="submit" name="submitButton" value="CreateAndContinueEdit" class="btn btn-primary">
+                    <i class="fa fa-floppy-o"> @Resource.CreateAndContinueEdit</i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div id="wizard" class="form_wizard">
+            <div>
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation" class="active">
+                        <a href="#general_info" aria-controls="general_info" role="tab" data-toggle="tab">@Resource.GeneralInfo</a>
+                    </li>
+                    @*<li role="presentation">
+                            <a href="#product_specification" aria-controls="product_specification" role="tab" data-toggle="tab">@Resource.Specification</a>
+                        </li>*@
+                    <li role="presentation">
+                        <a href="#product_version" aria-controls="product_version" role="tab" data-toggle="tab">@Resource.ProductVersion</a>
+                    </li>
+                    <li role="presentation">
+                        <a href="#product_media" aria-controls="product_media" role="tab" data-toggle="tab">@Resource.ProductMedia</a>
+                    </li>
+                </ul>
+
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane fade in  active" id="general_info">
+                        <div class="form-horizontal">
+                            @Html.ValidationSummary(true)
+                            @Html.AntiForgeryToken()
+                            @Html.EditorFor(m => m.GeneralInfo)
+                        </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane fade" id="product_specification">
+                        @Resource.CreateProductSpecificationMessage
+                    </div>
+                    <div role="tabpanel" class="tab-pane fade" id="product_version">
+                        @Resource.CreateProductVersionMessage
+                    </div>
+                    <div role="tabpanel" class="tab-pane fade" id="product_media">
+                        @Resource.CreateProductMediaMessage
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+<div id="divModal" class="modal fade" role="dialog"></div>
+
+@section scripts{
+    @Scripts.Render("~/bundles/elFinder")
+    <script type="text/javascript" src="~/Scripts/ckeditor/ckeditor.js"></script>
+    <script type="text/javascript" src="~/Scripts/ckeditor/adapters/jquery.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            initCkEl('@Url.Action("GetFile", "Files")', '@Request.Cookies["lang"].Value.Substring(0, 2)');
+            InitElf('@Url.Action("GetFile", "Files")', '@Request.Cookies["lang"].Value.Substring(0, 2)');
+
+            ReplaceCKEditor();
+            ReplaceSelect2('@Request.Cookies["lang"].Value.Substring(0, 2)');
+
+            $('#productGroup').change(function () {
+
+                var value = $(this).val();
+                GetList(value);
+            });
+
+            function GetList(value) {
+
+                $.getJSON('@Url.Action("GetProperties", "Product")', { ProductGroupId: value }, function (data) {
+                    var items = [];
+
+                    var length = Object.keys(data.ProductGroupProperties).length;
+                    for (i = 0; i < length; i++) {
+                       // items.push("<li id='" + key + "'>" + val + "</li>");
+                        items.push("<div class='GroupProperties'><h5>" + data.ProductGroupProperties[i].Title + "</h5>");
+                        var object = data.ProductGroupProperties[i];
+                        var l = Object.keys(object.ListProductProperty).length;
+                        for(j = 0; j < l; j++)
+                        {
+                            var name = object.ListProductProperty[j].Title;
+                            var value = object.ListProductProperty[j].ProductPropertyID;
+                            items.push("<input type = 'checkbox' name = '" + name + "' value ='" + value + "'/><span>" + name + "</span><br/>");
+                        }
+                        items.push("</div>");
+                    }
+
+                    $("#listProperties").html("");
+
+                    $("<div/>", {
+                        "class": "my-new-list",
+                        html: items.join("")
+                    }).appendTo("#listProperties");
+                });
+            }
+
+        });
+
+        function AlertFailure() {
+            ShowAlertDialog('@Html.Raw(Resource.UnknowErrorMessage)');
+        };
+    </script>
+}
+

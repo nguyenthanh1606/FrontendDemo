@@ -1,0 +1,77 @@
+﻿@model Frontend.Models.LayoutIntroductionViewModel
+
+@{
+    ViewBag.Title = Model.Group.Title;
+}
+
+<div class="wrapper">
+    @Html.Breadcrumb(Frontend.Infrastructure.BreadcrumbType.Group, @Model.Group.GroupID)
+    <div class="group-banner">
+        <img src="@Model.Group.BannerUrl" alt="group-banner" class="img-responsive"/>
+    </div>
+    <div class="body-container">
+        <h2 class="site-title title-border">@Model.Group.Title</h2>
+
+        @foreach (var content in @Model.ListContent)
+        {
+            @Html.Raw(@content.Body)
+        }
+     
+        @*<div class="header_body_about">
+            Thoải mái mua sắm sắm tại chongtoi.com
+        </div>
+        <ul class="content-about-block1">
+            <li>
+                <div class="header_block_about">Nơi mua sắm lý tưởng</div>
+                <div class="body_block_about">
+                    Với hàng ngàn sản phẩm đa sạng thuộc các ngành hàng khác nhau từ sức khỏe, sắc đẹp, thời trang, điện tử - công nghệ,
+                    điện tử - da dạng, chồng tôi sẽ đáp ứng tất cả nhu cầu mua sắm của các chị em dành cho phái mạnh.
+                </div>
+            </li>
+            <li>
+                <div class="header_block_about">Mua sắm dễ dàng và thuận tiện</div>
+                <div class="body_block_about">
+                   Không còn phải lo kẹt xe, đông đúc và xếp hàng dài chờ đợi. Giờ đây bạn có thể mua sắm bất kể lúc nào, bất ở ở đâu chỉ 
+                    cần trên tay bạn sở hữu một thiết bị máy tính có kết nối mạng.
+                </div>
+            </li>
+            <li>
+                <div class="header_block_about">Dịch vụ mua hàng nhanh chóng và đáng tin cậy</div>
+                <div class="body_block_about">
+                    Với chính sách mua hàng và giao hàng tận nơi cho khách hàng thì trung tâm luôn đặt sự nhanh chóng và đáng tin cậy của bạn lên trên hết.
+                </div>
+            </li>
+        </ul>
+        <div class="content-about-summary">
+            Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi!
+        </div>*@
+        @*<section class="row service-intro">
+            <h2 class="site-title title-border">Dịch vụ của chúng tôi</h2>
+            <div class="col-md-4 col-sm-6 col-xs-12 service-detail">
+                <div class="site-icon icon-introduction">
+                    <i class="fa fa-search" aria-hidden="true"></i>
+                </div>
+                <p>Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia</p>
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12 service-detail">
+                <div class="site-icon icon-introduction">
+                    <i class="fa fa-user" aria-hidden="true"></i>
+                </div>
+                <p>Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia</p>
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12 service-detail">
+                <div class="site-icon icon-introduction">
+                    <i class="fa fa-thumbs-up" aria-hidden="true"></i>
+                </div>
+                <p>Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia</p>
+            </div>
+            <div class="col-md-12 col-sm-6 col-xs-12 service-detail">
+                <div class="site-icon icon-introduction">
+                    <i class="fa fa-quote-right" aria-hidden="true"></i>
+                </div>
+                <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book.It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+            </div>
+        </section>*@
+    </div>
+</div>
+

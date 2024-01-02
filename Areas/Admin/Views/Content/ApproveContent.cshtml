@@ -1,0 +1,99 @@
+﻿@{
+    ViewBag.Title = @Resource.Approve;
+}
+<div class="page-title">
+    <div class="title_left">
+        <h3>
+            @Resource.Contents
+            <small>@Resource.Approve</small>
+        </h3>
+    </div>
+</div>
+
+<div class="main-content">
+    <div id="list">
+        @{Html.RenderAction("ApproveContentList", "Content", new { page = ViewBag.Page });}
+    </div>
+</div>
+
+@using (Ajax.BeginForm("Approve", null, new AjaxOptions
+{
+    HttpMethod = "POST",
+    UpdateTargetId = "list",
+    InsertionMode = InsertionMode.Replace,
+    OnFailure = string.Format("ShowAlertDialog({0})", Resource.UnknowErrorMessage)
+}, new { id = "approve_form" } ))
+{
+    @Html.AntiForgeryToken()
+}
+
+<div id="rejectModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+        @using (Ajax.BeginForm("Reject", null, new AjaxOptions
+        {
+            HttpMethod = "POST",
+            UpdateTargetId = "list",
+            InsertionMode = InsertionMode.Replace,
+            OnFailure = string.Format("ShowAlertDialog({0})", Resource.UnknowErrorMessage)
+        }, new { id = "reject_form" }))
+        {
+            @Html.AntiForgeryToken()
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title" id="reject_title"></h4>
+                    <input type="hidden" name="id" id="reject_id"/>
+                    <input type="hidden" name="version" id="reject_version" />
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="reject_reason">@Resource.RejectedReasons</label>
+                        <textarea type="text" class="form-control" id="reject_reason" name="reason">
+
+                        </textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" onclick="SubmitReject()">@Resource.RejectContent</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">@Resource.Close</button>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        function ApproveContent(id, version) {
+            var form = $('#approve_form');
+            var data = form.serializeArray();
+            data.push({ name: "id", value: id })
+            data.push({ name: "version", value: version })
+            $.ajax({
+                type: "POST",
+                url: form.attr("action"),
+                data: data,
+                success: function (data) {
+                    $('#list').html(data);
+                },
+                error: function (jqXHR, textStatus, errorThrown) {
+                    ShowAlertDialog('@Html.Raw(Resource.UnknowErrorMessage)');
+                }
+            });
+        }
+
+        function RejectContent(id, version, title) {
+            $('#reject_id').val(id);
+            $('#reject_version').val(version);
+            $('#reject_title').text(title);
+            $('#reject_reason').val("");
+            $('#rejectModal').modal('show');
+        }
+
+        function SubmitReject() {
+            $('#rejectModal').modal('hide');
+            $('#reject_form').submit();
+        }
+    </script>
+}
+

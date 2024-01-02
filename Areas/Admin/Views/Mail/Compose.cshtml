@@ -1,0 +1,38 @@
+﻿
+@model Admin.Models.ComposeMailViewModel
+
+<div class="compose col-md-6 col-xs-12">
+    <div class="compose-header">
+        @Resource.NewMessage
+        <button type="button" class="close compose-close">
+            <span>×</span>
+        </button>
+    </div>
+
+
+    @using (Ajax.BeginForm("SendMail", null, new AjaxOptions { HttpMethod = "POST", OnSuccess = "AlertSuccess",
+        OnFailure = "AlertFailure", UpdateTargetId = "main-body" }, new { id = "composeForm" }))
+    {
+        @Html.AntiForgeryToken()
+        <div class="compose-body">
+            <div class="input-group">
+                <span class="input-group-addon" id="basic-addon1">@Html.DisplayNameFor(m => m.ReceiverID)</span>
+                <select class="form-control" id="ReceiverID" name="ReceiverID" aria-describedby="basic-addon1" style="width:100%; height: 34px;" multiple="multiple"></select>
+            </div>
+            @Html.ValidationMessageFor(m => m.ReceiverID)
+
+            <div class="input-group">
+                <span class="input-group-addon" id="basic-addon1">@Html.DisplayNameFor(m => m.Title)</span>
+                @Html.TextBoxFor(m => m.Title, new { @class = "form-control", aria_describedby = "basic-addon1" })
+            </div>
+            @Html.ValidationMessageFor(m => m.Title)
+
+            @Html.TextAreaFor(m => m.Content)
+            @Html.ValidationMessageFor(m => m.Content)
+        </div>
+
+            <div class="compose-footer">
+                <input type="submit" class="btn btn-sm btn-success" id="send" value="@Resource.Send" />
+            </div>
+    }
+</div>

@@ -1,0 +1,49 @@
+﻿@model Admin.Models.BrandAddPopupViewModel
+
+@using PagedList.Mvc;
+
+
+<div class="container-fluid">
+    <div class="form-horizontal row">
+        <div class="clearfix col-lg-12">
+            <table class="table table-hover">
+                <thead class="thead-inverse">
+                    <tr>
+                        <th class="col-lg-1">
+                            @Html.CheckBox("checkAll")
+                        </th>
+                        <th class="col-lg-11">
+                            @Resource.Brand
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.listBrands)
+                    {
+                        <tr>
+                            <td>
+                                @Html.CheckBox(string.Format("{0}", @item.Id), new { @class = "checkbox", id = @item.Id })
+                            </td>
+                            <td>
+                                <label for="@item.Id">@item.Name</label>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <div class="pull-left">
+                @string.Format(Resource.PaginationTxt, Model.listBrands.PageCount < Model.listBrands.PageNumber ? 0 : Model.listBrands.PageNumber, @Model.listBrands.PageCount)
+            </div>
+            <div class="pull-right">
+                @Html.PagedListPager(Model.listBrands, page => Url.Action("ListBrandAddPopup",
+            new { page, @Model.StartWith, @Model.RemoveBrands, @Model.UpdateTargetId }),
+            PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() { HttpMethod = "POST", InsertionMode = System.Web.Mvc.Ajax.InsertionMode.Replace, UpdateTargetId = "listBrands" }))
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+

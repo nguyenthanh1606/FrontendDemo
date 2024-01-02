@@ -1,0 +1,69 @@
+﻿@using Resources
+@model Admin.Models.FeedbackFilterViewModel
+
+@{
+    ViewBag.Title = Resource.FeedBack;
+}
+
+@Styles.Render("~/Content/pagedList")
+<div class="page-title">
+    <div class="title_left">
+        <h3>@Resource.FeedBack</h3>
+    </div>
+
+</div>
+
+<div class="main-content">
+    @using (Ajax.BeginForm("ListFeedBack", "FeedBack", null, new AjaxOptions { InsertionMode = InsertionMode.Replace, UpdateTargetId = "list", HttpMethod = "Get" }, new { id = "filter_div" }))
+    {
+        <div class="form-group clearfix">
+            <div class="col-md-4 col-sm-6 col-xs-12">
+                <label class="control-label">@Resource.Status</label>
+                @Html.DropDownListFor(m => m.Status, ViewBag.ListStatus as SelectList, Resource.All, new { @class = "form-control" })
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+                <label class="control-label">@Resource.Email</label>
+                <div class="input-group">
+                    @Html.TextBoxFor(m => m.Email, null, new { @class = "form-control", placeholder = Resource.SearchPlaceholder })
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="button"><i class="fa fa-search" aria-hidden="true"></i></button>
+                    </span>
+                </div>
+            </div>
+            <div class="col-md-4 col-sm-6 col-xs-12">
+                <label class="control-label">@Resource.Phone</label>
+                <div class="input-group">
+                    @Html.TextBoxFor(m => m.Phone, null, new { @class = "form-control", placeholder = Resource.SearchPlaceholder })
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="button"><i class="fa fa-search" aria-hidden="true"></i></button>
+                    </span>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div id="list">
+        @{Html.RenderAction("ListFeedBack", "FeedBack", new { Status = ViewBag.Status, Email = ViewBag.Email,
+                Phone = ViewBag.Phone, page = ViewBag.Page
+            });}
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            
+        });
+
+        $('#Status').change(function () {
+            $('#filter_div').submit();
+        });
+
+        $('#filter_div').submit(function () {
+            ChangeUrl({ Status: $('#Status').val(), Email: $('#Email').val(), Phone: $('#Phone').val() });
+        });
+    </script>
+
+}
+
+

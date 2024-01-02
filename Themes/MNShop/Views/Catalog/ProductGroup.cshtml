@@ -1,0 +1,195 @@
+﻿@model Frontend.Models.SearchViewModel
+@using Frontend.Infrastructure.Helpers
+
+@{
+    string themeCatalogViewPath = "~/Themes/" + TabWeb.GetCurrentTheme() + "/Views/Catalog/{0}.cshtml";
+
+    ViewBag.Title = Model.ProductGroup.Title;
+    ViewBag.Description = Model.ProductGroup.Description.RemoveHtml();
+    if (!string.IsNullOrEmpty(Model.ProductGroup.ImageUrl))
+    {
+        ViewBag.Image = Url.Content(Model.ProductGroup.ImageUrl, true);
+    }
+    var bannerUrl = Model.ProductGroup.BannerUrl;
+    if (bannerUrl == null)
+    {
+        bannerUrl = "https://placehold.co/1440x432";
+    }
+}
+
+<main class="product-category">
+    <div class="banner-page">
+        <div class="picture-page">
+            <img class="img-fluid w-100" src="@Model.ProductGroup.BannerUrl" alt="@Model.ProductGroup.Title" />
+        </div>
+        <div class="wrapper">
+            <div class="banner-page--content">
+                <img src="~/Themes/MNShop/Images/Logo-white.png" alt="MN Shop">
+                <h2 class="title">In lại các tác phẩm nghệ thuật đẹp như bản gốc</h2>
+            </div>
+        </div>
+    </div>
+    @{Html.RenderAction(MVC.Component.Display(5, "AvsNotify"));}
+    <div class="container breadcrumb-ds" style="padding-bottom: 1.5rem; border-bottom: 1px solid #dadada; ">
+        @Html.Breadcrumb(Frontend.Infrastructure.Utility.BreadcrumbType.ProductGroup, Model.ProductGroup.GroupID, new { @class = "breadcrumb" })
+
+        <h2 class="page-category_title">Tìm kiếm tác phẩm nghệ thuật cho nhu cầu quà tặng của bạn</h2>
+        <div class="page-category_desc w-80">
+            <p>@Model.ProductGroup.Description.RemoveHtml()</p>
+        </div>
+    </div>
+    <div class="pr-category container">
+        <div class="pr-sidebar">
+            @*<div class="pr-sidebar--category">
+                <div class="pr-sidebar--category_title">
+                    <h3>Danh mục sản phẩm</h3>
+                </div>
+                @{Html.RenderAction(MVC.Catalog.GetChildGroup(6, "ListProductGroupMenu", null, true));}
+            </div>*@
+
+            @foreach (var productGroupProperty in Model.ProductGroup.ProductGroupProperties)
+            {
+                <div class="pr-sidebar--filter" id="pgp-@productGroupProperty.GroupPropertyID">
+                    <div class="pr-sidebar--filter_title">
+                        <h3>Lọc theo @productGroupProperty.Title:</h3>
+                        <button type="button" id="button-@productGroupProperty.GroupPropertyID" onclick="handleToogleFilter('body-@productGroupProperty.GroupPropertyID', 'button-@productGroupProperty.GroupPropertyID')"></button>
+                    </div>
+                    <div class="pr-sidebar--filter_body" id="body-@productGroupProperty.GroupPropertyID">
+                        @foreach (var pp in productGroupProperty.ListProductProperty)
+                        {
+                            <div class="pr-sidebar--filter_item">
+                                <label for="@pp.ProductPropertyID">
+                                    @pp.Title
+                                    <input type="checkbox" id="@pp.ProductPropertyID" onchange="updateURL(@pp.ProductPropertyID, 'pgp-@productGroupProperty.GroupPropertyID')">
+                                </label>
+                            </div>
+                        }
+                    </div>
+                </div>
+            }
+        </div>
+
+        @if (Model.ListProduct.TotalItemCount == 0)
+        {
+            <p style="text-align: center; font-size: 2rem; font-weight: 600; width: 100%">@Resources.Resource.Updating</p>
+        }
+        else
+        {
+            <div class="pr-body">
+                <div class="pr-body--action">
+                    @Html.DropDownList("Order", ViewBag.ListSortOrder as SelectList, new { @class = "form-select action-sort" })
+                    <div class="pr-total">
+                        <span>@Model.ListProduct.TotalItemCount sản phẩm</span>
+                    </div>
+                </div>
+                @{Html.RenderPartial("_ProductList", Model);}
+            </div>
+        }
+    </div>
+</main>
+
+@section scripts{
+    <script>
+        $(document).ready(function () {
+            // Get the current window.location.pathname
+            var currentPathname = window.location.pathname;
+
+            // Get all the navigation items
+            var navItems = document.querySelectorAll('.pr-sidebar--category_body a');
+
+            // Variable to track if a match is found
+            var matchFound = false;
+
+            // Iterate through the navigation items and check if their href matches the current pathname
+            for (var i = 0; i < navItems.length; i++) {
+                var navItem = navItems[i];
+                var navItemPathname = navItem.getAttribute('href');
+
+                // Check if the currentPathname matches the navItemPathname
+                if (currentPathname === navItemPathname) {
+                    // Add the --active class to the parent div of the matching navigation item
+                    navItem.parentElement.classList.add('--active');
+                    matchFound = true;
+                    break; // Exit the loop once a match is found
+                }
+            }
+
+            // selected list propeties
+            const proParameterValue = getPropertyIds(window.location.href);
+            var listInput = document.querySelectorAll('.pr-sidebar--filter_item input');
+            for (var i = 0; i < listInput.length; i++) {
+                var idInput = listInput[i].id
+                if (proParameterValue.includes(idInput)) {
+                    listInput[i].checked = true
+                }
+            }
+        });
+
+        $(document).ready(function () {
+            // Assuming "Order" is the ID of your dropdown list
+            $("#Order").change(function () {
+                // Your custom JavaScript code here
+                var selectedValue = $(this).val();
+                console.log("Selected value: " + selectedValue);
+
+                // Add more code to handle the selected value change
+                var currentURL = window.location.href;
+                currentURL = replaceUrlParam(currentURL, 'order', selectedValue)
+                window.location.href = currentURL;
+
+            });
+        });
+
+        function getParameterValue(url, parameter) {
+            const urlSearchParams = new URLSearchParams(new URL(url).search);
+            return urlSearchParams.get(parameter);
+        }
+
+        function getPropertyIds(url) {
+            const params = {};
+            const queryString = url.split("?")[1];
+            if (queryString) {
+                const keyValuePairs = queryString.split("&");
+                keyValuePairs.forEach(pair => {
+                    const [key, value] = pair.split("=");
+                    params[key] = value;
+                });
+            }
+
+            // Extract the 'properties' value and convert it to an array of integers
+            const properties = params.properties || '';
+            const propertyIds = properties.split(",");
+
+            return propertyIds;
+        }
+        function updateURL(id, pgpId) {
+
+
+            const propertyIds = getPropertyIds(window.location.href);
+            var listInput = document.querySelectorAll(`#${pgpId} .pr-sidebar--filter_item input`);
+            for (var i = 0; i < listInput.length; i++) {
+                if (propertyIds.includes(listInput[i].id)) {
+                    propertyIds.splice(propertyIds.indexOf(listInput[i].id), 1);
+                }
+                if (listInput[i].id == id) {
+                    if (listInput[i].checked) {
+                        propertyIds.push(id);
+                    }
+                    listInput[i].checked = !listInput[i].checked
+                } else {
+                    listInput[i].checked = false
+                }
+            }
+
+
+
+            var currentURL = window.location.href;
+            var orderValue = getParameterValue(currentURL, 'order') || 'Newest';
+
+            currentURL = currentURL.replace(/[\?&]properties=[^&]*/, '');
+
+            currentURL = window.location.origin + window.location.pathname + '?order=' + orderValue + '&properties=' + propertyIds.join(',');
+            window.location.href = currentURL;
+        }
+    </script>
+}

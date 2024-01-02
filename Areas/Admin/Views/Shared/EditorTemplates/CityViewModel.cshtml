@@ -1,0 +1,52 @@
+﻿@model Admin.Models.CityViewModel
+@using Resources;
+
+@Html.HiddenFor(m => m.CityID)
+
+<div class="form-group">
+    @Html.LabelFor(model => model.CityName, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextBoxFor(model => model.CityName, new { @class = "form-control", @readonly = true })
+        @Html.ValidationMessageFor(model => model.CityName)
+    </div>
+</div>
+
+@*<div class="form-group">
+    @Html.LabelFor(model => model.Area, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.DropDownListFor(model => model.Area, @ViewBag.Areas as SelectList, new { @class = "form-control ddl_select2" })
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.Coords, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextAreaFor(model => model.Coords, new { @class = "form-control", @rows = "5" })
+        @Html.ValidationMessageFor(model => model.Coords)
+    </div>
+</div>*@
+<div class="form-group">
+    @Html.LabelFor(model => model.Value1, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        <label class="radio-inline">
+            @*@Html.RadioButtonFor(m => m.Value1, "1", new { Checked = "checked" })@Resource.No*@
+            @Html.RadioButtonFor(m => m.Value1, "0")@Resource.No
+        </label>
+        <label class="radio-inline">
+            @Html.RadioButtonFor(m => m.Value1, "1")@Resource.Yes
+        </label>
+    </div>
+</div>
+@*<div class="form-group">
+    @Html.LabelFor(model => model.Value2, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextBoxFor(model => model.Value2, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.Value2)
+    </div>
+</div>*@
+@*<div class="form-group">
+    @Html.LabelFor(model => model.ImagesMap, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextAreaFor(model => model.ImagesMap, new { @class = "form-control ck_editor" })
+        @Html.ValidationMessageFor(model => model.ImagesMap)
+    </div>
+</div>*@

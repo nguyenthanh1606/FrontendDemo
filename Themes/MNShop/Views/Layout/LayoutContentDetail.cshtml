@@ -1,0 +1,70 @@
+﻿@model Frontend.Models.LayoutContentDetailViewModel
+@using Frontend.Infrastructure.ExtensionMethod;
+@using Frontend.Infrastructure.Utility;
+@using Frontend.Infrastructure.Helpers;
+@using Admin.Infrastructure.Helpers;
+@{
+    ViewBag.Title = Model.Content.Headline;
+}
+
+@section css{
+}
+@{
+    ViewBag.Title = Model.Content.Headline;
+    string themeHomeViewPath = "~/Themes/" + TabWeb.GetCurrentTheme() + "/Views/Home/{0}.cshtml";
+    Component component = new Component();
+    component.EntityID = Model.Group.GroupID;
+    component.TotalItems = 10;
+    component.ComponentType = 0;}
+
+@{
+    var bannerImg = Model.Content.BannerImages;
+    if (bannerImg == null)
+    {
+        bannerImg = Model.Group.BannerUrl;
+    }
+}
+
+
+
+
+
+<main class="page-about">
+    <div class="banner-page">
+        <div class="picture-page">
+            <img class="img-fluid w-100" src="@Model.Group.BannerUrl" alt="@Model.Group.Title" />
+        </div>
+        <div class="wrapper">
+            <div class="banner-page--content">
+                <img src="~/Themes/MNShop/Images/Logo-white.png" alt="MN Shop">
+                <h2 class="title">In lại các tác phẩm nghệ thuật đẹp như bản gốc</h2>
+            </div>
+        </div>
+    </div>
+    @{Html.RenderAction(MVC.Component.Display(5, "AvsNotify"));}
+    <div class="container breadcrumb-ds">
+        @Html.Breadcrumb(Frontend.Infrastructure.Utility.BreadcrumbType.Group, Model.Group.GroupID, new { @class = "breadcrumb" })
+    </div>
+    <div class="container">
+        <h2 class="page-about_title --line-bottom color-active">@Model.Group.Title</h2>
+        <div class="home-content mt-0">
+            <div class="home-left">
+                <div class="page-about_content">
+                    <h3 class="content-title"></h3>
+                    <div class="content-desc">
+                        <strong>@Html.Raw(Model.Content.Summary)</strong>
+                    </div>
+                    <div class="content-body">
+                        @Html.Raw(Model.Content.Body)
+                    </div>
+                </div>
+            </div>
+            <div class="home-right">
+                @{Html.RenderAction(MVC.Component.GetContentForGroupID(string.Format(themeHomeViewPath, "ListHuongDan"), ThemeConfig.GetComponent("GroupHuongDan"), Store.Service.Service.DistributionOrder.Lastest, true, ""));}
+
+            </div>
+        </div>
+
+    </div>
+</main>
+@section scripts{}

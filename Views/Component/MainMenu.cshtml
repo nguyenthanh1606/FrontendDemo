@@ -1,0 +1,121 @@
+﻿@using Store.Service.Models
+@model Frontend.Models.MainMenuViewModel
+
+@*<a id="touch-menu" class="mobile-menu" href="#"><i class="icon-reorder"></i>Menu</a>*@
+<div class="header-menu">
+    <ul class="menu">
+        <li class="li-menu">@Html.ActionLink(Resource.HomePage, "Index", "Home")</li>
+        @if (Model.MainMenu != null)
+        {
+            foreach (var item in Model.MainMenu.GetAllChilds())
+            {
+                if (item.Value.Title != "Product")
+                {
+                    <li class="li-menu">
+                        <a href="@item.Value.Url">@item.Value.Title</a>
+                    </li>
+                }
+                else
+                {
+                    <li id="productmenu" class="li-menu">
+                        <a href="#">@Resource.Product</a>
+                        <ul id="submenu" class="submenu">
+                            @foreach (var child in item.GetAllChilds())
+                            {
+                                if (child.Value != null && !string.IsNullOrWhiteSpace(child.Value.Url) && !string.IsNullOrWhiteSpace(child.Value.Title))
+                                {
+                                    <li class="menu-column">
+                                        <a href="@Url.Content(child.Value.Url)">@Html.Raw(child.Value.Title)</a>
+                                        @if (child.GetAllChilds().Count != 0)
+                                        {
+                                            <ul class="sub-menu">
+                                                @foreach (var grandchild in child.GetAllChilds())
+                                                {
+                                                    @DrawMenu(grandchild)
+                                                }
+                                            </ul>
+                                        }
+                                    </li>
+                                }
+                            }
+                        </ul>
+                    </li>
+                }
+            }
+        }
+    </ul>
+</div>
+
+<div class="menu_mobile_header wow animated fadeInRight">
+    <ul class="menu_mobile">
+        <li class="li_menu_mobile">@Html.ActionLink(Resource.HomePage, "Index", "Home")</li>
+        @if (Model.MainMenu != null)
+        {
+            foreach (var item in Model.MainMenu.GetAllChilds())
+            {
+                if (item.Value.Title != "Product")
+                {
+                    <li class="li_menu_mobile">
+                        <a href="@item.Value.Url">@item.Value.Title</a>
+                    </li>
+                }
+                else
+                {
+                    <li id="productmenu" class="li_menu_mobile">
+                        <a href="#">@Resource.Product</a><i class="extent_submenu_header">+</i>
+                        <ul id="submenu" class="sub_menu_mobile wow animated fadeInDown">
+                            @foreach (var child in item.GetAllChilds())
+                            {
+                                if (child.Value != null && !string.IsNullOrWhiteSpace(child.Value.Url) && !string.IsNullOrWhiteSpace(child.Value.Title))
+                                {
+                                    <li class="menu_mobile_column  wow animated fadeIn">
+                                        @if (child.GetAllChilds().Count > 0)
+                                        {
+                                            <a href="@Url.Content(child.Value.Url)">@Html.Raw(child.Value.Title)</a><i class="extent_submenu_header">+</i>
+                                        }
+                                        else
+                                        {
+                                            <a href="@Url.Content(child.Value.Url)">@Html.Raw(child.Value.Title)</a>
+                                        }
+
+                                        @if (child.GetAllChilds().Count != 0)
+                                        {
+                                            <ul class="sub_menu_mobile wow animated fadeIn">
+                                                @foreach (var grandchild in child.GetAllChilds())
+                                                {
+                                                    @DrawMenu(grandchild)
+                                                }
+                                            </ul>
+                                        }
+                                    </li>
+                                }
+                            }
+                        </ul>
+
+                    </li>
+                }
+            }
+        }
+    </ul>
+</div>
+
+@helper DrawMenu(TreeNode<MenuItem> nodes)
+{
+    if (nodes.Value != null && !string.IsNullOrEmpty(nodes.Value.Url) && !string.IsNullOrEmpty(nodes.Value.Title))
+    {
+        <li>
+          
+            <a href="@Url.Content(nodes.Value.Url)">@Html.Raw(nodes.Value.Title)</a>
+         
+            @if (nodes.HasChild())
+            {
+                <ul>
+                    @foreach (var child in nodes.GetAllChilds())
+                    {
+                        @DrawMenu(child);
+                    }
+                </ul>
+            }
+        </li>
+    }
+}

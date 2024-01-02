@@ -1,0 +1,54 @@
+﻿@model List<Frontend.Models.BannerViewModel>
+
+@*<div class="custom-top" id="custom_slider">
+    <div class="container">
+        <column class="position-display">
+            <div>
+                <div id="rev_slider_1_1_wrapper" class="rev_slider_wrapper fullwidthbanner-container"  style="margin:0px auto;background-color:#E9E9E9;padding:0px;margin-top:0px;margin-bottom:0px;max-height:900px;">
+                    <div id="rev_slider_1_1" class="rev_slider fullwidthabanner"  style="display:none;max-height:900px;height:900px;">
+                        <ul>
+                            @foreach (var banner in Model)
+                            {
+                                <li data-transition="random" data-slotamount="7" data-saveperformance="off">
+                                    <img src="@banner.ImageUrl" alt="@banner.AdName" title="@banner.AdName" data-bgposition="center top" data-bgfit="cover" data-bgrepeat="no-repeat">
+                                </li>
+                            }
+                        </ul>
+                        <div class="tp-bannertimer"></div>
+                    </div>
+                </div>
+            </div>
+        </column>
+    </div>
+</div>*@
+
+<div id="myCarousel" class="carousel slide" data-ride="carousel">
+
+    <div class="carousel-inner slider">
+        @{ 
+            var numb = 0;
+            var aclass = "";
+        }
+
+        @foreach (var banner in Model)
+        {
+            if (numb == 0)
+            {
+                aclass = "active";
+            }
+            else
+            {
+                aclass = "";
+            }
+
+            <div class="carousel-item @aclass">
+                <img class="first-slide" src="@banner.ImageUrl" alt="First slide">
+            </div>
+            numb++;
+        }
+    </div>
+
+
+</div>
+<!-- end slider -->
+<div class="clearfix"></div>

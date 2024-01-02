@@ -1,0 +1,60 @@
+﻿@model Frontend.Models.HeaderViewModel
+
+<div class="headerOut">
+    <div class="wrapper">
+
+        <div class="logosite">
+            <a href="/">@Html.BannerImage(1, Request.Cookies["lang"].Value)</a>
+        </div>
+        <div class="header-toolbar">
+            <ul class="toolbar">
+                <li>
+                    <span id="search-btn" class="menu-icon"><i class="fa fa-search"></i></span>
+                    <div id="search-form">
+                        @using (Html.BeginForm("Search", "Home", FormMethod.Get, new { id = "search_area" }))
+                        {
+                            <div class="input-group">
+                                @Html.TextBox("query", null, new { @class = "form-control" })
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+                                </span>
+                            </div>
+                        }
+                    </div>
+                </li>
+                <li>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <a class="account menu-icon" href="@Url.Action("Info", "Account")">
+                            <i class="fa fa-user" aria-hidden="true"></i>
+                        </a>
+                    }
+                    else
+                    {
+                        <a id="accounthref" class="account menu-icon" href="/login/">
+                            <i class="fa fa-user" aria-hidden="true"></i>
+                        </a>
+                        }  
+                </li>
+
+                <li>
+                    <a class="cart menu-icon" href="@Url.Action("List", "ShoppingCart")">
+                        <i class="fa fa-shopping-bag" aria-hidden="true"></i>
+                        <span id="cart_count_number">0</span>
+                    </a>
+                </li>
+                <li>
+                    <a class="menu_mobile_icon menu-icon" href="#">
+                        <i class="fa fa-align-justify" aria-hidden="true"></i>
+                    </a>
+                </li>
+            </ul>
+            <div class="usercontrol">
+                <div id="ctl10_Header1_picture" class="pic"></div>
+                <span id="ctl10_Header1_account"></span>
+            </div>
+        </div>
+        @{Html.RenderAction("MainMenu", "Layout");}
+    </div>
+</div>
+

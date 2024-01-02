@@ -1,0 +1,128 @@
+﻿@using Microsoft.Owin.Security
+@model Frontend.Models.AccountViewModel
+<div class="container-fluid login-partial-form">
+    <div class="split-panel split-panel-divider">
+        @using (Ajax.BeginForm("Register", "Account", new AjaxOptions { OnSuccess = "RegisterDone" }))
+        {
+            <h4 class="modal-title">@Resource.Register</h4>
+            @Html.AntiForgeryToken()
+            <input name="returnUrl" type="hidden" value="@ViewBag.ReturnUrl" />
+            <div>
+                @Html.ValidationMessageFor(model => model.RegisterViewModel.Email)
+                @Html.TextBoxFor(model => model.RegisterViewModel.Email, new
+           {
+               @class = "form-control",
+               @placeholder = Html.DisplayPlaceHolderFor(model => model.RegisterViewModel.Email)
+           })
+            </div>
+            <div>
+                @Html.ValidationMessageFor(model => model.RegisterViewModel.Password)
+                @Html.TextBoxFor(model => model.RegisterViewModel.Password, new
+           {
+               @class = "form-control",
+               @placeholder = Html.DisplayPlaceHolderFor(model => model.RegisterViewModel.Password)
+           })
+            </div>
+            <div>
+                @Html.ValidationMessageFor(model => model.RegisterViewModel.ConfirmPassword)
+                @Html.TextBoxFor(model => model.RegisterViewModel.ConfirmPassword, new
+           {
+               @class = "form-control",
+               @placeholder = Html.DisplayPlaceHolderFor(model => model.RegisterViewModel.ConfirmPassword)
+           })
+            </div>
+            <div>
+                @Html.ValidationMessageFor(model => model.RegisterViewModel.Fullname)
+                @Html.TextBoxFor(model => model.RegisterViewModel.Fullname, new
+           {
+               @class = "form-control",
+               @placeholder = Html.DisplayPlaceHolderFor(model => model.RegisterViewModel.Fullname)
+           })
+            </div>
+            <div>
+                @Html.ValidationMessageFor(model => model.RegisterViewModel.Phone)
+                @Html.TextBoxFor(model => model.RegisterViewModel.Phone, new
+           {
+               @class = "form-control",
+               @placeholder = Html.DisplayPlaceHolderFor(model => model.RegisterViewModel.Phone)
+           })
+            </div>
+            <div>
+                @Html.LabelFor(model => model.RegisterViewModel.Gender, new { @class = "control-label" })
+                <label class="radio-inline">
+                    @Html.RadioButtonFor(m => m.RegisterViewModel.Gender, 0) Nam
+                </label>
+                <label class="radio-inline">
+                    @Html.RadioButtonFor(m => m.RegisterViewModel.Gender, 1) Nữ
+                </label>
+                @Html.ValidationMessageFor(model => model.RegisterViewModel.Gender)
+            </div>
+            <div>
+                @Html.ValidationMessageFor(model => model.RegisterViewModel.Birthday)
+                @Html.TextBoxFor(model => model.RegisterViewModel.Birthday, new
+           {
+               @class = "form-control datepicker",
+               @placeholder = Html.DisplayPlaceHolderFor(model => model.RegisterViewModel.Birthday)
+           })
+            </div>
+            <div>
+                <button type="submit" class="btn btn-primary pull-right">@Resource.Register</button>
+            </div>
+        }
+    </div>
+    <div class="split-panel">
+        @using (Ajax.BeginForm("LoginAjax", "Account", new AjaxOptions { HttpMethod = "POST", OnSuccess = "LoginDone" }))
+        {
+            <div class="clearfix">
+                <h4 class="modal-title">@Resource.Login</h4>
+                @Html.AntiForgeryToken()
+                <ul id="login_error_summary" class="validation-summary-errors"></ul>
+                <input name="returnUrl" type="hidden" value="@ViewBag.ReturnUrl" />
+                <div>
+                    @Html.ValidationMessageFor(model => model.LoginViewModel.Email)
+                    @Html.TextBoxFor(model => model.LoginViewModel.Email, new
+               {
+                   @class = "form-control",
+                   @placeholder = Html.DisplayPlaceHolderFor(model => model.LoginViewModel.Email)
+               })
+                </div>
+                <div>
+                    @Html.ValidationMessageFor(model => model.LoginViewModel.Password)
+                    @Html.TextBoxFor(model => model.LoginViewModel.Password, new
+               {
+                   @class = "form-control",
+                   @placeholder = Html.DisplayPlaceHolderFor(model => model.LoginViewModel.Password),
+                   type = "password"
+               })
+                </div>
+                <div class="checkbox">
+                    <label>@Html.CheckBoxFor(m => m.LoginViewModel.RememberMe)<span>@Resource.RememberMe</span></label>
+                </div>
+                <div>
+                    <button type="submit" class="btn btn-primary pull-right">@Resource.Login</button>
+                </div>
+            </div>
+        }
+
+        <h4 class="title_item1">Hoặc đăng nhập bằng</h4>
+        <div class="login_other">
+            @{
+                var loginProviders = Context.GetOwinContext().Authentication.GetExternalAuthenticationTypes();
+                using (Html.BeginForm("ExternalLogin", "Account", new { ReturnUrl = ViewBag.ReturnUrl }))
+                {
+                    @Html.AntiForgeryToken()
+                    <input name="returnUrl" type="hidden" value="@ViewBag.ReturnUrl" />
+                    <div id="socialLoginList">
+                        <p>
+                            @foreach (AuthenticationDescription p in loginProviders)
+                            {
+                                <button type="submit" class="btn btn-default" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Log in using your @p.Caption account">@p.AuthenticationType</button>
+                            }
+                        </p>
+                    </div>
+                }
+            }
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,33 @@
+﻿@model Frontend.Models.ProductCommentViewModel
+@Html.HiddenFor(m => m.Id, new { v_model = "userComment.Id"})
+<input type="hidden" name="ProductId" value="@ViewBag.ProductId" />
+<div class="form-group">
+    <label class="control-label">@Resource.YourRatingAboutProduct:</label>
+    <div class="rating editable">
+        <span :class="[userComment.Rating >= 5? 'active star' : 'star']" v-on:click="userComment.Rating = 5"></span>
+        <span :class="[userComment.Rating >= 4? 'active star' : 'star']" v-on:click="userComment.Rating = 4"></span>
+        <span :class="[userComment.Rating >= 3? 'active star' : 'star']" v-on:click="userComment.Rating = 3"></span>
+        <span :class="[userComment.Rating >= 2? 'active star' : ' star']" v-on:click="userComment.Rating = 2"></span>
+        <span :class="[userComment.Rating >= 1? 'active star' : 'star']" v-on:click="userComment.Rating = 1"></span>
+    </div>
+    @Html.HiddenFor(m => m.Rating, new { v_model = "userComment.Rating" })
+    @Html.ValidationMessageFor(m => m.Rating)
+</div>
+<div class="form-group">
+    <label class="control-label">@Resource.Title:</label>
+    @Html.ValidationMessageFor(m => m.Title)
+    <div>
+        @Html.TextBoxFor(m => m.Title, new { @class = "form-control", v_model = "userComment.Title" })
+    </div>
+</div>
+<div class="form-group">
+    <label class="control-label">@Resource.WriteYourReviewBelow:</label>
+    @Html.ValidationMessageFor(m => m.Body)
+    <div>
+        @Html.TextAreaFor(m => m.Body, 5, 1,new { @class = "form-control", v_model = "userComment.Body" })
+    </div>
+</div>
+<div class="form-group"> 
+    <button type="submit" class="btn btn-primary">@Resource.Submit</button>
+    <button type="button" class="btn btn-default" v-on:click="isAddNewComment = false">@Resource.Cancel</button>
+  </div>

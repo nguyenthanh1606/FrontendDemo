@@ -1,0 +1,54 @@
+﻿@model Admin.Models.BankAccountViewModel
+
+@{
+    ViewBag.Title = ResourceAdmin.BankAccount;
+}
+@section css{
+    @Styles.Render("~/Content/css/elFinder")
+}
+
+<div class="page-title">
+    <div class="title_left">
+        <h3>
+            @ResourceAdmin.BankAccount
+            <small>@Resource.Update</small>
+        </h3>
+    </div>
+</div>
+
+<div class="main-content" id="contentGroup">
+    @using (Html.BeginForm("Update", "BankAccount", FormMethod.Post))
+    {
+        @Html.AntiForgeryToken()
+
+        <div class="form-horizontal">
+            @Html.ValidationSummary(true)
+            @Html.EditorForModel()
+
+            <div class="form-group">
+                <div class="col-md-offset-2 col-sm-offset-3 col-md-10 col-sm-9 col-xs-12">
+                    <input type="submit" value="@Resource.Save" class="btn btn-primary" />
+                    <a href="@(ViewBag.ReturnUrl?? @Url.Action("Index"))" class="btn btn-default">@Resource.BackToList</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section scripts{
+    @Scripts.Render("~/bundles/elFinder")
+    <script type="text/javascript" src="~/Scripts/ckeditor/ckeditor.js"></script>
+    <script type="text/javascript" src="~/Scripts/ckeditor/adapters/jquery.js"></script>
+
+    <script>
+
+        $(document).ready(function () {
+            initCkEl('@Url.Action("GetFile", "Files")', '@Request.Cookies["lang"].Value.Substring(0, 2)');
+            InitElf('@Url.Action("GetFile", "Files")', '@Request.Cookies["lang"].Value.Substring(0, 2)');
+
+            ReplaceSelect2('@Request.Cookies["lang"].Value.Substring(0, 2)');
+            ReplaceCKEditor();
+        });
+    </script>
+}
+

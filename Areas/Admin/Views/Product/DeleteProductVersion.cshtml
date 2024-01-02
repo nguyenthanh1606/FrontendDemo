@@ -1,0 +1,42 @@
+﻿@model Admin.Models.ProductVersionViewModel
+
+@using (Ajax.BeginForm("DeleteProductMedia", "Product",
+                new AjaxOptions
+                {
+                    HttpMethod = "Post",
+                    InsertionMode = InsertionMode.Replace,
+                    UpdateTargetId = "step-2",
+                    OnComplete = "HideModal('#divModal');",
+                    OnFailure = string.Format("ShowAlertDialog({0})", Resource.UnknowErrorMessage)
+                }))
+{
+    <div class="modal-dialog modal-lg" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">@string.Format(Resource.DeletePlaceholder, Resource.ProductVersion.ToLower())</h4>
+            </div>
+
+            <div class="modal-body">
+                <div class="form-horizontal">
+                    <div class="alert alert-danger fade in">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                        <span><i class="fa fa-bullhorn" style="padding-right: 7px" aria-hidden="true"></i>@Resource.AlertDelete</span>
+                    </div>
+
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary(true)
+
+                    @Html.DisplayForModel()
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">@Resource.Delete</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">@Resource.Cancel</button>
+            </div>
+        </div>
+    </div>
+}

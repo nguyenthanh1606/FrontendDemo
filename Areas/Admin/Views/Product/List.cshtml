@@ -1,0 +1,53 @@
+﻿@using PagedList.Mvc
+@model PagedList.IPagedList<Admin.Models.ProductOverviewViewModel>
+
+@Styles.Render("~/Content/pagedList")
+
+<table class="table table-hover">
+    <thead class="thead-inverse">
+        <tr>
+            <th class="width-6">@Html.DisplayNameFor(model => model.FirstOrDefault().Title)</th>
+            <th class="width-3">@Html.DisplayNameFor(model => model.FirstOrDefault().DefaultPrice)</th>
+            <th class="width-3">@Html.DisplayNameFor(model => model.FirstOrDefault().ProductGroupID)</th>
+            <th class="width-2">@Html.DisplayNameFor(model => model.FirstOrDefault().Priority)</th>
+            <th class="width-3">@Resource.Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.Title</td>
+                <td>@item.DefaultPrice</td>
+                <td>@item.ProductGroupName</td>
+                <td>@item.Priority</td>
+                <td>
+                    <div class="btn-group">
+                        @if (item.Status == Store.Service.ProductServices.ProductStatus.Normal)
+                        {
+                            <a href="@Url.Action("Update", new { id = item.ProductID })" class="btn btn-default">
+                                <i class="fa fa-pencil" aria-hidden="true"></i> @Resource.Edit
+                            </a>
+                        }
+                        else
+                        {
+                            <button type="button" class="btn btn-default" onclick="ResellConfirm(@item.ProductID, '@item.Title')">
+                                <i class="fa fa-recycle" aria-hidden="true"> @Resource.Reselling</i>
+                            </button>
+                        }
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="pull-left">
+    @string.Format(Resource.PaginationTxt, Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber, @Model.PageCount)
+</div>
+<div class="pull-right">
+    @Html.PagedListPager(Model, page => Url.Action("List",
+        new { page, groupId = ViewBag.GroupId, SearchString = ViewBag.SearchString }),
+        PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() {
+            HttpMethod = "GET", UpdateTargetId = "list", OnSuccess = string.Format("UpdatePagingAjaxUrl(this)") }))
+</div>

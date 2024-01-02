@@ -1,0 +1,45 @@
+﻿@model IEnumerable<Frontend.Models.ProductBoxViewModel>
+
+
+@foreach (var product in @Model)
+{
+    <div class="product-layout-tab col-lg-12 col-md-12 col-sm-6 col-xs-12">
+        <div class="row">
+            <div class="col-sm-12 col-md-12 col-lg-12">
+                <div class="t-all-product-info">
+
+                    <div class="t-product-img image_wrapper">
+                        <a href="@Url.CustomAction(Store.Service.SystemService.RoutingType.Product, product.ProductID)" class="image">
+                            <img src="@product.ImageUrl" alt="@product.Title" title="@product.Title" class="img-responsive">
+                        </a>
+                    </div>
+                    <div class="tab-p-info">
+                        <a href="@Url.CustomAction(Store.Service.SystemService.RoutingType.Product, product.ProductID)">@product.Title</a>
+                        <div class="rating">
+                            <span class="star"></span>
+                            <span class="star"></span>
+                            <span class="star"></span>
+                            <span class="star"></span>
+                            <span class="star"></span>
+                            <span class="score" style="width:@Math.Round(product.AverateRating*100/5)%">
+                                <span class="star"></span>
+                                <span class="star"></span>
+                                <span class="star"></span>
+                                <span class="star"></span>
+                                <span class="star"></span>
+                            </span>
+                        </div>
+                        <div class="price_product">
+                            <span class="price-new">@string.Format("{0:n0}", product.Price) VNĐ</span>
+                            @if (product.OriginalPrice.HasValue)
+                            {
+                                <div class="clear"></div>
+                                <span class="price-old">@string.Format("{0:n0}", product.OriginalPrice) VNĐ</span>
+                            }
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+}

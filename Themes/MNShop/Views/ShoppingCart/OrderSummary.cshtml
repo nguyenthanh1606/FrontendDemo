@@ -1,0 +1,60 @@
+﻿@model Frontend.Models.ShoppingCartViewModel
+
+
+@{var total = 0;}
+@foreach (var item in Model.ListItems)
+{
+    <div class="row">
+        <div class="col-md-12" style="padding: 0"><a href="@item.Url"><p style="padding-left: 15px;color: #0366a5; font-family: Roboto">@item.Title</p></a></div>
+        <div class="col-md-6" style="font-family: Roboto; font-size: 14px">
+            <p>@string.Format("{0:n0}", @item.Price)đ</p>
+        </div>
+        <div class="col-md-2 text-center">
+            <p>x @item.Quantity</p>
+        </div>
+        <div class="col-md-4 text-right price" style="line-height: 14px;">
+            <p style="font-size: 18px;">@string.Format("{0:n0}", @item.Price * @item.Quantity)đ</p>
+        </div>
+    </div>
+    total = total + @item.Price * @item.Quantity;
+}
+<hr />
+<div class="row">
+    <div class="col-md-6" style="font-family: Roboto-Bold">
+        <span style="font-size: large;">Tổng giá trị</span><br>
+    </div>
+    <div class="col-md-6 text-right price">
+       @string.Format("{0:n0}", @total)đ
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6" style="font-family: Roboto">
+        <span>
+            Giảm giá<br>
+        </span>
+    </div>
+    <div class="col-md-6 text-right price">
+        @string.Format("{0:n0}", @Model.DiscountValue)đ
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6" style="font-family: Roboto">
+        <span>
+            Phí giao hàng<br>
+        </span>
+    </div>
+    <div class="col-md-6 text-right price">
+        Chưa tính
+    </div>
+</div>
+<hr>
+<div class="row">
+    <div class="col-md-6" style="font-family: Roboto">
+        <span style="font-size: large; color: #0154a1;">TỔNG CỘNG:</span><br>
+    </div>
+    <div class="col-md-6 text-right">
+        <span class="price" style="font-size: 22px;">@string.Format("{0:n0}", @total - @Model.DiscountValue)đ</span><br>
+        <span>(đã bao gồm VAT)</span>
+    </div>
+</div>
+

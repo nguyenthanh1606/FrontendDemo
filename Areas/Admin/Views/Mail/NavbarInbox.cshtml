@@ -1,0 +1,33 @@
+﻿@model IEnumerable<Admin.Models.MailDetailViewModel>
+
+<a href="javascript:;" class="dropdown-toggle info-number" data-toggle="dropdown" aria-expanded="false">
+    <i class="fa fa-envelope-o"></i>
+    <span class="badge bg-green">@ViewBag.UnreadMail</span>
+</a>
+<ul id="menu1" class="dropdown-menu list-unstyled msg_list" role="menu">
+    @foreach (var item in Model)
+    {
+        <li class="@(item.Status == 0 ? "unread" : "")">
+            <a href="@Url.Action("Index", "Mail", new { id = item.MailID })">
+                <span class="image">
+                    <img src="~/Content/Images/img.jpg" alt="Profile Image" />
+                </span>
+                <span>
+                    <span>@item.SenderFullName</span>
+                    <span class="time">@item.CreationDate.ToShortTimeString()</span>
+                </span>
+                <span class="message">
+                    @item.Title.Truncate(100)
+                </span>
+            </a>
+        </li>
+    }
+    <li>
+        <div class="text-center">
+            <a>
+                <strong>@Html.ActionLink(Resource.SeeAllMail, "Index", "Mail")</strong>
+                <i class="fa fa-angle-right"></i>
+            </a>
+        </div>
+    </li>
+</ul>

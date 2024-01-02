@@ -1,0 +1,87 @@
+﻿@model IPagedList<Admin.Models.AgencyItemViewModel>
+@using PagedList.Mvc;
+@using PagedList;
+@{
+    ViewBag.Title = "AgencyList";
+}
+
+<table class="table table-hover">
+    <thead class="thead-inverse">
+        <tr>
+            <th class="width-2">
+                @Resource.ID
+            </th>
+            <th class="width-7">
+               @Resource.UnitName
+            </th>
+            <th class="width-3">
+                @Resource.City
+            </th>
+            <th class="width-3">
+                @Resource.Type
+            </th>
+            <th class="width-2">
+                @Resource.Priority
+            </th>
+            <th class="width-3">
+                @Resource.Action
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AgencyID)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.CityName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TypeName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Priority)
+                </td>
+                <td>
+                    <div class="btn-group">
+                        <a href="@Url.Action("Update", new { id = item.AgencyID })" class="btn btn-default">
+                            <i class="fa fa-pencil" aria-hidden="true"></i> @Resource.Edit
+                        </a>
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                            <span class="caret"></span>
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+
+                        <ul class="dropdown-menu btn-dropdown-menu" role="menu">
+                            <li>
+                                <a href="@Url.Action("Detail", new { id = item.AgencyID })">
+                                    <i class="fa fa-eye" aria-hidden="true"></i> @Resource.View
+                                </a>
+                            </li>
+                            <li>
+                                <a href="@Url.Action("Delete", new { id = item.AgencyID })">
+                                    <i class="fa fa-trash-o" aria-hidden="true"></i> @Resource.Delete
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+        }
+</table>
+
+<div class="pull-left">
+    @string.Format(Resource.PaginationTxt, Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber, @Model.PageCount)
+</div>
+<div class="pull-right">
+    @Html.PagedListPager(Model, page => Url.Action("ShowroomList",
+        new { page, ViewBag.SearchString, ViewBag.TypeID, ViewBag.AreaID, ViewBag.CityID }),
+        PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() {
+            HttpMethod = "GET", UpdateTargetId = "list", OnSuccess = string.Format("UpdatePagingAjaxUrl(this)") }))
+</div>
+

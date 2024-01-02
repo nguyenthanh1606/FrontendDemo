@@ -1,0 +1,52 @@
+﻿@model Frontend.Models.HomePageGroupViewModel
+@using Frontend.Infrastructure.Helpers
+@using Admin.Infrastructure.Helpers
+
+@{
+    string themeHomeViewPath = "~/Themes/" + TabWeb.GetCurrentTheme() + "/Views/Home/{0}.cshtml";
+}
+
+@if (Model.ListItem.Any())
+{
+
+    <section class="home-sk">
+        <h2 class="home-about_title">
+            @if (Model.DefaultName != "")
+            {
+                @Model.DefaultName
+            }
+            else
+            {
+                @Model.Group.Title
+            }
+        </h2>
+        <div class="home-sk_desc">
+            <p>@Model.Group.Description.RemoveHtml()</p>
+        </div>
+        <div class="home-sk_link">
+            <a href="@Url.CustomAction(Store.Service.SystemService.RoutingType.Group, Model.Group.GroupID)" class="text-uppercase">XEM THÊM CÁC NỘI DUNG KHÁC <i class="fas fa-caret-right"></i></a>
+        </div>
+        <div class="home-sk_list">
+            @foreach (var item in Model.ListItem)
+            {
+                <div class="home-sk_item card-new">
+                    <a href="@item.Url" class="thumnails-template">
+                        <div class="thumnails-content thumb-img">
+                            <img src="@item.PictureUrl" class="img-fluid w-100" alt="@item.Headline">
+                        </div>
+                    </a>
+                    <div class="card-news--content">
+                        <div class="category">
+                            <span class="text-uppercase">@item.GroupName</span>
+                        </div>
+                        <h4>
+                            <a href="@item.Url" class="headline">@item.Headline</a>
+                        </h4>
+                        <div class="desc">@item.Summary.RemoveHtml()</div>
+                        <a href="item.Url" class="link link-active text-decoration text-uppercase text-bold small">Xem thêm <i class="fas fa-caret-right"></i></a>
+                    </div>
+                </div>
+            }
+        </div>
+    </section>
+}

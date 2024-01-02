@@ -1,0 +1,39 @@
+﻿@model Frontend.Models.LayoutNewsDetailViewModel
+@using Frontend.Infrastructure.ExtensionMethod;
+@using Frontend.Infrastructure.Utility;
+@{
+    ViewBag.Title = Model.content.Headline;
+}
+<div class="BodyContent introlayout" id="layout-news-detail">
+    <div class="wrapper" id="news-page">
+
+        @Html.Breadcrumb(BreadcrumbType.Group, @Model.Group.GroupID)
+
+        <div class="banner-page">
+            <img src="@Model.Group.BannerUrl" />
+        </div>
+    
+        <div class="clearfix">
+            <div class="column-right">
+                <div class="container-fluid news-detail">
+                    <h5 class="a-news-title">@Model.content.Headline</h5>
+                    <div>@Html.Raw(@Model.content.Summary)</div>
+                    <div>@Html.Raw(@Model.content.Body)</div>
+                </div>
+
+            </div>
+            <div class="column-left">
+                <div class="CategoryName">Tin tức khác</div>
+                <div class="row">
+                    @foreach (var item in @Model.anotherNews)
+                    {
+                        <div class="news-item">
+                            @Html.DisplayFor(m => item)
+                        </div>
+                    }
+                </div>
+            </div>
+           
+        </div>
+    </div>
+</div>

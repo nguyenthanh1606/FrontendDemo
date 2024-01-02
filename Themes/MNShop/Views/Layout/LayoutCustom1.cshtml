@@ -1,0 +1,121 @@
+﻿@model Frontend.Models.LayoutContentViewModel
+@using PagedList.Mvc;
+@using PagedList;
+@using Frontend.Infrastructure.ExtensionMethod;
+@using Frontend.Infrastructure.Utility;
+@using Frontend.Infrastructure.Helpers;
+@using Admin.Infrastructure.Helpers;
+
+@{
+    ViewBag.Title = Model.Group.Title;
+    ViewBag.Description = Model.Group.Description.RemoveHtml();
+    if (!string.IsNullOrEmpty(Model.Group.ImageUrl))
+    {
+        ViewBag.Image = Url.Content(Model.Group.ImageUrl, true);
+    }
+    string ComponentViewPath = "~/Themes/" + TabWeb.GetCurrentTheme() + "/Views/Component/{0}.cshtml";
+}
+
+
+<main class="page-info">
+    <section class="banner-page" style="background-image: url(./images/banner-page.png)">
+        <div class="container">
+            <div class="banner-content">
+                <h2>Học cụ an toàn & chất lượng theo tiêu chuẩn Montessori</h2>
+                <p>
+                    Donec pretium vulputate sapien nec sagittis aliquam malesuada bibendum. Eget felis eget nunc lobortis
+                    mattis aliquam faucibus purus in.
+                </p>
+                <a href="#" class="btn btn-outline">CỬA HÀNG</a>
+            </div>
+        </div>
+    </section>
+    <div class="container">
+        <div class="breadcrumb">
+            <ul>
+                <li class="breadcrumb-home">
+                    <a href="#" class="breadcrumb-link">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 15 15" fill="none">
+                            <g clip-path="url(#clip0_165_109)">
+                                <path d="M11.5447 3.02196L7.94593 0.156331C7.8192 0.0554279 7.66199 0.000488281 7.49999 0.000488281C7.338 0.000488281 7.18079 0.0554279 7.05406 0.156331L3.45531 3.02196L0.687493 5.22602C0.594848 5.29972 0.527419 5.40041 0.494547 5.51413C0.461675 5.62786 0.464988 5.749 0.504027 5.86076C0.543066 5.97252 0.615898 6.06937 0.712432 6.13789C0.808966 6.20642 0.924423 6.24322 1.04281 6.24321H1.19249V14.2845C1.19249 14.3785 1.21101 14.4715 1.247 14.5584C1.28298 14.6452 1.33572 14.7241 1.40221 14.7906C1.46869 14.857 1.54762 14.9098 1.63448 14.9457C1.72134 14.9816 1.81443 15.0001 1.90843 15.0001H4.79062C4.88458 15.0001 4.97762 14.9816 5.06443 14.9456C5.15123 14.9096 5.2301 14.8569 5.29653 14.7905C5.36296 14.724 5.41564 14.6451 5.45157 14.5583C5.4875 14.4715 5.50597 14.3784 5.50593 14.2845V9.97633C5.50601 9.78659 5.58145 9.60465 5.71564 9.47051C5.84984 9.33637 6.03181 9.26102 6.22156 9.26102H8.96874C9.06271 9.26098 9.15576 9.27945 9.24258 9.31538C9.3294 9.35131 9.40829 9.40399 9.47475 9.47042C9.5412 9.53685 9.59392 9.61571 9.62989 9.70252C9.66586 9.78933 9.68437 9.88237 9.68437 9.97633V14.2845C9.68437 14.3785 9.7029 14.4716 9.7389 14.5585C9.7749 14.6453 9.82767 14.7242 9.89419 14.7907C9.96071 14.8572 10.0397 14.9099 10.1266 14.9458C10.2135 14.9817 10.3066 15.0002 10.4006 15.0001H13.2412C13.431 15.0001 13.6131 14.9247 13.7473 14.7905C13.8815 14.6563 13.9569 14.4743 13.9569 14.2845V6.24321C14.0753 6.24329 14.1908 6.20653 14.2874 6.13803C14.3839 6.06953 14.4568 5.97268 14.4959 5.8609C14.535 5.74913 14.5383 5.62796 14.5055 5.51421C14.4726 5.40045 14.4052 5.29973 14.3125 5.22602L11.5447 3.02196Z"
+                                      fill="#D3D1D1" />
+                            </g>
+                            <defs>
+                                <clipPath id="clip0_165_109">
+                                    <rect width="15" height="15" fill="white" />
+                                </clipPath>
+                            </defs>
+                        </svg>
+                    </a>
+                </li>
+                <li class="breadcrumb-item">
+                    <a href="" class="breadcrumb-link">
+                        CỬA HÀNG ONLINE
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <div class="page-info--body container">
+        <div class="page-info--sidebar">
+            <h1 class="sidebar-title">CHĂM SÓC KHÁCH HÀNG</h1>
+            <div class="sidebar-list">
+                <ul id="tabList">
+                    @foreach (var item in Model.ListContent)
+                    {
+                        <li><a href="@Url.CustomAction(Store.Service.SystemService.RoutingType.Content, item.ContentID)">@item.Headline</a></li>
+                    }
+                </ul>
+            </div>
+        </div>
+        <div class="page-info--content">
+            <div class="box-container">
+                <h1 class="page-info--content_title">
+                    HƯỚNG DẪN MUA HÀNG
+                </h1>
+                <div class="page-info--content_body">
+                    <p>
+                        Tortor pretium viverra suspendisse potenti nullam ac tortor vitae. Hendrerit gravida rutrum quisque non tellus orci ac. Quam id leo in vitae turpis massa sed elementum tempus.
+
+                        Est sit amet facilisis magna etiam tempor. Egestas quis ipsum suspendisse ultrices gravida dictum fusce. Aliquam malesuada bibendum arcu vitae elementum curabitur vitae. Sem fringilla ut morbi tincidunt augue interdum velit euismod in.
+
+                        Dolor morbi non arcu risus quis varius quam quisque id. Enim eu turpis egestas pretium. Diam maecenas ultricies mi eget mauris pharetra et ultrices. Facilisis sed odio morbi quis commodo. Proin sed libero enim sed faucibus turpis. Volutpat blandit aliquam etiam erat. Urna molestie at elementum eu facilisis sed. Eget nulla facilisi etiam dignissim diam. Volutpat maecenas volutpat blandit aliquam etiam erat velit. Varius quam quisque id diam vel.
+
+                        Metus vulputate eu scelerisque felis imperdiet proin fermentum leo. Bibendum est ultricies integer quis. Gravida cum sociis natoque penatibus et magnis dis parturient montes. Quam nulla porttitor massa id neque aliquam vestibulum. Massa sed elementum tempus egestas sed sed risus pretium quam. Ultrices eros in cursus turpis massa tincidunt dui ut. Montes nascetur ridiculus mus mauris vitae ultricies leo integer. Amet cursus sit amet dictum sit. Tempus quam pellentesque nec nam aliquam. Dui sapien eget mi proin sed libero enim. Ut pharetra sit amet aliquam. Eget dolor morbi non arcu risus.
+
+                        Felis eget velit aliquet sagittis id consectetur. Aliquam vestibulum morbi blandit cursus risus at. In est ante in nibh mauris cursus mattis molestie a. Tempus imperdiet nulla malesuada pellentesque elit eget gravida. Viverra justo nec ultrices dui sapien eget mi. Adipiscing commodo elit at imperdiet dui accumsan sit. Nulla facilisi etiam dignissim diam quis enim lobortis scelerisque fermentum. Nulla facilisi morbi tempus iaculis urna. A scelerisque purus semper eget duis at tellus at. Pretium lectus quam id leo in. In vitae turpis massa sed elementum tempus. Aliquet nibh praesent tristique magna sit amet purus gravida. Lectus arcu bibendum at varius vel.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+@section scripts{
+    <script>
+        const tabList = document.getElementById('tabList');
+
+        tabList.addEventListener('click', (event) => {
+            if (event.target.tagName === 'LI') {
+                const currentActiveTab = tabList.querySelector('li.--active');
+                if (currentActiveTab) {
+                    currentActiveTab.classList.remove('--active');
+                }
+
+                event.target.classList.add('--active');
+
+                const tabIndex = Array.from(tabList.children).indexOf(event.target);
+
+                const tabContent = document.getElementById('tabContent');
+                const tabChildren = Array.from(tabContent.children);
+                tabChildren.forEach((element, index) => {
+                    if (tabIndex === index) {
+                        element.classList.add('--active');
+                    } else {
+                        element.classList.remove('--active');
+                    }
+                });
+            }
+        });
+
+    </script>
+}

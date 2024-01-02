@@ -1,0 +1,77 @@
+﻿@model Frontend.Models.HeaderViewModel
+@using Store.Service.Models
+
+<aside class="line-top d-flex flex-column flex-center flex-middle">
+    Liên hệ đặt hàng & hỗ trợ nhanh: @Model.Hotline
+</aside>
+<header class="header">
+    <div class="top-header">
+        <nav class="site-link">
+            <ul>
+                <li class="--active"><a href="/">ART GIFTS</a></li>
+                <li><a href="/">ART PRINTS</a></li>
+                <li><a href="/">ART POTRAITS</a></li>
+                <li><a href="/">ART SPACE</a></li>
+            </ul>
+        </nav>
+        <div class="site-menu">
+            @if (Model.TopMenu.HasChild())
+            {
+                <ul>
+                    @foreach (var item in Model.TopMenu.GetAllChilds())
+                    {
+                        <li><a href="@item.Value.Url" class="text-uppercase">@item.Value.MenuName</a></li>
+
+                    }
+                </ul>
+            }
+
+            <div class="lang">
+                <a href="/" class="--active">VIE</a>
+                <a href="/">ENG</a>
+            </div>
+            <div class="cart" id="cart">
+                <a href="@Url.Action("List", "ShoppingCart")">
+                    <img src="~/Themes/MNShop/images/icons/cart.svg" />
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="main-header">
+        <div class="logo">
+            <a href="/">@Html.BannerImage(1, Request.Cookies["lang"].Value)</a>
+        </div>
+        <div class="main-menu">
+            @if (Model.MainMenu.HasChild())
+            {
+                <ul>
+                    @foreach (var item in Model.MainMenu.GetAllChilds())
+                    {
+                        if (item.HasChild())
+                        {
+                            <li>
+                                <a href="@item.Value.Url" class="text-uppercase">@item.Value.MenuName</a>
+                                <ul class="mn-lv2">
+                                    @foreach (var itemLv2 in item.GetAllChilds())
+                                    {
+                                        <li><a href="@itemLv2.Value.Url" class="text-uppercase">@itemLv2.Value.MenuName</a></li>
+
+                                    }
+                                </ul>
+                            </li>
+                        }
+                        else
+                        {
+                            <li><a href="@item.Value.Url" class="text-uppercase">@item.Value.MenuName</a></li>
+
+                        }
+                    }
+                </ul>
+            }
+            <div class="search">
+                <input type="text" placeholder="Tìm kiếm..." />
+                <button><img src="~/Themes/MNShop/images/icons/search.svg" /></button>
+            </div>
+        </div>
+    </div>
+</header>

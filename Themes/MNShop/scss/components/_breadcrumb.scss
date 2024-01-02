@@ -1,0 +1,41 @@
+.breadcrumb-ds {
+  ul.breadcrumb {
+    display: block;
+    padding-left: 0;
+    list-style-type: none;
+
+    li {
+      display: inline-block;
+      padding-right: 10px;
+      padding-bottom: 5px;
+
+      a {
+        color: $color-main;
+        font-size: 0.9rem;
+        text-decoration: none;
+        font-weight: bold;
+      }
+
+      &:first-child {
+        a {
+          color: #b0b2ac;
+          font-size: 16px;
+        }
+      }
+
+      &:not(:last-child):after {
+        content: "\f0da";
+        font-family: "Font Awesome 5 Pro";
+        font-weight: 900;
+        padding-left: 10px;
+        color: #b0b2ac;
+      }
+
+      &:hover {
+        a {
+          color: $color-active;
+        }
+      }
+    }
+  }
+}

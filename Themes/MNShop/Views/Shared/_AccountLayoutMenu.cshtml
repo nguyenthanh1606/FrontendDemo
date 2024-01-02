@@ -1,0 +1,22 @@
+﻿<div class="user-profile clearfix">
+    <div class="avatar image_wrapper pull-left">
+        <div class="image">
+            <img src="~/Content/Images/avatar.png" />
+        </div>
+    </div>
+
+</div>
+<div class="fuction-list">
+    <div class="user-account">
+        <span>@Resource.Account</span>
+        <p><strong>@User.Identity.Name</strong></p>
+    </div>
+    <ul class="list-unstyled">
+
+        <li>@Html.ActionLink(Resource.YourAccount, "Info")</li>
+        <li>@Html.ActionLink(Resource.ChangePassword, "ChangePassword")</li>
+        @*<li>@Html.ActionLink(Resource.Wishlist, "Wishlist", "Account")</li>*@
+        <li>@Html.ActionLink(Resource.MyOrder, "MyOrders", "Account")</li>
+        <li>@Html.ActionLink(Resource.Logout, "Logoff", "Account")</li>
+    </ul>
+</div>

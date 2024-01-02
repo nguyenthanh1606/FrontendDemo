@@ -1,0 +1,255 @@
+﻿@model Frontend.Models.CheckoutViewModel
+@{
+    ViewBag.Title = "Checkout";
+}
+<div class="wrapper">
+    <div class="cartlayout container" id=checkout_page>
+        <div class="form_wizard wizard_horizontal">
+            <ul class="wizard_steps anchor">
+                <li>
+                    <a href="javascript:void(0)" v-bind:class="classStep(1)">
+                        <span class="step_no">1</span>
+                        <span class="step_descr">
+                            @Resource.Login
+                        </span>
+                    </a>
+                </li>
+                <li>
+                    <a href="javascript:void(0)" v-bind:class="classStep(2)">
+                        <span class="step_no">2</span>
+                        <span class="step_descr">
+                            @Resource.ShippingAddress
+                        </span>
+                    </a>
+                </li>
+                <li>
+                    <a href="javascript:void(0)" v-bind:class="classStep(3)">
+                        <span class="step_no">3</span>
+                        <span class="step_descr">
+                            @Resource.Payment
+                        </span>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="container-fluid">
+                <div class="row">
+                    <h4 v-if="isOnStep(1)">@Resource.Login</h4>
+                    <h4 v-if="isOnStep(2)">@Resource.ShippingAddress</h4>
+                    <h4 v-if="isOnStep(3)">@Resource.Payment</h4>
+                    <div class="col-md-8 col-xs-12">
+                        <transition name="fade">
+                            <div class="padding-row" v-if="isOnStep(1)">
+                                @if (!User.Identity.IsAuthenticated)
+                                {
+                                    Html.RenderAction("LoginPartial", "Account");
+                                }
+                            </div>
+
+                            <div id="shipping_address" v-if="isOnStep(2)">
+                                @using (Html.BeginForm())
+                                {
+                                    <div class="container-fluid">
+                                        <div class="row">
+                                            <div class="col-md-6 col-xs-12" v-for="item in listAddress">
+                                                <div class="panel">
+                                                    <p class="name">{{item.CustomerName}}</p>
+                                                    <p class="address">
+                                                        @Resource.Address: {{item.Address}}
+                                                    </p>
+                                                    <p class="phone">@Resource.Phone: {{item.Phone}}</p>
+                                                    <p class="action">
+                                                        <button type="button" class="btn btn-primary" v-on:click="SelectAddress(item)">
+                                                            Giao đến địa chỉ này
+                                                        </button>
+                                                        <button type="button" class="btn btn-default" v-on:click="EditAddress(item.Id)">@Resource.Edit</button>
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                }
+                                <p>Bạn muốn giao hàng đến địa chỉ khác? <a v-on:click="AddAddress">Thêm địa chỉ giao hàng mới</a></p>
+                                <transition name="fade">
+                                    <div id="edit_address" v-show="isEditAddress">
+
+                                    </div>
+                                </transition>
+                            </div>
+
+                            <div v-if="isOnStep(3)">
+                                <div class="panel padding-row">
+                                    @using (Html.BeginForm("Checkout", "ShoppingCart", FormMethod.Post))
+                                    {
+                                        <div class="container-fluid">
+                                            <div class="row">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="@Html.NameFor(m => m.Order.AddressReceive)" id="@Html.IdFor(m => m.Order.AddressReceive)" v-model="shippingAddress.Id" />
+                                                <div class="form-title">@Html.DisplayNameFor(m => m.Order.ShippingMethod)</div>
+                                                <div class="form-choice">
+                                                    <p style="margin-left:20px"> @Model.DeliviryMethod</p>
+                                                    @*@foreach (var type in Model.ListShippingMethod)
+                                                    {
+                                                        <div class="radio">
+                                                            <label>@Html.RadioButtonFor(m => m.Order.ShippingMethod, type.Value)@type.Text</label>
+                                                        </div>
+                                                    }*@
+                                                </div>
+                                                <div class="form-title">@Html.DisplayNameFor(m => m.Order.PaymentType)</div>
+                                                <div class="form-choice">
+                                                    @foreach (var type in Model.ListPaymentType)
+                                                    {
+                                                        <div class="radio">
+                                                            <label>@Html.RadioButtonFor(m => m.Order.PaymentType, type.Value)@type.Text</label>
+                                                        </div>
+                                                    }
+                                                </div>
+                                                <div class="form-title">@Resource.ShippingInformation</div>
+                                                <div class="form-horizontal">
+                                                    <div class="checkbox">
+                                                        <label><input type="checkbox" name="@Html.NameFor(m => m.Order.UseNameOnAddress)" value="true" v-model="useNameOnAddress">@Resource.UseNameAndPhoneOnShippingAddress</label>
+                                                        <input name="@Html.NameFor(m => m.Order.UseNameOnAddress)" value="false" type="hidden">
+                                                    </div>
+                                                    <div class="panel" v-show="!useNameOnAddress">
+                                                        <div class="form-group">
+                                                            <span class="col-md-4 col-sm-6 col-xs-12 control-label">@Html.DisplayNameFor(m => m.Order.ReceiverName)</span>
+                                                            <div class="col-md-8 col-sm-6 col-xs-12">
+                                                                @Html.TextBoxFor(model => model.Order.ReceiverName, new { @class = "form-control" })
+                                                                @Html.ValidationMessageFor(model => model.Order.ReceiverName)
+                                                            </div>
+                                                        </div>
+                                                        <div class="form-group">
+                                                            <span class="col-md-4 col-sm-6 col-xs-12 control-label">@Html.DisplayNameFor(m => m.Order.ReceiverPhone)</span>
+                                                            <div class="col-md-8 col-sm-6 col-xs-12">
+                                                                @Html.TextBoxFor(model => model.Order.ReceiverPhone, new { @class = "form-control" })
+                                                                @Html.ValidationMessageFor(model => model.Order.ReceiverPhone)
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="col-md-4 col-sm-6 col-xs-12">
+                                                    <button class="btn btn-primary btn-block">@Resource.Checkout</button>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                    }
+                                </div>
+                            </div>
+                        </transition>
+                    </div>
+                    <div class="col-md-4 col-xs-12 padding-row">
+                        <div class="panel" v-if="isOnStep(3)">
+                            <div class="panel-title clearfix">
+                                <span>@Resource.ShippingAddress</span>
+                                <button class="btn btn-default pull-right" v-on:click="currentStep = 2">@Resource.Edit</button>
+                            </div>
+                            <div class="panel-body">
+                                <p><span class="name">{{shippingAddress.CustomerName}}</span></p>
+                                <p>@Resource.Phone: {{shippingAddress.Phone}}</p>
+                                <p>@Resource.Address: {{shippingAddress.Address}}</p>
+                            </div>
+                        </div>
+                        @{Html.RenderAction("OrderSummary");}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+@section scripts{
+    <script>
+        function EditAddressFail(data){
+            ShowAlertDialog(data.errorMsg);
+        }
+
+        function DoneEditAddress(data, isEdit){
+            if(isEdit){
+                vmCheckout.listAddress = data.listAddress;
+                vmCheckout.isEditAddress = false;
+            }
+            else{
+                vmCheckout.listAddress.push(data);
+                vmCheckout.isEditAddress = false;
+            }
+        }
+
+        function CancelEdit(){
+            vmCheckout.isEditAddress = false;
+        }
+
+        var baseEditAddress = '@Url.Action("EditAddressCheckout", "Account")';
+        var vmCheckout = new Vue({
+            el: '#checkout_page',
+            data: {
+                currentStep: @(User.Identity.IsAuthenticated? 2 : 1),
+                listAddress: @Html.Raw(Json.Encode(Model.ListAddress)),
+                isEditAddress:false,
+                useNameOnAddress:true,
+                shippingAddress:null
+            },
+            methods:{
+                EditAddress:function(id){
+                    var self = this;
+                    $.ajax({
+                        type: "GET",
+                        url: baseEditAddress + "/" + id,
+                        success: function (data) {
+                            $('#edit_address').html(data);
+                            InitAjaxForm('#edit_address');
+                            self.isEditAddress = true;
+                        },
+                        error: function (jqXHR, textStatus) {
+                            alert(textStatus);
+                        }
+                    });
+                },
+                AddAddress:function(id){
+                    var self = this;
+                    $.ajax({
+                        type: "GET",
+                        url: baseEditAddress,
+                        success: function (data) {
+                            $('#edit_address').html(data);
+                            InitAjaxForm('#edit_address');
+                            self.isEditAddress = true;
+                        },
+                        error: function (jqXHR, textStatus) {
+                            alert(textStatus);
+                        }
+                    });
+                },
+                SelectAddress:function(item){
+                    this.currentStep = 3;
+                    this.shippingAddress = item;
+                },
+                classStep: function(step) {
+                    return {
+                        'disabled': this.currentStep < step,
+                        'selected': this.currentStep === step,
+                        'done': this.currentStep > step
+                    }
+                },
+                isOnStep:function(step){
+                    return this.currentStep === step;
+                }
+            },
+            watch: {
+                currentStep: function(val){
+                    if(val === 3){
+                        @*this.$nextTick(function(){
+                            $('#@Html.IdFor(m => m.Order.ShippingDate)').datetimepicker({
+                                locale: '@Request.Cookies["lang"].Value.Substring(0,2)',
+                                format: 'DD/MM/YYYY'
+                            });
+                        })*@
+                    }
+                }
+            }
+        });
+    </script>
+}
+

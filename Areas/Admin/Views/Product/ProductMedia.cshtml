@@ -1,0 +1,84 @@
+﻿@model IEnumerable<Admin.Models.ProductVersionMediaViewModel>
+@using Store.Service.ProductServices
+
+
+<ul class="nav nav-tabs">
+    <li v-bind:class="index == '0' ? 'active' : ''" v-for="(media, index) in mediaTypes"
+        v-on:click="SelectedMediaType(media.MediaTypeID)">
+        <a href="#" data-toggle="tab">{{media.MediaTypeName}}</a>
+    </li>
+    <li class="pull-right">
+        <button class="btn btn-primary" type="button" v-on:click="AddMediaPopup()">@string.Format(Resource.CreatePlaceholder, Resource.ProductMedia)</button>
+    </li>
+</ul>
+<div class="tab-content">
+    <div class="tab-pane fade in active">
+        <table class="table table-hover">
+            <thead class="thead-inverse">
+                <tr>
+                    <th class="width-3">
+                        @Resource.LinkMedia
+                    </th>
+                    <th class="width-8">
+                        @Resource.Title
+                    </th>
+                    <th class="width-5">
+                        @Resource.MediaStyle
+                    </th>
+                    <th class="width-4">
+                        @Resource.Action
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr v-for="media in filteredData">
+                    <td>
+                        <div class="block-image">
+                            <span v-if="media.MediaUrl">
+                                <video v-if="media.MediaUrl.endsWith('.mp4') || media.MediaUrl.endsWith('.webm')" v-bind:src="media.MediaUrl" class="img-responsive img-table"></video>
+                                <a href="#" v-else>
+                                    <img v-bind:src="media.MediaUrl" alt="@Resource.Image" class="img-responsive img-table" />
+                                </a>
+                            </span>
+                        </div>
+                    </td>
+                    <td>
+                        {{media.Title}}
+                    </td>
+
+                    <td>
+                        {{media.MediaStyleName}}
+                    </td>
+                    <td>
+                        <div class="btn-group">
+                            <button type="button" v-on:click="UpdateMediaPopup(media.Id)" class="btn btn-default">
+                                <i class="fa fa-pencil"></i> @Resource.Update
+                            </button>
+                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                <span class="caret"></span>
+                                <span class="sr-only">Toggle Dropdown</span>
+                            </button>
+
+                            <ul class="dropdown-menu btn-dropdown-menu" role="menu">
+                                <li>
+                                    <a href="#" v-on:click="ViewMediaPopup(media.Id)">
+                                        <i class="fa fa-eye"></i> @Resource.View
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="#" v-on:click="DeleteMediaPopup(media.Id)">
+                                        <i class="fa fa-trash-o"></i> @Resource.Delete
+                                    </a>
+                                </li>
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div id="mediaModal" class="modal fade" role="dialog">
+    @{Html.RenderAction("AddProductMedia");}
+</div>

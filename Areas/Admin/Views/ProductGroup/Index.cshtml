@@ -1,0 +1,55 @@
+﻿@model Admin.Models.ProductGroupFilterViewModel
+@{
+    ViewBag.Title = Resource.ProductGroup;
+}
+
+<div class="page-title">
+    <div class="title_left">
+        <h3>@Resource.ProductGroup</h3>
+    </div>
+    <div class="title_right">
+        <div class="pull-right">
+            @Html.ActionLink(@Resource.Create, "Create", null, new { @class = "btn btn-primary" })
+        </div>
+    </div>
+</div>
+
+<div class="main-content">
+    @using (Ajax.BeginForm("ListProductGroup", "ProductGroup", new AjaxOptions { InsertionMode = InsertionMode.Replace, UpdateTargetId = "list", HttpMethod = "Get" }, new { id = "filter_div" }))
+    {
+        <div class="form-group clearfix">
+            <div class="col-md-6 col-sm-6 col-xs-12">
+                <label class="control-label">@string.Format(Resource.ParrentPlaceHolder, Resource.ProductGroup)</label>
+                @Html.DropDownListFor(m => m.ParentGroupId, ViewBag.ParentGroups as SelectList, @Resource.All, new { @class = "form-control ddl_select2" })
+            </div>
+            <div class="col-md-6 col-sm-6 col-xs-12">
+                <label class="control-label">@Resource.Title</label>
+                <div class="input-group">
+                    @Html.TextBoxFor(m => m.SearchString, new { @class = "form-control", @placeholder = @Resource.SearchPlaceholder })
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+                    </span>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div id="list">
+        @{Html.RenderAction("ListProductGroup", "ProductGroup", new { Model, Page = ViewBag.Page });}
+    </div>
+</div>
+@section scripts{
+    <script>
+        $('#ParentGroupId').change(function () {
+            $('#filter_div').submit();
+        });
+
+        $('#filter_div').submit(function () {
+            ChangeUrl({ ParentGroupId: $('#ParentGroupId').val(), SearchString: $('#SearchString').val() });
+        });
+
+        $(document).ready(function () {
+            ReplaceSelect2('@Request.Cookies["lang"].Value.Substring(0, 2)');
+        });
+    </script>
+}

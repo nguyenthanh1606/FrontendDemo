@@ -1,0 +1,54 @@
+﻿@using PagedList.Mvc
+@using Store.Service.Helper.ExtensionMethod
+
+@model PagedList.IPagedList<Admin.Models.OrderViewModel>
+
+@Styles.Render("~/Content/pagedList")
+
+<table class="table table-hover">
+    <thead class="thead-inverse">
+        <tr>
+            <th class="width-2">@Html.DisplayNameFor(model => model.FirstOrDefault().OrderID)</th>
+            <th class="width-2">@Html.DisplayNameFor(model => model.FirstOrDefault().Status)</th>
+            <th class="width-2">@Html.DisplayNameFor(model => model.FirstOrDefault().PaymentStatus)</th>
+            <th class="width-2">@Html.DisplayNameFor(model => model.FirstOrDefault().ShippingStatus)</th>
+            <th class="width-5">@Html.DisplayNameFor(model => model.FirstOrDefault().CustomerID)</th>
+            <th class="width-2">@Html.DisplayNameFor(model => model.FirstOrDefault().OrderDate)</th>
+            <th class="width-2">@Html.DisplayNameFor(model => model.FirstOrDefault().Total)</th>
+            <th class="width-3">@Resource.Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.OrderID</td>
+                <td>@item.Status.GetDescription()</td>
+                <td>@item.PaymentStatus.GetDescription()</td>
+                <td>@item.ShippingStatus.GetDescription()</td>
+                <td>
+                    @item.Email
+                </td>
+                <td>@item.OrderDate.Value.ToShortDateString()</td>
+                <td>@string.Format("{0:n0}",item.Total)</td>
+                <td>
+                    <div class="btn-group">
+                        <a href="@Url.Action("Details", new { id = item.OrderID })" class="btn btn-default">
+                            <i class="fa fa-eye" aria-hidden="true"></i> @Resource.View
+                        </a>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="pull-left">
+    @string.Format(Resource.PaginationTxt, Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber, @Model.PageCount)
+</div>
+<div class="pull-right">
+    @Html.PagedListPager(Model, page => Url.Action("AccountList",
+        new { page, Status = ViewBag.Status, ShippingStatus = ViewBag.ShippingStatus, PaymentStatus = ViewBag.PaymentStatus }),
+        PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() {
+            HttpMethod = "GET", UpdateTargetId = "list", OnSuccess = string.Format("UpdatePagingAjaxUrl(this)")  }))
+</div>

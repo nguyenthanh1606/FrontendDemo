@@ -1,0 +1,29 @@
+﻿
+@{
+    ViewBag.Title = Resource.ShoppingCart;
+}
+<link href="~/Themes/AnhNhan/css/checkout.css" rel="stylesheet" />
+<link href="~/Themes/AnhNhan/css/User.css" rel="stylesheet" />
+
+<div class="container-fluid wrap-page pd-left pd-right">
+
+    <div class="title-link">
+        @Html.Breadcrumb(Frontend.Infrastructure.Utility.BreadcrumbType.Custom, htmlAttributes: new { @class = "breadcrumb" }, customMenuName: Resource.ShoppingCart, customUrl: Url.Action("List", "ShoppingCart"))
+    </div>
+
+    <!-- main checkout -->
+    <div class="row" id="cartPage" style="margin: 0">
+        <div class="col-md-12 table-checkout" style="padding: 0">
+            <div class="title-form">
+                <span>GIỎ HÀNG CỦA BẠN</span>
+            </div>
+            <br/>
+            <div class="col-md-12">
+                <div class="titlepage">@Resource.CartEmptyMsg</div>
+                <a href="/">Tiếp tục mua hàng</a>
+            </div>
+            <br/>
+        </div>
+    </div>
+    <!-- end main checkout -->
+</div>

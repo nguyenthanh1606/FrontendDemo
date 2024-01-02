@@ -1,0 +1,21 @@
+﻿@model Frontend.Models.CustomerAddressViewModel
+
+@{
+    bool isEdit = ViewBag.IsEdit;
+}
+
+@using (Ajax.BeginForm(isEdit ? "EditAddress" : "AddAddress", "Account", new { isAjax = true },
+                new AjaxOptions { HttpMethod = "POST", OnSuccess = string.Format("DoneEditAddress(data, {0})", isEdit.ToString().ToLower()) }, null))
+{
+    <div class="form-horizontal">
+        @Html.AntiForgeryToken()
+        @Html.EditorForModel()
+
+        <div class="form-group" style="margin-bottom:15px;width:100%;float:left;">
+            <div class="">
+                <input type="submit" value='@(isEdit? Resource.Save : Resource.ShipToThisAddess)' class="btn btn-primary btn-danger submit-style" style="width:50%;float:left;"/>
+                <button class="btn btn-default submit-style" type="button" onclick="CancelEdit()" style="width:50%;float:left;">@Resource.Cancel</button>
+            </div>
+        </div>
+    </div>
+}

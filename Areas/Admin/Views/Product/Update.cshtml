@@ -1,0 +1,587 @@
+﻿@model Admin.Models.ProductViewModel
+@using Store.Service.ProductServices
+@{
+    ViewBag.Title = Resource.Product;
+}
+@section css{
+    @Styles.Render("~/Content/css/elFinder")
+    <link href="~/Content/css/bootstrap-colorpicker.min.css" rel="stylesheet" />
+}
+
+
+<div class="page-title">
+    <div class="title_left">
+        <h3>
+            @Resource.Product
+            <small>@Resource.Update</small>
+        </h3>
+    </div>
+    <div class="title_right">
+        <div class="pull-right">
+            <a href="@(ViewBag.ReturnUrl?? @Url.Action("Index"))" class="btn btn-default">@Resource.BackToList</a>
+            <button type="submit" name="submitButton" value="Update" class="btn btn-primary" onclick="$('#productInfoForm').submit()">
+                <i class="fa fa-floppy-o"> @Resource.Update</i>
+            </button>
+            <button type="button" name="submitButton" value="UpdateAndContinueEdit" class="btn btn-primary" onclick="UpdateProductAjax()">
+                <i class="fa fa-floppy-o"> @Resource.UpdateAndContinueEdit</i>
+            </button>
+            <button type="button" id="delete-product" data-toggle="modal" data-target="#product-delete-confirmation" class="btn btn-danger">
+                <i class="fa fa-trash-o"> @Resource.StopSelling</i>
+            </button>
+        </div>
+    </div>
+</div>
+
+<div class="main-content">
+    <div id="wizard" class="form_wizard">
+        <div>
+            <ul class="nav nav-tabs" role="tablist">
+
+                <li role="presentation" class="active">
+                    <a href="#general_info" aria-controls="general_info" role="tab" data-toggle="tab">@Resource.GeneralInfo</a>
+                </li>
+                <li role="presentation">
+                    <a href="#product_version" aria-controls="product_version" role="tab" data-toggle="tab">@Resource.ProductVersion</a>
+                </li>
+                <li role="presentation">
+                    <a href="#product_media" aria-controls="product_media" role="tab" data-toggle="tab">@Resource.ProductMedia</a>
+                </li>
+                @*<li role="presentation">
+                        <a href="#product_specification" aria-controls="product_specification" role="tab" data-toggle="tab">@Resource.Specification</a>
+                    </li>*@
+            </ul>
+            
+             <div class="tab-content">
+                <div role="tabpanel" class="tab-pane fade in active general_info" id="general_info">
+                    @using (Html.BeginForm("Update", "Product", FormMethod.Post, new { id = "productInfoForm" }))
+                    {
+                        <div class="form-horizontal">
+                            @Html.ValidationSummary(true)
+                            @Html.AntiForgeryToken()
+                            @Html.Hidden("ReturnUrl", (string)ViewBag.ReturnUrl)
+                            @Html.EditorFor(m => m.GeneralInfo)
+                        </div>
+                    }
+                </div>
+                <div role="tabpanel" class="tab-pane fade" id="product_version">
+                    @{ Html.RenderAction("ProductVersion", new { id = Model.GeneralInfo.ProductID }); }
+                </div>
+
+                <div role="tabpanel" class="tab-pane fade" id="product_media">
+                    @{ Html.RenderAction("ProductMedia", new { id = Model.GeneralInfo.ProductID }); }
+                </div>
+
+                @*<div role="tabpanel" class="tab-pane fade" id="product_specification">
+                        @{ Html.RenderAction("ProductSpecification", new { id = Model.GeneralInfo.ProductID }); }
+                </div>*@
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+<div id="product-delete-confirmation" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="product-delete-confirmation-title">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                <h4 class="modal-title" id="productmodel-delete-confirmation-title">@Resource.AreYouSure</h4>
+            </div>
+            @using (Html.BeginForm("Delete", "Product", new { id = Model.GeneralInfo.ProductID }, FormMethod.Post, null))
+            {
+                <div class="form-horizontal">
+                    <div class="modal-body">
+                        @Html.AntiForgeryToken()
+                        @Html.Hidden("ReturnUrl", (string)ViewBag.ReturnUrl)
+                        @Resource.StopSellingConfirmation
+                    </div>
+                    <div class="modal-footer">
+                        <span class="btn btn-default" data-dismiss="modal">@Resource.Cancel</span>
+                        <button type="submit" class="btn btn-primary pull-right">
+                            @Resource.StopSelling
+                        </button>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<div id="divModal" class="modal fade" role="dialog"></div>
+
+<script type="text/x-template" id="spec-template">
+    <tr v-if="!isEditing">
+        <td>{{data.SpecificationName}}</td>
+        <td>{{data.Value}}</td>
+        <td>
+            <button class="btn btn-primary" v-on:click="StartEditing">@Resource.Update</button>
+            <button class="btn btn-danger" v-on:click="$emit('delete-value')">@Resource.Delete</button>
+        </td>
+    </tr>
+    <tr v-else>
+        <td>{{tempValue.SpecificationName}}</td>
+        <td><input v-model="tempValue.Value" class="form-control" /></td>
+        <td>
+            <button class="btn btn-primary" v-on:click="Update">@Resource.Save</button>
+            <button class="btn btn-default" v-on:click="CancelEditing">@Resource.Cancel</button>
+        </td>
+    </tr>
+</script>
+
+@section scripts{
+    @Scripts.Render("~/bundles/elFinder")
+    <script type="text/javascript" src="~/Scripts/ckeditor/ckeditor.js"></script>
+    <script type="text/javascript" src="~/Scripts/ckeditor/adapters/jquery.js"></script>
+    @*<script type="text/javascript" src="~/Scripts/colorPicker/bootstrap-colorpicker.min.js"></script>*@
+
+    <script>
+        var vmGeneralInfo = new Vue({
+            el: '#productInfoForm',
+            data:{
+                isEditUrl: false,
+                currentUrl: '@(Model.GeneralInfo.FriendlyUrl?? "")',
+                friendlyUrl: '@(Model.GeneralInfo.FriendlyUrl?? "")',
+            },
+            methods: {
+                saveUrl: function () {
+                    if (this.isEditUrl) {
+                        if ($('#GeneralInfo_FriendlyUrl').valid()) {
+                            this.currentUrl = this.friendlyUrl;
+                            this.isEditUrl = false;
+                        }
+                    }
+                },
+                cancelEdit: function () {
+                    this.friendlyUrl = this.currentUrl;
+                    this.isEditUrl = false;
+                }
+            }
+        });
+    </script>
+
+    <script>
+        var newMedia = @Html.Raw(Json.Encode(new Admin.Models.ProductVersionMediaViewModel()));
+        var vmMedia = new Vue({
+            el: '#product_media',
+            data: {
+                versionMedia: JSON.parse(JSON.stringify(newMedia)),
+                action:0,
+                listMedia:null,
+                selectedProductVersionId:'',
+                selectedType: 0,
+                mediaTypes: @Html.Raw(Json.Encode(@ViewBag.MediaTypes)),
+                mediaStyles: @Html.Raw(Json.Encode(@ViewBag.MediaStyles)),
+            },
+            computed:{
+                mediaSubmitBtnText: function(){
+                    switch(this.action){
+                        case 0:
+                            return '@Html.Raw(Resource.Create)';
+                        case 1:
+                            return '@Html.Raw(Resource.Update)';
+                        case 2:
+                            return '@Html.Raw(Resource.View)';
+                        case 3:
+                            return '@Html.Raw(Resource.Delete)';
+                        default:
+                            return '';
+                    }
+                },
+                mediaAction:function(){
+                    switch(this.action){
+                        case 0:
+                            return '@Url.Action("AddProductMedia")';
+                        case 1:
+                            return '@Url.Action("UpdateProductMedia")';
+                        case 3:
+                            return '@Url.Action("DeleteProductMedia")';
+                        default:
+                            return '';
+                    }
+                },
+                mediaModalTitle:function(){
+                    switch(this.action){
+                        case 0:
+                            return '@Html.Raw(string.Format(Resource.CreatePlaceholder, Resource.ProductMedia.ToLower()))';
+                        case 1:
+                            return '@Html.Raw(string.Format(Resource.UpdatePlaceholder, Resource.ProductMedia.ToLower()))';
+                        case 3:
+                            return '@Html.Raw(string.Format(Resource.DeletePlaceholder, Resource.ProductMedia.ToLower()))';
+                        default:
+                            return '@Html.Raw(Resource.ProductMedia)';
+                    }
+
+                },
+                filteredData: function(){
+
+                    var data = this.listMedia;
+                    var type = this.selectedType;
+                    var selectedVersion = this.selectedProductVersionId;
+                    if(data != undefined){
+                        if(selectedVersion){
+                            data = data.filter(function (row) {
+                                return row.ProductVersionID == selectedVersion;
+                            });
+                        }else {
+                            data = data.filter(function (row) {
+                                return row.MediaType == type;
+                            });
+                        }
+                    }
+
+                    return data;
+
+                },
+            },
+            methods:{
+                SubmitMedia:function(){
+                    var self = this;
+                    var mediaForm = $('#mediaForm');
+                    mediaForm.validate();
+                    if(mediaForm.valid()){
+                        UpdateCKEditor('#mediaForm');
+                        $.ajax({
+                            type: "POST",
+                            url: self.mediaAction,
+                            data: mediaForm.serialize(),
+                            success: function( response ) {
+                                self.GetListMedia();
+                                $('#mediaModal').modal("hide");
+                            }
+                        });
+                    };
+                    if(this.action === 0){
+                        this.versionMedia = JSON.parse(JSON.stringify(newMedia));
+                    }
+                },
+                AddMediaPopup:function(){
+                    var self = this;
+                    if(self.action !== 0){
+                        self.action = 0;
+                        self.versionMedia = newMedia;
+                    }
+                    $('#mediaModal').modal();
+                },
+                UpdateMediaPopup:function(id){
+                    var self = this;
+                    if(self.action !== 1){
+                        self.action = 1;
+                        self.GetMedia(id, false);
+                    }
+                    else{
+                        if(id !== self.versionMedia.Id){
+                            self.GetMedia(id, false);
+                        }
+                    }
+                    $('#mediaModal').modal();
+                },
+                ViewMediaPopup:function(id){
+                    var self = this;
+                    if(self.action !== 2){
+                        self.action = 2;
+                        self.GetMedia(id, true);
+                    }
+                    else{
+                        if(id !== self.versionMedia.Id){
+                            self.GetMedia(id, true);
+                        }
+                    }
+                    $('#mediaModal').modal();
+                },
+                DeleteMediaPopup:function(id){
+                    var self = this;
+                    if(self.action !== 3){
+                        self.action = 3;
+                        self.GetMedia(id, true);
+                    }
+                    else{
+                        if(id !== self.versionMedia.Id){
+                            self.GetMedia(id, true);
+                        }
+                    }
+                    $('#mediaModal').modal();
+                },
+                GetListMedia:function(){
+                    var self = this;
+                    $.ajax({
+                        type: "GET",
+                        url: '@Url.Action("ListProductMedia", new { id = ViewBag.ProductId })',
+                        success: function( response ) {
+                            self.listMedia = response;
+                        }
+                    });
+                },
+                GetMedia:function(id, isDisplay){
+                    var self = this;
+                    DestroyCKEditor("#mediaForm");
+                    if(!isDisplay){
+                        $.ajax({
+                            type: "GET",
+                            url: '@Url.Action("GetProductMedia")' + "/" + id,
+                            success: function( response ) {
+                                self.versionMedia = response;
+                                ReplaceCKEditor("#mediaForm");
+                            }
+                        });
+                    }
+                    else{
+                        $.ajax({
+                            type: "GET",
+                            url: '@Url.Action("GetDisplayProductMedia")' + "/" + id,
+                            success: function( response ) {
+                                self.versionMedia = response;
+                            }
+                        });
+                    }
+                },
+                SelectedMediaType: function(type){
+                    this.selectedType = type;
+                }
+            },
+            created:function () {
+                this.GetListMedia();
+                this.selectedType = this.mediaTypes[0].MediaTypeID;
+            },
+            watch:{
+
+            }
+        });
+
+        @*var vmSpec = new Vue({
+            el: '#product_specification',
+            data: {
+                listSpec: @Html.Raw(Json.Encode(ViewBag.ListSpec)),
+                listSpecValue: [],
+                isAddNewSpec: false,
+            },
+            methods: {
+                StartAddNewSpec: function () {
+                    var self = this;
+                    self.isAddNewSpec = true;
+                    Vue.nextTick(function () {
+                        $('#newSpecOpt').select2({
+                            theme: "bootstrap",
+                            language: '@Request.Cookies["lang"].Value.Substring(0, 2)',
+                        });
+                    })
+                },
+                GetListSpecValue:function(){
+                    var self = this;
+                    $.ajax({
+                        type: "GET",
+                        url: '@Url.Action("ListSpecValue", new { id = ViewBag.ProductId })',
+                        success: function( response ) {
+                            self.listSpecValue = response;
+                        }
+                    });
+                },
+                CancelAddNewSpec: function () {
+                    var self = this;
+                    $('#newSpecOpt').select('destroy');
+                    self.isAddNewSpec = false;
+                },
+                AddNewSpec: function () {
+                    var self = this;
+                    $.ajax({
+                        type: "POST",
+                        url: '@Url.Action("AddNewSpecValue")',
+                        data: {
+                            SpecificationId: $('#newSpecOpt').val(),
+                            Value: $('#newSpecValue').val(),
+                            ProductId: @ViewBag.ProductId,
+                        },
+                        success: function (response) {
+                            $('#newSpecOpt').select('destroy');
+                            self.isAddNewSpec = false;
+                            self.listSpecValue.push(response);
+                        }
+                    });
+                },
+                DeleteValue: function (index) {
+                    var c = confirm("@Html.Raw(Resource.DeleteConfirmation)");
+                    if (c == true) {
+                        var self = this;
+                        var deleteValue = self.listSpecValue[index];
+                        $.ajax({
+                            type: "POST",
+                            url: '@Url.Action("DeleteSpecValue")',
+                            data: {
+                                Id: deleteValue.Id,
+                            },
+                            success: function (response) {
+                                self.listSpecValue.splice(index, 1)
+                            }
+                        });
+                    }
+                }
+            },
+            computed: {
+                listAvailableSpec: function () {
+                    var self = this;
+                    var result = self.listSpec.filter(function (row) {
+                        if (self.selectedSpec != null && self.selectedSpec.length > 0) {
+                            return self.selectedSpec.indexOf(parseInt(row.Value)) == -1;
+                        }
+                        else {
+                            return true;
+                        }
+                    });
+                    return result;
+                },
+                selectedSpec: function () {
+                    if (this.listSpecValue) {
+                        return this.listSpecValue.map(function (a) { return a.SpecificationId; })
+                    }
+                    return null;
+                }
+            },
+            created: function () {
+                this.GetListSpecValue();
+            },
+            components: {
+                specValueItem: {
+                    props: ['data', 'index', 'msg'],
+                    template: '#spec-template',
+                    data: function () {
+                        return {
+                            tempValue: null,
+                            isEditing: false,
+                        }
+                    },
+                    methods: {
+                        StartEditing: function () {
+                            var self = this;
+                            self.tempValue = self.data;
+                            self.isEditing = true;
+                        },
+                        CancelEditing: function () {
+                            var self = this;
+                            self.isEditing = false;
+                        },
+                        Update: function () {
+                            var self = this;
+                            $.ajax({
+                                type: "POST",
+                                url: '@Url.Action("UpdateSpecValue")',
+                                data: {
+                                    Id: self.tempValue.Id,
+                                    Value: self.tempValue.Value,
+                                },
+                                success: function (response) {
+                                    self.data = self.tempValue;
+                                    self.isEditing = false;
+                                }
+                            });
+                            self.isEditing = false;
+                        }
+                    }
+                },
+                child: {
+                    props: ['msg'],
+                    template: '#spec-template'
+                }
+            }
+        })*@
+
+        $(document).ready(function () {
+            initCkEl('@Url.Action("GetFile", "Files")', '@Request.Cookies["lang"].Value.Substring(0, 2)');
+            InitElf('@Url.Action("GetFile", "Files")', '@Request.Cookies["lang"].Value.Substring(0, 2)');
+
+            ReplaceCKEditor();
+            ReplaceSelect2('@Request.Cookies["lang"].Value.Substring(0, 2)');
+            //$("#ColorCode-cp").colorpicker({ format: 'hex' }).on('changeColor', function(e) {
+            //    vmMedia.versionMedia.ColorCode = e.color.toHex();
+            //});
+        });
+
+        @*fix jquery change event not fire native event*@
+        $('#MediaUrl').on('change', function(){
+            vmMedia.versionMedia.MediaUrl = $('#MediaUrl').val();
+        });
+
+        function AlertFailure() {
+            ShowAlertDialog('@Html.Raw(Resource.UnknowErrorMessage)');
+        };
+
+        function UpdateProductAjax(){
+            var infoForm = $('#productInfoForm');
+            UpdateCKEditor('#productInfoForm');
+            $.ajax({
+                type: infoForm.attr('method'),
+                url: infoForm.attr("action"),
+                data: infoForm.serialize() + "&submitButton=UpdateAndContinueEdit",
+                success: function( response ) {
+                    ShowAlertDialog('@Html.Raw(Resource.UpdateSuccess)');
+                }
+            });
+        }
+    </script>
+
+    <script>
+        $('#productGroup').change(function () {
+
+            var value = $(this).val();
+            GetList(value);
+        });
+
+        function GetList(value) {
+
+            $.getJSON('@Url.Action("GetProperties", "Product")', { ProductGroupId: value }, function (data) {
+                var items = [];
+
+                var length = Object.keys(data.ProductGroupProperties).length;
+                for (i = 0; i < length; i++) {
+                    // items.push("<li id='" + key + "'>" + val + "</li>");
+                    items.push("<div class='GroupProperties'><h5>" + data.ProductGroupProperties[i].Title + "</h5>");
+                    var object = data.ProductGroupProperties[i];
+                    var l = Object.keys(object.ListProductProperty).length;
+                    for(j = 0; j < l; j++)
+                    {
+                        var name = object.ListProductProperty[j].Title;
+                        var value = object.ListProductProperty[j].ProductPropertyID;
+                        items.push("<input type = 'checkbox' onclick='UpdatePP(this, " + value + ")' name = '" + name + "' value ='" + value + "'/><span>" + name + "</span><br/>");
+                    }
+                    items.push("</div>");
+                }
+
+                $("#listProperties").html("");
+
+                $("<div/>", {
+                    "class": "my-new-list",
+                    html: items.join("")
+                }).appendTo("#listProperties");
+            });
+
+        }
+
+        $(document).ready(function () {
+            $properties = $("#GeneralInfo_Properties").val();
+
+            $('#listProperties input').each(function() {
+                if ($properties.indexOf($(this).val()) >= 0)
+                {
+                    this.checked = true;
+                }
+            });
+
+        });
+
+        function UpdatePP(checkbox, value)
+        {
+            $properties = $("#GeneralInfo_Properties").val();
+            if(checkbox.checked == false)
+            {
+                $newproperties = $properties.replace(value + ',', '')
+            }
+            else
+            {
+                $newproperties = $properties + value + ",";
+            }
+            $("#GeneralInfo_Properties").val($newproperties);
+        }
+
+
+    </script>
+}
+

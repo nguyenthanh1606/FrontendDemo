@@ -1,0 +1,45 @@
+﻿@model PagedList.IPagedList<Admin.Models.FeedBackViewModel>
+@using PagedList.Mvc;
+
+<table class="table table-hover">
+    <thead class="thead-inverse">
+        <tr>
+            <th class="width-4">@Html.DisplayNameFor(model => model.FirstOrDefault().CustomerName)</th>
+            <th class="width-5">@Html.DisplayNameFor(model => model.FirstOrDefault().Email)</th>
+            <th class="width-7">@Html.DisplayNameFor(model => model.FirstOrDefault().Body)</th>
+            <th class="width-2">@Html.DisplayNameFor(model => model.FirstOrDefault().CreationDate)</th>
+            <th class="width-2">@Resource.Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @using (Ajax.BeginForm(new AjaxOptions { }))
+        {
+            foreach (var item in Model)
+            {
+                <tr>
+                    <td>@item.CustomerName</td>
+                    <td>@item.Email</td>
+                    <td>@item.Body.Truncate(50)</td>
+                    <td>@item.CreationDate.ToShortDateString()</td>
+                    <td>
+                        <a href="@Url.Action("Details", new { id = item.Id })" class="btn btn-default">
+                            <i class="fa fa-eye" aria-hidden="true"></i> @Resource.View
+                        </a>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+<div class="pull-left">
+    @string.Format(Resource.PaginationTxt, Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber, @Model.PageCount)
+</div>
+<div class="pull-right">
+    @Html.PagedListPager(Model, page => Url.Action("ListFeedBack",
+        new { page, Status = ViewBag.Status, Email = ViewBag.Email, Phone = ViewBag.Phone, CustomerName = ViewBag.CustomerName }),
+        PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() {
+            HttpMethod = "GET", UpdateTargetId = "list", OnSuccess = string.Format("UpdatePagingAjaxUrl(this)") }))
+</div>
+
+

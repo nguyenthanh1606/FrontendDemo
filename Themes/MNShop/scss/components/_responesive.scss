@@ -1,0 +1,10 @@
+@media screen and (min-width: 1500px) {
+  .pr {
+    &-body {
+      &_item {
+        flex: 0 0 calc(25% - 20px);
+        max-width: calc(25% - 20px);
+      }
+    }
+  }
+}

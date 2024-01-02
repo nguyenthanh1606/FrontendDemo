@@ -1,0 +1,28 @@
+﻿@model List<Frontend.Models.BannerViewModel>
+
+@if (Model.Any())
+{
+<div class="home-feedback" style="background: url( @Model.First().ImageUrl ); background-repeat: no-repeat; background-size: cover;
+">
+
+    <div class="swiper home-feedback_wrapper">
+        <div class="swiper-wrapper">
+            @foreach (var item in Model)
+            {
+            <div class="swiper-slide home-feedback_item">
+                <div style="margin: auto; max-width: 1200px; text-align: center">
+                    <div class="home-feedback_item__desc" style="margin: auto">
+                        @Html.Raw(item.Content)
+                    </div>
+                    <div class="home-feedback_item__info">
+                        <span>@item.Note</span>
+                    </div>
+                </div>
+            </div>
+            }
+        </div>
+        <div class="swiper-pagination"></div>
+
+    </div>
+</div>
+}

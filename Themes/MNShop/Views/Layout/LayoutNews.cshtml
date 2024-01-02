@@ -1,0 +1,52 @@
+﻿@model Frontend.Models.LayoutNewsViewModel
+@using PagedList.Mvc;
+@using PagedList;
+@using Frontend.Infrastructure.ExtensionMethod;
+@using Frontend.Infrastructure.Utility;
+
+@{
+    ViewBag.Title = Model.Group.Title;
+    ViewBag.Description = Model.Group.Description.RemoveHtml();
+    if (!string.IsNullOrEmpty(Model.Group.ImageUrl))
+    {
+        ViewBag.Image = Url.Content(Model.Group.ImageUrl, true);
+    }
+}
+
+<div class="page_image_title" style="background-image:url(@Model.Group.BannerUrl);">
+    <h3>
+        @Model.Group.Title
+    </h3>
+</div>
+<div class="breadcum_main">
+    <div class="container">
+        @Html.Breadcrumb(Frontend.Infrastructure.Utility.BreadcrumbType.Group, Model.Group.GroupID, new { @class = "breadcrumb" })
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-sm-12">
+            @if (Model.ListContentOfGroup.Count == 1)
+            {
+                var firstContent = Model.ListContentOfGroup.First();
+                <h2>@firstContent.Headline</h2>
+                <div class="content-body">
+                    @Html.Raw(firstContent.Summary)
+                    @Html.Raw(firstContent.Body)
+                </div>
+                
+            }
+            else
+            {
+                foreach (var item in Model.ListContentOfGroup)
+                {
+                    @Html.DisplayFor(m => item)
+                }
+                <div class="contentPagination">
+                    @Html.GetPageList((int)ViewBag.Page, (int)ViewBag.PageSize, (int)ViewBag.TotalItem)
+                </div>
+            }
+        </div>
+    </div>
+</div>

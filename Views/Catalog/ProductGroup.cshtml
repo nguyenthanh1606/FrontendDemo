@@ -1,0 +1,71 @@
+﻿@model Frontend.Models.SearchViewModel
+
+@{
+    ViewBag.Title = Model.ProductGroup.Title;
+    ViewBag.Description = Model.ProductGroup.Description.RemoveHtml();
+    if (!string.IsNullOrEmpty(Model.ProductGroup.ImageUrl))
+    {
+        ViewBag.Image = Url.Content(Model.ProductGroup.ImageUrl, true);
+    }
+}
+
+<div class="wrapper">
+    @Html.Breadcrumb(Frontend.Infrastructure.Utility.BreadcrumbType.ProductGroup, Model.ProductGroup.GroupID)
+
+    <div class="followcharacter-box">
+        <div id="ctl10_ctl00_Hfollowcharacter" class="Hfollowcharacter">TÌM KIẾM THEO CHỮ CÁI: </div>
+        <div id="ctl10_ctl00_followcharacter" class="followcharacter">
+            <a href="@Url.CustomAction(Store.Service.SystemService.RoutingType.ProductGroup, Model.ProductGroup.GroupID)">#</a>
+            @for (byte i = 65; i <= 90; i++)
+            {
+                string txt = System.Text.ASCIIEncoding.ASCII.GetString(new byte[]{i});
+                <a href="@Url.CustomAction(Store.Service.SystemService.RoutingType.ProductGroup, Model.ProductGroup.GroupID)?name=@txt">@txt</a>
+            }
+        </div>
+    </div>
+
+    <div class="banner-page">
+        @*<img src="@Model.ProductGroup.BannerUrl"/>*@
+       
+    </div>
+    <div class="ProductContent">
+        <div class="ProductContentLeft">
+            @Html.Hidden("filterAttributes")
+            @Html.Hidden("filterBrand")
+            @Html.Hidden("filterPrice")
+            @Html.Hidden("filterName")
+            @{Html.RenderPartial("_ProductCategory", Model.ListCategory);}
+        </div>
+        <div class="ProductContentRight">
+            <div class="SearchBox">
+                <div id="SearchTitle" class="SearchTitle full">@Model.ProductGroup.Title (@Model.TotalCount)</div>
+                <div class="searchLitem">
+                    <ul class="listItem" id="SearchBar">
+                        @foreach (var filter in Model.ListFilter)
+                        {
+                            <li>
+                                @filter.Item1
+                                <span class="cancelFilter" onclick="location.href='@filter.Item2'">X</span>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+            <div id="Result" style="float:left" class="clearfix">
+                @{Html.RenderPartial("_ProductList", Model);}
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section scripts{
+<link href="~/Content/css/jquery-ui.css" rel="stylesheet" />
+<script src="~/Scripts/jquery-ui.js"></script>
+<script src="~/Scripts/productCategories.js"></script>
+<script type="text/javascript">
+    var maxPrice = @ViewBag.MaxPrice;
+    var minPrice = @ViewBag.MinPrice;
+</script>
+   
+}

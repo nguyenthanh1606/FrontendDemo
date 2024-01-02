@@ -1,0 +1,153 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@(!string.IsNullOrEmpty(ViewBag.Title) ? ViewBag.Title + " - " + ViewBag.SiteTitle : ViewBag.SiteTitle)</title>
+    <meta name="description" content="@ViewBag.Description" />
+    <meta name="keywords" content="@ViewBag.MetaKeywords" />
+    @*Facebook meta*@
+    <meta property="og:url" content="@Request.Url.GetLeftPart(UriPartial.Path)" />
+    <meta property="og:type" content="article" />
+    <meta property="og:title" content="@Html.Raw(ViewBag.Title)" />
+    <meta property="og:description" content="@Html.Raw(ViewBag.Description)" />
+    <meta property="og:image" content="@ViewBag.Image" />
+
+    @*@Styles.Render("~/Content/css/common")*@
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Quicksand:wght@300;400;500;600;700&display=swap"
+          rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/css/toastr.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+    @RenderSection("css", required: false)
+    @Html.RenderDefaultThemeStyles("~/Themes/MNShop/css/all.css", "~/Themes/MNShop/css/main.css?v=1")
+    @{ Html.RenderAction(MVC.Component.GoogleAnalytics());}
+</head>
+<body>
+
+    @{Html.RenderAction(MVC.Component.Header());}
+
+    @RenderBody()
+
+    @*@Html.AlertModal("")*@
+
+    @*<div id="addToCartModal" class="modal" role="dialog">
+            <div class="modalOut">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h5 class="modal-title">@Resource.AddToCartSuccessfully</h5>
+
+                        </div>
+                        <div class="modal-body">
+                            <div id="product_modal_info"></div>
+                        </div>
+                        <div class="modal-footer">
+                            @Html.ActionLink(Resource.ToShoppingCart, "List", "ShoppingCart", null, new { @class = "btn btn-default" })
+                            <button type="button" class="btn btn-primary" data-dismiss="modal">@Resource.ContinueShopping</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>*@
+
+    @*@if (!User.Identity.IsAuthenticated)
+        {
+            @Html.Partial("_LoginPartial")
+        }*@
+
+    @{Html.RenderAction(MVC.Component.Footer());}
+
+    @Scripts.Render("~/bundles/common")
+    @Scripts.Render("~/bundles/jqueryval")
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/js/toastr.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
+    @Html.RenderDefaultThemeScripts("~/Themes/MNShop/scripts/vue.js", "~/Themes/MNShop/scripts/main.js")
+
+    <script>
+        $(function () {
+            window.prettyPrint && prettyPrint()
+            $(document).on('click', '.navbar .dropdown-menu', function (e) {
+                e.stopPropagation()
+            })
+        })
+
+        $("button#searchProduct").click(function () {
+
+            var href = $("#productCatalog option:selected").val();
+            var query = $("#searchQuery").val();
+            if (query != "") {
+                window.location.href = href + "?query=" + query;
+            }
+            else
+            {
+                window.location.href = href;
+            }
+        });
+
+
+        $(document).ready(function () {
+            UpdateWishlistNumber();
+        });
+
+        $(document).ready(function () {
+            var url = window.location;
+            // Will only work if string in href matches with location
+            $('ul.nav-child-menu a[href="' + url + '"]').closest("li").addClass('active');
+
+            //  Will also work for relative and absolute hrefs
+            //$('#mySidenav ul a').filter(function () {
+            //    return this.href == url;
+            //}).parents('li').addClass('sel');
+
+        });
+
+        var vmMenuCart = new Vue({
+            mixins: [vmShoppingCart],
+            el: '#cart',
+            data: {
+                cart: null,
+                discountValue:0,
+            },
+            filters: {
+                formatMoney: function (value) {
+                    return value.toLocaleString("@Request.Cookies["lang"].Value", { minimumFractionDigits: 0 });
+                }
+            },
+        });
+        // Get the current window.location.pathname
+        var currentPathname = window.location.pathname;
+
+        // Get all the navigation items
+        var navItems = document.querySelectorAll('.nav-link a');
+
+        // Variable to track if a match is found
+        var matchFound = false;
+
+        // Iterate through the navigation items and check if their href matches the current pathname
+        for (var i = 0; i < navItems.length; i++) {
+            var navItem = navItems[i];
+            var navItemPathname = navItem.getAttribute('href');
+
+            // Check if the currentPathname matches the navItemPathname
+            if (currentPathname.replace("/", "") === navItemPathname) {
+                // Add the --active class to the parent div of the matching navigation item
+                navItem.parentElement.classList.add('--active');
+                matchFound = true;
+                break; // Exit the loop once a match is found
+            }
+        }
+
+        // If no match is found, add --active to the first item
+        if (!matchFound && navItems.length > 0) {
+            navItems[0].parentElement.classList.add('--active');
+        }
+    </script>
+
+    @RenderSection("scripts", required: false)
+</body>
+</html>

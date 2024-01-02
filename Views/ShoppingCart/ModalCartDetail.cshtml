@@ -1,0 +1,15 @@
+﻿@model Frontend.Models.CartItemViewModel
+
+<div class="row">
+    <div class="col-xs-4">
+        <img class="img-responsive" src="@Model.ImageUrl" alt="@Model.Title">
+    </div>
+    <div class="col-xs-8">
+        <strong>@Model.Title</strong>
+        <div class="product-detail-price">@Resource.Price: <strong>10.000.000đ</strong></div>
+        @foreach (var property in Model.ListProperties)
+        {
+            <span>@property.Item1: <strong>@property.Item2</strong></span><br />
+        }   
+    </div>
+</div>

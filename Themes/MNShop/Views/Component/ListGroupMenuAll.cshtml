@@ -1,0 +1,29 @@
+﻿@model Frontend.Models.GroupViewModel
+
+@if (@Model.ListGroup.Count > 0)
+{
+    <ul>
+        @foreach (var group in Model.ListGroup)
+        {
+            if (@group.Layout != 2)
+            {
+                <li>
+                    <a href="@Url.CustomAction(Store.Service.SystemService.RoutingType.Group, group.GroupID)" style="text-transform:uppercase;">@group.Title</a>
+                    @if (@group.ListGroup.Any())
+                    {
+                        <ul class="sub-nav">
+                            @foreach (var groupc in @group.ListGroup)
+                            {
+                                <li>
+                                    <a href="@Url.CustomAction(Store.Service.SystemService.RoutingType.Group, groupc.GroupID)">@groupc.Title</a>
+                                </li>
+                            }
+                        </ul>
+                    }
+
+                </li>
+            }
+        }
+    </ul>
+
+}

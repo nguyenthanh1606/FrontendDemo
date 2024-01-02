@@ -1,0 +1,172 @@
+﻿@using Microsoft.Owin.Security
+@model Frontend.Models.AccountViewModel
+
+<div role="tabpanel" class="tab-pane active" id="loginForm">
+    @using (Ajax.BeginForm("LoginAjax", "Account", new AjaxOptions { HttpMethod = "POST", OnSuccess = "LoginDone" }, new { @class = "form-style" }))
+    {
+        <div class="main-form" style="padding:10px;">
+            <p>Đăng nhập vào trang Anh Nhân nếu bạn đã có tài khoản</p>
+            @Html.AntiForgeryToken()
+            <ul id="login_error_summary" class="validation-summary-errors"></ul>
+            <input name="returnUrl" type="hidden" value="@ViewBag.ReturnUrl" />
+            <div class="form-group">
+                @Html.ValidationMessageFor(model => model.LoginViewModel.Email)
+                @Html.TextBoxFor(model => model.LoginViewModel.Email, new
+           {
+               @class = "form-control",
+               @placeholder = Html.DisplayPlaceHolderFor(model => model.LoginViewModel.Email)
+           })
+            </div>
+            <div class="form-group">
+                @Html.ValidationMessageFor(model => model.LoginViewModel.Password)
+                @Html.TextBoxFor(model => model.LoginViewModel.Password, new
+           {
+               @class = "form-control",
+               @placeholder = Html.DisplayPlaceHolderFor(model => model.LoginViewModel.Password),
+               type = "password"
+           })
+            </div>
+            @*<div class="checkbox">
+                    <label>@Html.CheckBoxFor(m => m.LoginViewModel.RememberMe)<span>@Resource.RememberMe</span></label>
+
+                </div>*@
+            <div class="save-ps" style="margin-top:10px;">
+                <label>@Html.CheckBoxFor(m => m.LoginViewModel.RememberMe) Lưu thông tin đăng nhập</label>
+            </div>
+            <div>
+                <button type="submit" class="btn btn-danger sm-signUp submit-style btn-default">@Resource.Login</button>
+            </div>
+            <br />
+            <div class="row user-more" style="margin-left: 0;">
+                <div class="text-right col-md-6" style="border-right: 1px solid #ccc;">@Html.ActionLink(Resource.ForgetPassword, "ForgotPassword", "Account")</div>
+                <div class="login col-md-6">@Html.ActionLink(Resource.DontHaveAccount, "Register", "Account")</div>
+            </div>
+        </div>
+    }
+
+    @*<h4 class="title_item1">Hoặc đăng nhập bằng</h4>
+        <div class="login_other">
+            @{
+                var loginProviders = Context.GetOwinContext().Authentication.GetExternalAuthenticationTypes();
+                using (Html.BeginForm("ExternalLogin", "Account", new { ReturnUrl = ViewBag.ReturnUrl }))
+                {
+                    @Html.AntiForgeryToken()
+                    <input name="returnUrl" type="hidden" value="@ViewBag.ReturnUrl" />
+                    <div id="socialLoginList">
+                        <p>
+                            @foreach (AuthenticationDescription p in loginProviders)
+                            {
+                                <button type="submit" class="btn btn-default" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Log in using your @p.Caption account">@p.AuthenticationType</button>
+                            }
+                        </p>
+                    </div>
+                }
+            }
+        </div>*@
+
+
+    <div class="row" style="margin-left: 0; margin-right:0;">
+
+        @{
+            var loginProviders = Context.GetOwinContext().Authentication.GetExternalAuthenticationTypes();
+            using (Html.BeginForm("ExternalLogin", "Account", new { ReturnUrl = ViewBag.ReturnUrl }))
+            {
+                @Html.AntiForgeryToken()
+                <div id="socialLoginList" style="width:100%; float:left;padding:10px;">
+                    <span style="color: #000;">Hoặc đăng nhập bằng các tài khoản</span>
+                    @foreach (AuthenticationDescription p in loginProviders)
+                    {
+                        <div class="col-md-6" style="padding: 3px; float:left;">
+                            <div class="btn @GetClass(@p.AuthenticationType) text-center d-block">
+                                <button type="submit" class="btn btn-default" id="@p.AuthenticationType" name="provider" value="@p.AuthenticationType" title="Log in using your @p.Caption account">@Resource.Account @p.AuthenticationType</button>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        }
+    </div>
+
+
+
+</div>
+
+<div role="tabpanel" class="tab-pane" id="registerForm">
+    @using (Ajax.BeginForm("Register", "Account", new AjaxOptions { OnSuccess = "RegisterDone" }, new { @class = "form-style" }))
+    {
+        <div class="main-form" style="padding:10px;">
+            <p>Bạn có thể lựa chọn đăng ký tài khoản riêng tại Anh Nhân Computer. Vui lòng cung cấp cho chúng tôi một vài thông tin sau:</p>
+            @Html.AntiForgeryToken()
+            <input name="returnUrl" type="hidden" value="@ViewBag.ReturnUrl" />
+            <div class="form-group">
+                @Html.ValidationMessageFor(model => model.RegisterViewModel.Email)
+                @Html.TextBoxFor(model => model.RegisterViewModel.Email, new
+       {
+           @class = "form-control",
+           @placeholder = Html.DisplayPlaceHolderFor(model => model.RegisterViewModel.Email)
+       })
+            </div>
+            <div class="form-group">
+                @Html.ValidationMessageFor(model => model.RegisterViewModel.Password)
+                @Html.TextBoxFor(model => model.RegisterViewModel.Password, new
+           {
+               @class = "form-control",
+               @placeholder = Html.DisplayPlaceHolderFor(model => model.RegisterViewModel.Password)
+           })
+            </div>
+            <div class="form-group">
+                @Html.ValidationMessageFor(model => model.RegisterViewModel.ConfirmPassword)
+                @Html.TextBoxFor(model => model.RegisterViewModel.ConfirmPassword, new
+           {
+               @class = "form-control",
+               @placeholder = Html.DisplayPlaceHolderFor(model => model.RegisterViewModel.ConfirmPassword)
+           })
+            </div>
+            <div class="form-group">
+                @Html.ValidationMessageFor(model => model.RegisterViewModel.Fullname)
+                @Html.TextBoxFor(model => model.RegisterViewModel.Fullname, new
+           {
+               @class = "form-control",
+               @placeholder = Html.DisplayPlaceHolderFor(model => model.RegisterViewModel.Fullname)
+           })
+            </div>
+            <div class="form-group">
+                @Html.ValidationMessageFor(model => model.RegisterViewModel.Phone)
+                @Html.TextBoxFor(model => model.RegisterViewModel.Phone, new
+           {
+               @class = "form-control",
+               @placeholder = Html.DisplayPlaceHolderFor(model => model.RegisterViewModel.Phone)
+           })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(model => model.RegisterViewModel.Gender, new { @class = "control-label" })
+                <label class="radio-inline">
+                    @Html.RadioButtonFor(m => m.RegisterViewModel.Gender, 0) Nam
+                </label>
+                <label class="radio-inline">
+                    @Html.RadioButtonFor(m => m.RegisterViewModel.Gender, 1) Nữ
+                </label>
+                @Html.ValidationMessageFor(model => model.RegisterViewModel.Gender)
+            </div>
+            <div class="form-group">
+                @Html.ValidationMessageFor(model => model.RegisterViewModel.Birthday)
+                @Html.TextBoxFor(model => model.RegisterViewModel.Birthday, new
+           {
+               @class = "form-control datepicker",
+               @placeholder = Html.DisplayPlaceHolderFor(model => model.RegisterViewModel.Birthday)
+           })
+            </div>
+            <div class="form-group">
+                <button type="submit" class="btn btn-danger sm-signUp submit-style btn-default">@Resource.Register</button>
+            </div>
+        </div>
+    }
+</div>
+
+@functions{
+    public string GetClass(string type)
+    {
+        return type == "Google" ? "btn-danger link-gg" : type == "Facebook" ? "btn-info link-fb" : "";
+    }
+}
+

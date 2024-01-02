@@ -1,0 +1,58 @@
+﻿@model Admin.Models.CityFilterViewModel
+
+<link href="~/Content/css/PagedList.css" rel="stylesheet" />
+
+@{
+    ViewBag.Title = Resource.City;
+}
+
+<div class="page-title">
+    <div class="title_left">
+        <h3>@Resource.City</h3>
+    </div>
+</div>
+
+<div class="main-content">
+    @using (Ajax.BeginForm("CityList", "City", new AjaxOptions { InsertionMode = InsertionMode.Replace, UpdateTargetId = "list", HttpMethod = "Get" }, new { id = "filter_div" }))
+    {
+        <div class="form-group clearfix">
+            <div class="col-md-4 col-sm-6 col-xs-12">
+                <label class="control-label">@Resource.Area</label>
+                @Html.DropDownListFor(model => model.AreaID, ViewBag.Areas as SelectList, @Resource.All, new { @class = "form-control" })
+            </div>
+            <div class="col-md-8 col-sm-6 col-xs-12">
+                <label class="control-label">@Resource.Search</label>
+                <div class="input-group">
+                    @Html.TextBoxFor(model => model.SearchString, null, new { @class = "form-control", @placeholder = @Resource.SearchPlaceholder, @aria_describedby = "basic-addon2" })
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="submit"><i class="fa fa-search" aria-hidden="true"></i></button>
+                    </span>
+                </div>
+            </div>
+        </div>
+    }
+
+    <div id="list">
+        @{Html.RenderAction("CityList", "City", new { filter = Model, page = ViewBag.Page });}
+    </div>
+</div>
+
+@section scripts{
+    <script>
+        $('#AreaID').change(function () {
+            $('#filter_div').submit();
+        });
+
+        $('#filter_div').submit(function () {
+            ChangeUrl({ AreaID: $('#AreaID').val(), SearchString: $('#SearchString').val() });
+        });
+
+        $(document).ready(function () {
+            $('select').select2({
+                theme: "bootstrap",
+                language: '@Request.Cookies["lang"].Value.Substring(0, 2)'
+            });
+        });
+
+    </script>
+}

@@ -1,0 +1,106 @@
+﻿@model Admin.Models.ContentViewModel
+
+@{
+    ViewBag.Title = Resource.InsertContent;
+}
+
+@section css{
+    @Styles.Render("~/Content/css/elFinder")
+}
+
+<div class="page-title">
+    <div class="title_left">
+        <h3>
+            @Resource.Contents
+            <small>@Resource.InsertContent</small>
+        </h3>
+    </div>
+    <div class="title_right">
+        <div class="pull-right">
+            <div class="onoffswitch">
+                <input type="checkbox" class="onoffswitch-checkbox" id="myonoffswitch" value="true" onchange="$('#properties_container').toggleClass('showAdvance')">
+                <label class="onoffswitch-label" for="myonoffswitch">
+                    <span class="onoffswitch-inner" data-locale-basic="@Resource.Basic" data-locale-advanced="@Resource.Advance"></span>
+                    <span class="onoffswitch-switch"></span>
+                </label>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="main-content">
+    @using (Html.BeginForm("Create", "Content", FormMethod.Post, new { enctype = "multipart/form-data" }))
+    {
+        @Html.AntiForgeryToken()
+        @Html.ValidationSummary(true)
+
+
+        <div id="properties_container">
+            @Html.EditorForModel()
+            <div class="form-group">
+                <div class="col-md-offset-2 col-sm-offset-3 col-md-10 col-sm-9 col-xs-12">
+                    <input type="submit" value="@Resource.Insert" class="btn btn-primary" />
+                    <a href="@(ViewBag.ReturnUrl?? @Url.Action("Writed"))" class="btn btn-default">@Resource.Ignore</a>
+                    @Html.ActionLink(Resource.ReInput, "Insert", "Published", null, new { @class = "btn btn-default" })
+                    <button class="btn btn-default" type="button" onclick="myfunction()">@Resource.Unformat</button>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+@section scripts{
+    @Scripts.Render("~/bundles/elFinder")
+    <script type="text/javascript" src="~/Scripts/ckeditor/ckeditor.js"></script>
+    <script type="text/javascript" src="~/Scripts/ckeditor/adapters/jquery.js"></script>
+    <script>
+        var vmContent = new Vue({
+            el: '#main-body',
+            mixins: [contentMixin],
+            data: {
+                isEditUrl: false,
+                friendlyUrl: '@(Model.FriendlyUrl?? "")',
+                originalFriendlyUrl: '@(Model.FriendlyUrl?? "")',
+                content: @Html.Raw(Json.Encode(Model)),
+                contentTitleMaxLength: 128,
+                customizeTitleMaxLength: 128,
+            },
+            created: function () {
+                var self = this;
+                var title = document.getElementById('@Html.IdFor(m => m.Headline)');
+                self.contentTitleMaxLength = title.dataset.valMaxlengthMax;
+                var customizeTitle = document.getElementById('@Html.IdFor(m => m.CustomizeTitle)');
+                self.customizeTitleMaxLength = title.dataset.valMaxlengthMax;
+            }
+        });
+
+        $(document).ready(function () {
+            initCkEl('@Url.Action("GetFile", "Files")', '@Request.Cookies["lang"].Value.Substring(0, 2)');
+            InitElf('@Url.Action("GetFile", "Files")', '@Request.Cookies["lang"].Value.Substring(0, 2)');
+
+            ReplaceCKEditor();
+            ReplaceSelect2('@Request.Cookies["lang"].Value.Substring(0, 2)');
+
+            $("#Tags").select2({
+                theme: "bootstrap",
+                tags: true,
+                language: '@Request.Cookies["lang"].Value.Substring(0, 2)',
+            });
+        });
+
+        function myfunction() {
+            for (name in CKEDITOR.instances) {
+                var editor = CKEDITOR.instances[name];
+                editor.document.$.execCommand('SelectAll', false, null);
+                editor.document.$.execCommand('RemoveFormat', editor.getSelection().getNative());
+                editor.getSelection().getNative().removeAllRanges();
+            }
+        }
+
+        $('#PictureUrl, #BannerImages, #IconUrl').on('change', function () {
+            $('#' + $(this).attr('id') + 'Thumbnail').attr('src', $(this).val())
+        });
+    </script>
+}
+
+

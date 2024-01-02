@@ -1,0 +1,249 @@
+﻿#product-gallery{
+    width:56px;
+    display:inline-block;
+    float: left;
+    vertical-align:middle;
+    position: absolute;
+    z-index: 10;
+    height: 360px;
+    left:0;
+}
+
+.zoom-image-container{
+    width: 100%;
+    position: relative;
+    /* margin-left: -56px; */
+    padding-left: 56px;
+    display:inline-block;
+    float: left;
+}
+
+.zoom-image-container > div{
+    position:relative !important;
+}
+
+#product-gallery img{
+    border: 2px solid white;
+    width: 100%;
+}
+
+ #product-gallery .active img{border:2px solid #333 !important;}
+
+ @media screen and (min-width:768px){
+    ul.tabs
+    {
+        padding-top: 30px;
+        margin:0;
+        font-size: 0;
+        list-style-type: none;
+        text-align: left;/*set to left, center, or right to align the tabs as desired*/
+        width: 260px;
+        padding: 0px;
+        float: left;
+    }
+        
+    ul.tabs li
+    {
+      /* display: inline; */
+      /* margin-left: -3px; */
+      width: calc(100% - 3px);
+      /* margin: 0; */
+      background: White;
+      float: left;
+      text-decoration: none;
+      position: relative;
+      color: #696868;
+      outline: none;
+      background: #f2f2f2;
+      border: 1px solid #CCC;
+      /* border-right: 0; */
+      font-family: "Myriad-Pro";
+      text-align: center;
+      border-top: none;
+    }
+        
+    ul.tabs li a 
+    {
+      font-weight: normal;
+      font: 15px Arial;
+      position: relative;
+      /* font-size: 18px; */
+      padding: 10px 0px;
+      width: 100%;
+      float: left;
+      text-decoration: none;
+      color: #000;
+      text-transform: uppercase;
+      /* font-weight: bold; */
+      -webkit-font-smoothing: antialiased;
+      text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.26);
+    }
+
+    /*Note: IE8 and earlier doesn't support li:last-child. You have to add another class to the last tab (LI) and specify its border-right as below.*/
+    ul.tabs li:last-child a
+    {
+        border-right:1px solid #CCC;
+    }
+  
+        
+    ul.tabs li a:hover
+    {
+        color: #000;
+        background: white;
+    }
+        
+    ul.tabs li.selected a, ul.tabs li.selected a:hover {
+      font-weight: bold;
+      background: #fff;
+      color: #03C8AD;
+      font-family: Arial;
+      position: relative;
+      font-size: 15px;
+      padding: 10px 0px;
+      width: 100%;
+      float: left;
+    }
+        
+        
+    ul.tabs li.active
+    {
+        color: #000;
+        background: white;
+    }
+
+    div.tabcontents
+    {
+        /* border-top: 1px solid #CCC; */
+        /* padding: 60px 10px; */
+        text-align: justify;
+        font-family: Arial;
+        font-size: 16px;
+        color: #000000;
+        float: left;
+        width: calc(100% - 275px);
+        padding-left: 15px;
+        margin-top: 15px;
+        font-smooth: 2em;
+    }
+
+}
+
+/*---------------Review-----------------*/
+.rating{
+    position:relative;
+    display: inline-block;
+    color: #dfdfdf;
+}
+
+.rating.editable{
+    direction: rtl;
+}
+
+.rating.editable .star:hover{
+    cursor:pointer;
+}
+
+.rating .score{
+    display: block;
+    position: absolute;
+    top: 2px;
+    left: 0;
+    bottom: 0;
+    z-index: 1;
+    overflow: hidden;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+.rating span.star {
+    font-family: FontAwesome;
+    font-weight: normal;
+    font-style: normal;
+    display: inline-block;
+}
+
+
+.rating span.star:before {
+    content: "\f005";
+}
+
+.rating.editable span.star:hover:before, .rating.editable span.star:hover~span.star:before,
+.rating .score span.star:before, .rating .score span.star~span.star:before ,
+.star.active{
+    color: #f4cd27;
+}
+
+.score-detail{
+    margin-bottom:5px;
+    float:left;
+    width: 100%;
+}
+
+.score-detail .rating-title{
+    line-height:20px;
+    display:inline-block;
+    width:20%;
+    float:left;
+}
+
+.score-detail .rating-progress{
+    line-height:20px;
+    display:inline-block;
+    width:80%;
+    float:left;
+}
+
+.score-detail .progress{
+    margin-bottom: 0;
+    vertical-align: middle;
+}
+
+.rating-btn{
+    margin:10px 0;
+}
+
+.btn-rated-up{
+    background-color:#5f9ea0;
+}
+.btn-rated-down{
+    background-color:#f56b6b;
+}
+/*---------------End Review-----------------*/
+
+/*----------------User comment----------------------*/
+.review_title_block{
+    margin: 25px 0 15px;
+    padding: 10px;
+    background: #f1f1f1;
+}
+
+.thumbnail {
+    padding:0px;
+}
+.cmt-panel {
+	position:relative;
+    padding-left:5px;
+}
+.cmt-panel>.cmt-panel-heading:after,.cmt-panel>.cmt-panel-heading:before{
+	position:absolute;
+	top:11px;
+	right:100%;
+	width:0;
+	height:0;
+	display:block;
+	content:" ";
+	border-color:transparent;
+	border-style:solid solid outset;
+	pointer-events:none;
+}
+.cmt-panel>.cmt-panel-heading:after{
+	border-width:7px;
+	border-right-color:#f7f7f7;
+	margin-top:1px;
+}
+.cmt-panel>.cmt-panel-heading:before{
+	border-right-color:#ddd;
+	border-width:8px;
+}
+
+/*--------------End User comment-------------------*/

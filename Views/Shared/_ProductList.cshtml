@@ -1,0 +1,185 @@
+﻿@model Frontend.Models.SearchViewModel
+@using Store.Data.Models;
+@using Store.Service.SystemService;
+@using PagedList;
+@using PagedList.Mvc;
+
+@{ 
+    int productPerList = 5;
+    var list = Model.ListProduct.ToList();
+    int totalList = (int)Math.Ceiling((double)list.Count / productPerList);
+}
+
+@for (int i = 0; i < totalList; i++)
+{
+    @DrawProductList(@list.Take(productPerList).ToList());
+    @*Not last list*@
+    if(i < (totalList - 1))
+    {
+        list.RemoveRange(i * productPerList, productPerList);
+    }
+}
+
+
+
+@helper DrawProductList(List<Frontend.Models.ProductBoxViewModel> list) 
+{
+    <div id="ProductListBox" class="ProductListBox">
+        @if (list != null && list.Count != 0)
+        {
+            var first = list.First();
+            
+            <div class="itemProductBox-focus">
+                <div class="itemProduct-img">
+                    <a href="@Url.CustomAction(RoutingType.Product, first.ProductID)">
+                        <img src="@first.ImageUrl" />
+                    </a>
+                </div>
+                <div class="itemProduct-info">
+                    <div class="middleDiv">
+                        <div>
+                            <a href="@Url.CustomAction(RoutingType.Product, first.ProductID)">
+                                <div class="itemProduct-name">@first.Title</div>
+                            </a>
+                            <div class="itemProduct-price">
+                                @if (@first.DiscountPrice != 0)
+                                {
+                                    <span class="discount">từ @first.DiscountPrice VNĐ</span>
+                                    <span class="tag-discount">
+                                        @{
+                                        int temp = (int)((first.DiscountPrice - @first.Price) / @first.Price * 100);
+                                        }
+                                       @string.Format("{0}%", @temp)
+                                    </span>
+                                }
+                                <span class="default">từ @first.Price VNĐ</span>
+                            </div>
+                            <ul class="itemProduct-color">
+                                @foreach (var color in first.ListColorProperties)
+                                {
+                                <li class="item">
+                                    <input type="radio" name="pColor_@first.ProductID" class="productype" id="@first.ProductID@color.Id">
+                                    <label for="@first.ProductID@color.Id">
+                                        <span class="colorrgb">
+                                            <span style="background: @color.Note"></span>
+                                        </span>
+                                    </label>
+                                </li>
+                                }
+                            </ul>
+                            <ul class="itemProduct-tool clearfix">
+                                <li>
+
+                                    @Ajax.FontawsomeActionLink("fa-shopping-cart", "", "AddToCart_Catalog", "ShoppingCart", new { id = first.ProductID },
+                                    new AjaxOptions { HttpMethod = "POST", OnFailure = "AddToCartFail", OnSuccess = "AddToCartSuccess", InsertionMode = InsertionMode.Replace, UpdateTargetId = "product_modal_info" },
+                                    new { @class = "add­to­cart" })
+                                </li>
+                            </ul>
+
+
+                            @if (!string.IsNullOrEmpty(first.CouponCode))
+                            {
+                                <div class="product-info">
+                                    <div class="product-coupon-code">Nhập mã: <span style="color:red;">@first.CouponCode</span></div>
+                                    <div class="product-coupon-code">Nhận giảm: <span style="color:red;">@first.DiscountCodeValue</span> VNĐ</div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            list.Remove(first);
+            <div class="itemProductNormal">
+                @foreach(var item in list)
+                {
+                    <div class="itemProductBox-small">
+                        <div class="itemProduct-img">
+                            <a href="@Url.CustomAction(RoutingType.Product, item.ProductID)">
+                                <img src="@item.ImageUrl" />
+                            </a>
+                        </div>
+                        <div class="itemProduct-info-small">
+                            <div class="middleDiv">
+                                <div>
+                                    <a href="@Url.CustomAction(RoutingType.Product, item.ProductID)">
+                                        <div class="itemProduct-name">@item.Title</div>
+                                    </a>
+                                    <div class="itemProduct-price">
+                                    @if (@item.DiscountPrice != 0)
+                                    {
+                                        <span class="discount">từ @item.DiscountPrice VNĐ</span>
+                                        <span class="tag-discount">
+                                        @{
+                                        int temp = (int)((item.DiscountPrice - item.Price) / item.Price * 100);
+                                        }
+                                            @string.Format("{0}%", @temp)
+                                        </span>
+                                    }
+                                    <span class="default">từ @item.Price VNĐ</span>
+                                    </div>
+                                    <ul class="itemProduct-color">
+                                        @foreach (var color in item.ListColorProperties)
+                                        {
+                                            <li class="item">
+                                                <input type="radio" name="pColor_@first.ProductID" class="productype" id="@first.ProductID@color.Id">
+                                                <label for="@first.ProductID@color.Id">
+                                                    <span class="colorrgb">
+                                                        <span style="background: @color.Note"></span>
+                                                    </span>
+                                                </label>
+                                            </li>
+                                        }
+                                    </ul>
+                                    <ul class="itemProduct-tool clearfix">
+                                        <li>
+                                            @Ajax.FontawsomeActionLink("fa-shopping-cart", "", "AddToCart_Catalog", "ShoppingCart", new { id = item.ProductID },
+                                    new AjaxOptions { HttpMethod = "POST", OnFailure = "AddToCartFail", OnSuccess = "AddToCartSuccess", InsertionMode = InsertionMode.Replace, UpdateTargetId = "product_modal_info" },
+                                    new { @class = "add­to­cart" })
+                                        </li>
+                                    </ul>
+
+                                    @if (!string.IsNullOrEmpty(item.CouponCode))
+                                    {
+                                        <div class="product-info">
+                                            <div class="product-coupon-code">Nhập mã: <span style="color:red;">@item.CouponCode</span></div>
+                                            <div class="product-coupon-code">Nhận giảm: <span style="color:red;">@item.DiscountCodeValue</span> VNĐ</div>
+                                        </div>
+                                    }
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                }
+
+            </div>
+        }
+    </div>
+
+}
+
+
+@{  
+    var parameters = new Dictionary<string, string>();
+    if(!string.IsNullOrEmpty(@Request.QueryString["attr"]))
+    {
+        parameters.Add("attr", @Request.QueryString["attr"]);
+    }
+        
+
+    if (!string.IsNullOrEmpty(@Request.QueryString["brand"]))
+    {
+        parameters.Add("brand", @Request.QueryString["brand"]);
+    }
+
+
+    if (!string.IsNullOrEmpty(@Request.QueryString["price"]))
+    {
+        parameters.Add("price", @Request.QueryString["price"]);
+    }        
+        
+    
+    @Html.GetPageList(Model.ListProduct.PageNumber, Model.ListProduct.PageSize, Model.ListProduct.TotalItemCount, parameters);            
+}

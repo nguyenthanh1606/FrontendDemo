@@ -1,0 +1,189 @@
+﻿@model Frontend.Models.ProductCategoryViewModel
+@using Frontend.Models;
+@using Store.Service.ProductServices;
+
+
+<div class="CategoryName">@Resource.Category</div>
+
+<div class="left-menu">
+    <div class="list-product">
+
+        <div class="type-search">
+            <div class="one-search">
+                <div class="name-search">
+                    <span>@Resource.ProductGroup</span>
+                </div>
+                <div class="list-search">
+                    <ul class="category productGroup" name="brand">
+                        @foreach (var item in Model.ListProductGroup)
+                        {
+                            @DrawProductGroup(item)
+                        }
+                    </ul>
+                </div>
+            </div>
+
+            @foreach (var item in Model.ProductAttributes)
+            {
+                @*Only show filter if has more than 1 value*@
+                if (item.Value != null && item.Value.Count() > 1)
+                {
+                    <div class="one-search">
+                        <div class="name-search">
+                            <span>@item.Key.Title</span>
+                        </div>
+                        <div class="list-search">
+                            @if (item.Key.Type == (int)ProductGroupPropertiesType.Color)
+                            {
+                                <ul class="category color" name="attribute">
+                                    @foreach (var p in item.Value)
+                                    {
+                                        <li class="item">
+                                            <input type="checkbox" class="productype" id="@p.ProductPropertyID" value="@p.ProductPropertyID">
+                                            <label for="@p.ProductPropertyID">@p.Title<span style="background:@p.Note;" class="colorrgb"></span></label>
+                                        </li>
+                                    }
+                                </ul>
+                            }
+                            else if (item.Key.Type == (int)ProductGroupPropertiesType.Size)
+                            {
+                                <div class="list-search">
+                                    <ul class="category size" name="attribute">
+                                        @foreach (var p in item.Value)
+                                        {
+                                            <li class="item">
+                                                <input type="checkbox" class="productype" id="@p.ProductPropertyID" value="@p.ProductPropertyID">
+                                                <label for="@p.ProductPropertyID">@p.Title<span class="colorrgb"></span></label>
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                            }
+                            @*else if (item.Key.Type == (int)ProductGroupPropertiesType.Material)
+                                {
+                                    <div class="list-search">
+                                        <ul class="category material" name="attribute">
+                                            @foreach (var p in item.Value)
+                                            {
+                                                <li class="item">
+                                                    <input type="checkbox" class="productype" id="@p.ProductPropertyID" value="@p.ProductPropertyID">
+                                                    <label for="@p.ProductPropertyID">@p.Title<span class="colorrgb"></span></label>
+                                                </li>
+                                            }
+                                        </ul>
+                                    </div>
+                                }*@
+                            else if (item.Key.Type == (int)ProductGroupPropertiesType.Normal)
+                            {
+                                <div class="list-search">
+                                    <ul class="category pattern" name="attribute">
+                                        @foreach (var p in item.Value)
+                                        {
+                                            <li class="item">
+                                                <input type="checkbox" class="productype" id="@p.ProductPropertyID" value="@p.ProductPropertyID">
+                                                <label for="@p.ProductPropertyID">@p.Title<span class="colorrgb"></span></label>
+                                            </li>
+                                        }
+                                    </ul>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+
+            }
+
+            <div class="one-search">
+                <div class="name-search">
+                    <span>Giá</span>
+                </div>
+                <div class="list-search">
+                    <ul class="category price">
+                        <li>
+                            <div id="filter_slider"></div>
+                            <p>
+                                <span id="price"></span>
+                            </p>
+                        </li>
+                        <li>
+                            <button class="btn btn-default" onclick="loadProduct();loadSearchBar()">Ok</button>
+                        </li>
+                    </ul>
+
+                </div>
+            </div>
+
+            <div class="one-search">
+                <div class="name-search">
+                    <span>@Resource.Brand</span>
+                </div>
+                <div class="list-search">
+                    <ul class="category brand" name="brand">
+                        @foreach (var item in Model.Brands)
+                        {
+                            <li class="item">
+                                <input type="checkbox" name="brand" class="productype" id="@item.Id" value="@item.Id">
+                                <label for="@item.Id">@item.Name (@item.Count)<span class="colorrgb"></span></label>
+                            </li>
+                        }
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="type-product">
+            @if (Model.ShoppingCart.Count != 0)
+            {
+                <div>
+                    <div class="name-search">
+                        <span>@Resource.ShoppingCart</span>
+                    </div>
+                    <div class="list-search">
+                        <ul class="category shopping-cart">
+                            @foreach (var item in Model.ShoppingCart)
+                            {
+                                <li>
+                                    <div class="itemProductBox-small">
+                                        <div class="itemProduct-img">
+                                            <a href='@Url.CustomAction(Store.Service.SystemService.RoutingType.Product, item.ProductID)'>
+                                                <img src="@(!string.IsNullOrEmpty(item.ImageUrl)? @item.ImageUrl : "/Content/Images/product_placeholder.png")" />
+                                            </a>
+                                        </div>
+                                        <div class="itemProduct-info">
+                                            <a href='@Url.CustomAction(Store.Service.SystemService.RoutingType.Product, item.ProductID)'>
+                                                @item.Title
+                                            </a>
+                                        </div>
+                                    </div>
+                                </li>
+                            }
+
+                        </ul>
+
+                    </div>
+                </div>
+            }
+
+        </div>
+    </div>
+</div>
+
+@helper DrawProductGroup(ProductGroupViewModel group)
+{
+if (group.Title != null)
+{
+        <li class="item">
+            <label>
+                <a href="@(Url.CustomAction(Store.Service.SystemService.RoutingType.ProductGroup, group.GroupID) + "?" + ViewBag.QueryString)">@group.Title (@group.Count)</a>
+            </label>
+            @if (group.ChildGroup != null && group.ChildGroup.Count > 0)
+            {
+                <ul class="category productGroup">
+                    @foreach (ProductGroupViewModel child in group.ChildGroup)
+                    {
+                        @DrawProductGroup(child)
+                    }
+                </ul>
+            }
+        </li>
+    }
+}

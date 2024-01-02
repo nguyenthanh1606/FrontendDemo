@@ -1,0 +1,29 @@
+﻿@model Frontend.Models.FooterViewModel
+
+
+<div class="footer">
+    <div class="wrapper">
+        <div class="ft-l">
+            <div class="ft-logo">
+                <a href="/">@Html.BannerImage(1, Request.Cookies["lang"].Value)</a>
+            </div>
+            <div class="contact-info">
+                <div class="contact-info-title">@Resource.Address: @Model.Address</div>
+                <div class="contact-info-phone">@Resource.HotLine: @Model.Hotline</div>
+            </div>
+
+        </div>
+        <div class="ft-r">
+            <div class="ft-socialWrap">
+                <div id="ctl11_Footer2_socialM" class="ft-social">
+                    <a target="_blank" href="/" class="ft-facebook"><i class="fa fa-facebook"></i></a>
+                    <a target="_blank" href="/" class="ft-twinter"><i class="fa fa-twitter"></i></a>
+                    <a target="_blank" href="/" class="ft-google"><i class="fa fa-google-plus"></i></a>
+                    <a target="_blank" href="/" class="ft-rss"><i class="fa fa-rss"></i></a>
+                    <a target="_blank" href="/" class="ft-youtube"><i class="fa fa-youtube"></i></a>
+                </div>
+                <div class="tab">DESIGN BY <a href="http://tabweb.vn">TAB</a></div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,18 @@
+﻿@{
+    ViewBag.Title = Resource.RejectedContent;
+}
+
+<div class="page-title">
+    <div class="title_left">
+        <h3>
+            @Resource.Contents
+            <small>@Resource.RejectedContent</small>
+        </h3>
+    </div>
+</div>
+
+<div class="main-content">
+    <div id="list">
+        @{Html.RenderAction("ListRejected", "Content");}
+    </div>
+</div>

@@ -1,0 +1,35 @@
+﻿@model Frontend.Models.ProductBoxViewModel
+
+<div class="product-wrapper">
+    <div>
+        <div class="a-product">
+            <a href='@Url.CustomAction(Store.Service.SystemService.RoutingType.Product, Model.ProductID)'>
+                <div class="product-img">
+                    <img src="@(!string.IsNullOrEmpty(Model.ImageUrl)? @Model.ImageUrl : "/Content/Images/product_placeholder.png")"  />
+                </div>
+            </a>
+        </div>
+        <div class="product-box">
+            <div class="product-info">
+                <div class="product-name">@Model.Title</div>
+                <div class="product-price">@String.Format("{0:n0}", @Model.Price) VNĐ</div>
+            </div>
+            <div class="product-tool">
+                <div class="add-cart-box">
+                    @Ajax.ActionLink(Resource.AddToCart, "AddToCart_Catalog", "ShoppingCart", new { id = Model.ProductID }, 
+                        new AjaxOptions { HttpMethod = "POST", OnFailure = "AddToCartFail", OnSuccess = "AddToCartSuccess", InsertionMode = InsertionMode.Replace, UpdateTargetId = "product_modal_info"},
+                        new { @class = "addtocart add-cart" })
+                </div>
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.CouponCode))
+            {
+                <div class="product-info">
+                    <div class="product-coupon-code">Nhập mã: <span style="color:red;">@Model.CouponCode</span></div>
+                    <div class="product-coupon-code">Nhận giảm: <span style="color:red;">@Model.DiscountCodeValue</span> VNĐ</div>
+                </div>
+            }
+            
+        </div>
+    </div>
+</div>

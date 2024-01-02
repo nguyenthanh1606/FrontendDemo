@@ -1,0 +1,140 @@
+﻿@model Frontend.Models.FooterViewModel
+@using Store.Service.Models
+@using Frontend.Infrastructure.Helpers
+
+@{
+    string themeHomeViewPath = "~/Themes/" + TabWeb.GetCurrentTheme() + "/Views/Home/{0}.cshtml";
+}
+<div class="lineCenter text-center">
+    <div class="lineCenter-button text-uppercase m-backtotop" onclick="handleScrollToTop()">
+        Lên đầu trang
+    </div>
+</div>
+<div class="border-bot">
+    <div class="container  ">
+        <div class="m-auto m-80 logo-qb">
+            <img src="~/Themes/MNShop/images/MN logo Art House đen 2.png" />
+            <img src="~/Themes/MNShop/images/MN logos thuong dung đen 3 1.png" />
+            <img src="~/Themes/MNShop/images/MN dau tron noi 36mm 1.png" />
+        </div>
+    </div>
+</div>
+<div class="container border-bot" style="margin-top: 1rem; padding-bottom: 2rem; margin-bottom: 1rem;">
+    <div class="footer-top align-items--center">
+        <div class="signInNews">
+            <div class="signInNews-content justyfy-spaceBetween align-items--center">
+                <div class="signInNews-text">
+                    <h4 class="text-bold">Đăng ký nhận tin từ chúng tôi</h4>
+                    <p>
+                        Quis ipsum suspendisse ultrices gravida. Risus commodo viverra maecenas accumsan lacus
+                    </p>
+                </div>
+                <div class="signInNews-form">
+                    <form action="">
+                        <div class="form-group">
+                            <input type="text" class="form-control" placeholder="E-mail của bạn">
+                            <button type="submit" class="text-uppercase btn btn-1">Đăng ký</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+        <div class="followUs">
+            <div class="followUs-list">
+                <ul>
+                    <li>
+                        <h4 class="text-bold">Theo dõi chúng tôi tại</h4>
+                    </li>
+                    <li><a href="@Model.Facebook"><img src="~/Themes/MNShop/Images/icons/fb.png" alt=""></a></li>
+                    <li><a href="#"><img src="~/Themes/MNShop/Images/icons/ins.png" alt=""></a></li>
+                    <li><a href="#"><img src="~/Themes/MNShop/Images/icons/pri.png" alt=""></a></li>
+                    <li><a href="@Model.Youtube"><img src="~/Themes/MNShop/Images/icons/you.png" alt=""></a></li>
+                    <li><a href="#"><img src="~/Themes/MNShop/Images/icons/tik.png" alt=""></a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer class="footer">
+    <div class="container">
+        <div class="footer-main">
+            <div class="footer-main--left">
+                <div class="footer-logoList">
+                    <a href="/" title="@Model.SiteTitle">
+                        @Html.BannerImage(3, Request.Cookies["lang"].Value, new { id = "site-logo", @alt = "MNShop" })
+                    </a>
+                    <img src="~/Themes/MNShop/images/MN logos thuong dung đen 2 1.png" />
+                </div>
+                <div class="company-i">
+                    <strong>Showroom MN ArtHouse</strong>
+                    <p>16 Lê A, Phường Tân Tiến, TP. Biên Hòa, Đồng Nai</p>
+                    <p>Điện thoại: <a href="tel:0966 925 358">0966 925 358</a></p>
+                    <strong>Họa thất:</strong>
+                    <p>1A, Cư xá Tỉnh đội, P. Tân Phong, TP. Biên Hòa, Đồng Nai</p>
+                    <p>Điện thoại: <a href="tel:0966 925 358">0966 925 358</a></p>
+                </div>
+                @*<div class="desc">
+                    @Model.Description.RemoveHtml()
+                </div>*@
+                <div class="footer-listContact">
+                    <ul>
+                        <li>
+                            <div class="footer-listContact--icon">
+                                <img src="~/Themes/MNShop/Images/icons/i-mess.png" alt="">
+                            </div>
+                            <div class="footer-listContact--text">
+                                <h5>Messenger</h5>
+                                <a href="@Model.Facebook">http://m.me/mnshop</a>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="footer-listContact--icon">
+                                <img src="~/Themes/MNShop/Images/icons/i-call.png" alt="">
+                            </div>
+                            <div class="footer-listContact--text">
+                                <h5>Call Center</h5>
+                                <a href="tel:@Model.Phone.Replace(".","")">@Model.Hotline</a>
+                            </div>
+                        </li>
+                        <li>
+                            <div class="footer-listContact--icon">
+                                <img src="~/Themes/MNShop/Images/icons/i-mail.png" alt="">
+                            </div>
+                            <div class="footer-listContact--text">
+                                <h5>Mail Contact</h5>
+                                <a href="mailto:@Model.EmailContact">@Model.EmailContact</a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-main--right" style="padding-top: 1.5rem">
+                <div class="footer-menuList">
+
+                    @if (Model.FooterMenu.GetAllChilds().Any())
+                    {
+                        foreach (var item in Model.FooterMenu.GetAllChilds())
+                        {
+                            <div class="footer-menuItem">
+                                <h5 class="title">@item.Value.MenuName</h5>
+                                @if (item.GetAllChilds().Any())
+                                {
+                                    <ul>
+                                        @foreach (var item2 in item.GetAllChilds())
+                                        {
+                                            <li><a href="@item.Value.SelectedCss@item2.Value.Url">@item2.Value.MenuName</a></li>
+                                        }
+                                    </ul>
+                                }
+                            </div>
+                        }
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>
+<aside class="line-top d-flex flex-column flex-center flex-middle">
+    <span>@Model.Copyright</span>
+</aside>

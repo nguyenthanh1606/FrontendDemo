@@ -1,0 +1,20 @@
+﻿@model IList<Frontend.Models.ProductBoxViewModel>
+<link href="~/Themes/CustomTheme/css/slick.css" rel="stylesheet" />
+<link href="~/Themes/CustomTheme/css/Slideprod1.css" rel="stylesheet" />
+
+<div class="slider responsive @ViewBag.SliderID ">
+    @foreach (var product in @Model)
+    {
+        <div>
+            <div class="prdsl"><a href=""><img src="@product.ImageUrl" /></a></div>
+            <div class="prdsm fl"><a href="">@product.Title</a></div>
+            <div class="prdpr fl fw">@product.Price</div>
+        </div>
+    }
+
+</div>
+<div class="detailprod fl fw">
+    <div class="dtpr fr"><a href="">Xem toàn bộ</a></div>
+</div>
+
+

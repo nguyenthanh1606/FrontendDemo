@@ -1,0 +1,54 @@
+﻿@model PagedList.IPagedList<Admin.Models.ApproveContentViewModel>
+@using PagedList.Mvc;
+
+@Styles.Render("~/Content/pagedList")
+
+<div id="watting_content">
+    <table class="table table-hover">
+        <thead class="thead-inverse">
+            <tr>
+                <th class="width-7">
+                    @Html.DisplayName(@Resource.Headline)
+                </th>
+                <th class="width-7">
+                    @Html.DisplayName(@Resource.PublishingInGroup)
+                </th>
+                <th class="width-6">
+                    @Html.DisplayName(@Resource.Action)
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @item.Headline
+                    </td>
+                    <td>
+                        @item.PublishingInGroup
+                    </td>
+                    <td>
+                        <button type="button" class="btn btn-primary" onclick="ApproveContent(@item.ContentID, @item.Version)">
+                            <i class="fa fa-check" aria-hidden="true"></i> @Resource.Approve
+                        </button>
+                        <button type="button" class="btn btn-default" onclick="RejectContent(@item.ContentID, @item.Version, '@item.Headline')">
+                            <i class="fa fa-ban" aria-hidden="true"></i> @Resource.RejectContent
+                        </button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+
+    </table>
+</div>
+
+<div class="pull-left">
+    @string.Format(Resource.PaginationTxt, Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber, @Model.PageCount)
+</div>
+<div class="pull-right">
+    @Html.PagedListPager(Model, page => Url.Action("ApproveContentList",
+        new { page }),
+        PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() {
+            HttpMethod = "GET", UpdateTargetId = "list", OnSuccess = string.Format("UpdatePagingAjaxUrl(this)") }))
+</div>

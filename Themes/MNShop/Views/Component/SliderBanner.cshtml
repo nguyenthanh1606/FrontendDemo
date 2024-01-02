@@ -1,0 +1,18 @@
+﻿@model List<Frontend.Models.BannerViewModel>
+
+@if (Model.Any())
+{
+    <section class="swiper banner-home">
+        <div class="swiper-wrapper">
+            @foreach (var item in Model)
+            {
+                var target = item.OpenInNewTab ? "_blank" : "_parent";
+                <div class="swiper-slide banner-item">
+                    <a href="@item.Url" target="@target"><img src="@item.ImageUrl" alt="@item.AdName" loading="lazy" /></a>
+                </div>
+            }
+        </div>
+        <div class="swiper-pagination"></div>
+    </section>
+}
+

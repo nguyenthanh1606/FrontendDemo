@@ -1,0 +1,57 @@
+﻿@model Admin.Models.BrandViewModel
+
+@Html.HiddenFor(m => m.Id)
+@Html.HiddenFor(m => m.OriginalUrl)
+
+<div class="form-group">
+    @Html.LabelFor(model => model.Name, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextBoxFor(model => model.Name, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.Name, "")
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.FriendlyUrl, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextBoxFor(model => model.FriendlyUrl, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.FriendlyUrl, "")
+    </div>
+</div>
+
+<div class="form-group">
+    @Html.LabelFor(model => model.Slogan, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextBoxFor(model => model.Slogan, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.Slogan, "")
+    </div>
+</div>
+
+<div class="form-group">
+    @Html.LabelFor(model => model.Description, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextAreaFor(model => model.Description, new { @class = "form-control ck_editor" })
+        @Html.ValidationMessageFor(model => model.Description, "")
+    </div>
+</div>
+
+<div class="form-group">
+    @Html.LabelFor(model => model.Priority, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.TextBoxFor(model => model.Priority, new { @class = "form-control" })
+        @Html.ValidationMessageFor(m => m.Priority)
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.ImageUrl, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.FilesManagerTextboxFor(model => model.ImageUrl, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.ImageUrl)
+    </div>
+</div>
+<div class="form-group">
+    @Html.LabelFor(model => model.BannerUrl, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+    <div class="col-md-10 col-sm-9 col-xs-12">
+        @Html.FilesManagerTextboxFor(model => model.BannerUrl, new { @class = "form-control" })
+        @Html.ValidationMessageFor(model => model.BannerUrl)
+    </div>
+</div>

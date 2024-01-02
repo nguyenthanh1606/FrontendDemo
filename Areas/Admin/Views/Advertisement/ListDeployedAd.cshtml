@@ -1,0 +1,62 @@
+﻿
+@using PagedList.Mvc
+@model PagedList.IPagedList<Admin.Models.AdPublishViewModel>
+
+@Styles.Render("~/Content/pagedList")
+
+<table class="table table-hover">
+    <thead class="thead-inverse">
+        <tr>
+            <th class="width-1">@Html.DisplayNameFor(model => model.FirstOrDefault().AdID)</th>
+            <th class="width-6">@Html.DisplayNameFor(model => model.FirstOrDefault().AdName)</th>
+            <th class="width-3">@Html.DisplayNameFor(model => model.FirstOrDefault().Date)</th>
+            <th class="width-3">@Html.DisplayNameFor(model => model.FirstOrDefault().Position)</th>
+            <th class="width-2">@Html.DisplayNameFor(model => model.FirstOrDefault().Order)</th>
+            <th class="width-2">@Html.DisplayNameFor(model => model.FirstOrDefault().DeployedDays)</th>
+            <th class="width-3">@Resource.Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.AdID</td>
+                <td>@item.AdName</td>
+                <td>@item.Date.ToShortDateString()</td>
+                <td>@item.PositionName</td>
+                <td>@item.Order</td>
+                <td>@item.DeployedDays</td>
+                <td>
+                    <div class="btn-group">
+                        <a href="@Url.Action("Republish", new { id = item.AdID })" class="btn btn-default">
+                            <i class="fa fa-share-square-o" aria-hidden="true"></i> @Resource.RePublish
+                        </a>
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                            <span class="caret"></span>
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+
+                        <ul class="dropdown-menu btn-dropdown-menu" role="menu">
+                            <li>
+                                <a href="@Url.Action("Stop", new { id = item.AdID })">
+                                    <i class="fa fa-ban" aria-hidden="true"></i> @Resource.Stop
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="pull-left">
+    @string.Format(Resource.PaginationTxt, Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber, @Model.PageCount)
+</div>
+<div class="pull-right">
+
+    @Html.PagedListPager(Model, page => Url.Action("ListDeployedAd",
+        new { page, position = ViewBag.Position }),
+        PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() {
+            HttpMethod = "GET", UpdateTargetId = "list", OnSuccess = string.Format("UpdatePagingAjaxUrl(this)") }))
+</div>

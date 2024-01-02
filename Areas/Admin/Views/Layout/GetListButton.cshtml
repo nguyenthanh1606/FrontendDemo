@@ -1,0 +1,33 @@
+﻿@model Admin.Models.FunctionButtonListViewModel
+@using Admin.Models
+
+@{
+    FunctionButtonViewModel firstItem = Model.ListFunction.FirstOrDefault();
+    Model.ListFunction = Model.ListFunction.Skip(1).ToList();
+}
+
+<div class="btn-group">
+    <a href="@Url.Action(firstItem.Action, new { id = Model.EntityId })" class="btn btn-default">
+        @firstItem.DisplayName
+    </a>
+
+    @if (Model.ListFunction.Count > 0)
+    {
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+            <span class="caret"></span>
+            <span class="sr-only">Toggle Dropdown</span>
+        </button>
+
+        <ul class="dropdown-menu btn-dropdown-menu" role="menu">
+            @foreach (var item in Model.ListFunction)
+            {
+                <li>
+                    <a href="@Url.Action(item.Action, new { id = Model.EntityId })">
+                        @item.DisplayName
+                    </a>
+                </li>
+            }
+        </ul>
+    }
+
+</div>

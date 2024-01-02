@@ -1,0 +1,24 @@
+﻿
+@{
+    ViewBag.Title = "EmailNotConfirmed";
+}
+
+<div class="wrapper">
+    <h2 class="text-danger">@ViewBag.Message</h2>
+    <div>
+        <span>@Resource.NotReceiveMailYet </span>
+        @using (Ajax.BeginForm("ResendConfirmMail", "Account", new AjaxOptions
+        {
+            OnComplete = string.Format("ShowAlertDialog('{0}')", Resource.EmailResendSuccessMsg),
+            OnFailure = string.Format("ShowAlertDialog('{0}')", Resource.UnknowErrorMessage)
+        }))
+        {
+            @Html.AntiForgeryToken()
+            @Html.Hidden("id", (int)ViewBag.Id)
+            <button class="btn btn-default" type="submit">@Resource.ResendEmail</button>
+        }
+    </div>
+</div>
+
+
+

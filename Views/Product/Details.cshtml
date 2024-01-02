@@ -1,0 +1,530 @@
+﻿@model Frontend.Models.ProductDetailsViewModel
+@using Store.Service.ProductServices
+@using Store.Service.Helper.ExtensionMethod
+
+@{
+    ViewBag.Title = "Details";
+}
+@Styles.Render("~/Content/css/slider")
+
+
+<div class="BodyContent productlayout" id="product-detail">
+    <div class="wrapper">
+        @Html.Breadcrumb(Frontend.Infrastructure.Utility.BreadcrumbType.ProductGroup, Model.ProductGroupID)
+
+        <div class="ProductDetail" itemscope itemtype="http://schema.org/Product">
+            <div class="col-md-8 col-xs-12 demo wow fadeInLeft animated" id="ProductLeftCt">
+                <div class="product-images clearfix">
+                    <div id="product-gallery" class="swiper-container">
+                        <div class="swiper-wrapper">
+                            @foreach (string image in Model.ListImages)
+                            {
+                                <a href="#" data-image="@image" data-zoom-image="@image" class="swiper-slide">
+                                    <img src="@image" />
+                                </a>
+                            }
+                        </div>
+                    </div>
+                    <div class="zoom-image-container">
+                        @if (Model.ListImages.Count > 0)
+                        {
+                            <img src="@Model.ListImages[0]" data-zoom-image="@Model.ListImages[0]" id="productThumb" itemprop="image"/>
+                        }
+                        else
+                        {
+                            <img src="~/Content/Images/product_placeholder.png" data-zoom-image="/Content/Images/product_placeholder.png" id="productThumb"/>
+                        }
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-4 col-xs-12 wow fadeInRight animated">
+                <div class="ProductID">
+                    <div class="ProductIDTT" id="ProductIDTT">Mã sản phẩm</div>
+                    <div class="ProductIDValue" id="ProductIDValue">@Model.ProductID</div>
+                </div>
+                @if(Model.BrandId.HasValue)
+                {
+                <div>
+                    <span>@Resource.Brand</span>
+                    <span><a href="@Model.Brand.Item2" itemprop="brand">@Model.Brand.Item1</a></span>
+                </div>
+                }
+                <div itemprop="aggregateRating" itemscope itemtype="http://schema.org/AggregateRating">
+                    <div class="rating">
+                        <span class="star"></span>
+                        <span class="star"></span>
+                        <span class="star"></span>
+                        <span class="star"></span>
+                        <span class="star"></span>
+                        <span class="score" style="width:@Math.Round(Model.CommentSummary.AverageRating*100/5)%">
+                            <span class="star"></span>
+                            <span class="star"></span>
+                            <span class="star"></span>
+                            <span class="star"></span>
+                            <span class="star"></span>
+                        </span>
+                    </div>
+                    <span class="average-rating" itemprop="ratingValue" content="@Math.Round(Model.CommentSummary.AverageRating,1)">@Math.Round(Model.CommentSummary.AverageRating, 1)/5</span>
+                    (<a href="#comment" id="link_to_review" data-toggle="tab"><span class="reviewCount" itemprop="reviewCount">@Model.CommentSummary.TotalRating</span> @Resource.ReviewCount</a>)
+                </div>
+                <div class="clearfix">
+                    <div class="ProductStatus">
+                        <div class="ProductStatusTT" id="ProductStatusTT">@Resource.Condition</div>
+                        <div class="ProductStatusValue" id="ProductStatusValue">@Model.Condition.GetDescription()</div>
+                    </div>
+                    @if (ViewBag.DisplayInventoryNumber == true)
+                    {
+                        <div class="ProductCount @(Model.InventoryNumber.HasValue? "" : "hidden")">
+                            <div class="ProductCountTT" id="ProductCountTT">@Resource.Quantity</div>
+                            <div class="ProductCountValue" id="ProductCountValue">@Model.InventoryNumber</div>
+                        </div>
+                    }
+                </div>
+                
+                <div class="ProductName" id="ProductName" itemprop="name">@Model.Title</div>
+                <div class="ProductPrice" id="ProductPrice" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+                    <span itemprop="price">@string.Format("{0:n0}", Model.DefaultPrice)</span> <span itemprop="priceCurrency" content="VND">VNĐ</span>
+                </div>
+                @using (Ajax.BeginForm("VersionDetails", "Product",null,
+                new AjaxOptions { HttpMethod = "POST", OnSuccess = "SelectVersionSuccess" }, new { id = "version_form"}))
+                {
+                    @Html.HiddenFor(m => m.ProductID)
+                    @Html.AntiForgeryToken()
+                    <div class="ProductVersion" id="ProductVersion">
+                        @for (int i = 0; i < Model.ListVersionProperty.Count; i++)
+                        {
+                            <div>
+                                @Model.ListVersionProperty[i].Name
+                                @if (Model.ListVersionProperty[i].Type == (int)ProductGroupPropertiesType.Color)
+                                {
+                                    <div>
+                                        <input hidden name="properties" value="@Model.ListVersionProperty[i].ListProperty[0].Id"/>
+                                        @foreach (var property in Model.ListVersionProperty[i].ListProperty)
+                                        {
+                                            <span class="ProductcolorValue" title="@property.Title" 
+                                                   onclick ="ProductSelectColor(this, @property.Id)" style="background-color:@property.Note"></span>
+                                        }
+                                    </div>
+                                }
+                                else
+                                {
+                                    if(Model.ListVersionProperty[i].ListProperty.Count ==  1)
+                                    {
+                                        <span>@Model.ListVersionProperty[i].ListProperty.First().Title</span>
+                                        @Html.Hidden("properties", @Model.ListVersionProperty[i].ListProperty.First().Id)
+                                    }
+                                    else
+                                    {
+                                        @Html.DropDownList("properties",
+                                        new SelectList(Model.ListVersionProperty[i].ListProperty, "Id", "Title"), new { @class = "product_properties" });
+                                    }
+                                }
+                            </div>
+                        }
+                    </div>
+                }
+                <div id="btnAdd" class="add-cart-box">
+                    <button type="button" id="btnAddToCart" class="addtocart add-cart">@Resource.AddToCart</button>
+                </div>
+            </div>
+            <div class="ProductInfo">
+                <ul class="tabs nav nav-tabs" role="tablist">
+                    <li role="presentation" class="active">
+                        <a href="#summary" aria-controls="view1" role="tab" data-toggle="tab">Mô tả sản phẩm</a>
+                    </li>
+                    <li role="presentation">
+                        <a href="#view2" aria-controls="view2" role="tab" data-toggle="tab">Thông tin phụ</a>
+                    </li>
+                    <li role="presentation">
+                        <a href="#comment" aria-controls="view3" role="tab" data-toggle="tab">Nhận xét từ khách hàng</a>
+                    </li>
+                    <li role="presentation">
+                        <a href="#view4" aria-controls="view4" role="tab" data-toggle="tab">Tags</a>
+                    </li>
+                </ul>
+                <div class="tabcontents tab-content">
+                    <div id="summary" class="tab-pane fade in  active">
+                        @Html.Raw(Model.Summary)
+                    </div>
+                    <div id="view2" class="tab-pane fade">
+                        There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc.
+                    </div>
+                    <div id="comment" class="tab-pane fade">
+                        <div class="container-fluid" id="user-comment">
+                            <div class="row">
+                                <div class="comment-overview clearfix">
+                                    <div class="col-sm-4 col-xs-12">
+                                        @Resource.AverageRating
+                                        <span class="average-rating">@Math.Round(Model.CommentSummary.AverageRating, 1)/5</span>
+                                        <div class="rating">
+                                            <span class="star"></span>
+                                            <span class="star"></span>
+                                            <span class="star"></span>
+                                            <span class="star"></span>
+                                            <span class="star"></span>
+                                            <span class="score" style="width:@Math.Round(Model.CommentSummary.AverageRating*100/5)%">
+                                                <span class="star"></span>
+                                                <span class="star"></span>
+                                                <span class="star"></span>
+                                                <span class="star"></span>
+                                                <span class="star"></span>
+                                            </span>
+                                        </div>
+                                        <div>(@Model.CommentSummary.TotalRating @Resource.ReviewCount)</div>
+                                        <div class="rating-btn">
+                                            @if (User.Identity.IsAuthenticated)
+                                            {
+                                                <button class="btn btn-primary" type="button" v-on:click="AddNewComment()">{{btnCommentText}}</button>
+                                            }
+                                            else
+                                            {
+                                                <button class="btn btn-primary" type="button" data-toggle="modal" data-target="#login-modal">@Resource.WriteYourComment</button>
+                                            }
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-8 col-xs-12">
+                                        <div class="score-detail">
+                                            <span class="rating-title">5 sao</span>
+                                            <div class="rating-progress">
+                                                <div class="progress">
+                                                    <div class="progress-bar" role="progressbar" style="width:@Math.Round((double)Model.CommentSummary.Rate5 * 100 / Model.CommentSummary.TotalRating)%">
+                                                        @Model.CommentSummary.Rate5
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="score-detail">
+                                            <span class="rating-title">4 sao</span>
+                                            <div class="rating-progress">
+                                                <div class="progress">
+                                                    <div class="progress-bar" role="progressbar" style="width:@Math.Round((double)Model.CommentSummary.Rate4 * 100 / Model.CommentSummary.TotalRating)%">
+                                                        @Model.CommentSummary.Rate4
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="score-detail">
+                                            <span class="rating-title">3 sao</span>
+                                            <div class="rating-progress">
+                                                <div class="progress">
+                                                    <div class="progress-bar" role="progressbar" style="width:@Math.Round((double)Model.CommentSummary.Rate3 * 100 / Model.CommentSummary.TotalRating)%">
+                                                        @Model.CommentSummary.Rate3
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div class="score-detail">
+                                            <span class="rating-title">2 sao</span>
+                                            <div class="rating-progress">
+                                                <div class="progress">
+                                                    <div class="progress-bar" role="progressbar" style="width:@Math.Round((double)Model.CommentSummary.Rate2 * 100 / Model.CommentSummary.TotalRating)%">
+                                                        @Model.CommentSummary.Rate2
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="score-detail">
+                                            <span class="rating-title">1 sao</span>
+                                            <div class="rating-progress">
+                                                <div class="progress">
+                                                    <div class="progress-bar" role="progressbar" style="width:@Math.Round((double)Model.CommentSummary.Rate1 * 100 / Model.CommentSummary.TotalRating)%">
+                                                        @Model.CommentSummary.Rate1
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                    </div>
+                                    <div v-show="isAddNewComment">
+                                        @using (Ajax.BeginForm("CommentProduct", null, new AjaxOptions {
+                                            HttpMethod = "POST", OnSuccess = "vmComment.DoneComment()",
+                                            OnFailure = "AlertFailure"
+                                        },
+                                            new { id = "comment_form" }))
+                                        {
+                                            @Html.AntiForgeryToken()
+                                            @Html.EditorFor(m => m.Comment)
+                                        }
+                                    </div>
+
+                                </div>
+                                <div class="product-review" id="product-review">
+                                    <div class="review-header">
+                                        <div class="review_title_block">
+                                            <span class="review-title">@Resource.CustomerComment</span>
+                                            <select v-model="sortOrder" class="pull-right">
+                                                @foreach(var order in ViewBag.CommentSortOrder)
+                                                {
+                                                    <option value="@order.Value">@order.Text</option>
+                                                }
+                                            </select>
+                                        </div>
+                                        
+                                        <div class="review-paging">
+                                            <div v-if="typeof listComment === 'undefined' || listComment  === null || listComment.length === 0">
+                                                <strong>@Resource.EmptyProductCommentMsg</strong>
+                                            </div>
+                                            <div v-else class="container-fluid">
+                                                <div class="row" v-for="comment in listComment">
+                                                    <div class="col-sm-2">
+                                                        <div class="thumbnail hidden-xs">
+                                                            <img class="img-responsive user-photo" src="~/Content/Images/avatar.png" alt="avatar">
+                                                        </div>
+                                                        <strong>{{comment.CustomerName}}</strong>
+                                                        <p class="text-muted">{{comment.CommentDate}}</p>    
+                                                    </div>
+                                                    <div class="col-sm-10">
+                                                        <div class="panel panel-default cmt-panel">
+                                                            <div class="cmt-panel-heading ">
+                                                                <div class="rating">
+                                                                    <span class="star"></span>
+                                                                    <span class="star"></span>
+                                                                    <span class="star"></span>
+                                                                    <span class="star"></span>
+                                                                    <span class="star"></span>
+                                                                    <span class="score" :style="{width: Math.round(comment.Rating*100/5) + '%'}">
+                                                                        <span class="star"></span>
+                                                                        <span class="star"></span>
+                                                                        <span class="star"></span>
+                                                                        <span class="star"></span>
+                                                                        <span class="star"></span>
+                                                                    </span>
+                                                                </div>
+                                                                <strong>{{comment.Title}}</strong>
+                                                            </div>
+                                                            <div class="panel-body">
+                                                                {{comment.Body}}
+                                                            </div>
+                                                            <div class="panel-body">
+                                                                <p v-if="comment.Upvote + comment.Downvote > 0">
+                                                                    <strong>{{comment.Upvote}}/{{comment.Upvote + comment.Downvote}}</strong> @Resource.PeopleFoundThisReviewHelpful.ToLower()
+                                                                </p>
+                                                                <span>@Resource.VoteReviewMessage</span>
+                                                                @if (User.Identity.IsAuthenticated)
+                                                                {
+                                                                    <button :class="[comment.Rate === 1? 'btn-rated-up btn btn-sm' : 'btn btn-sm']" type="button" v-on:click="Upvote(comment)">
+                                                                        <i class="fa fa-thumbs-o-up" aria-hidden="true"></i> @Resource.Yes
+                                                                    </button>
+                                                                    <button :class="[comment.Rate === 2? 'btn-rated-down btn btn-sm' : 'btn btn-sm']" type="button" v-on:click="Downvote(comment)">
+                                                                        <i class="fa fa-thumbs-o-down" aria-hidden="true"></i> @Resource.No
+                                                                    </button>
+                                                                }
+                                                                else
+                                                                {
+                                                                    <button class="btn btn-sm" type="button" data-toggle="modal" data-target="#login-modal">
+                                                                        <i class="fa fa-thumbs-o-up" aria-hidden="true"></i> @Resource.Yes
+                                                                    </button>
+                                                                    <button class="btn btn-sm" type="button" data-toggle="modal" data-target="#login-modal">
+                                                                        <i class="fa fa-thumbs-o-down" aria-hidden="true"></i> @Resource.No
+                                                                    </button>
+                                                                }
+                                                                
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="text_center">
+                                                    <ul class="pagination">
+                                                        <li v-for="pageNumber in totalPages" :class="{active:currentPage === pageNumber }" v-show="Math.abs(pageNumber - currentPage) < 3 || pageNumber === totalPages || pageNumber === 1">
+                                                            <a href="#product-review" v-on:click="currentPage = pageNumber">{{pageNumber}}</a>
+                                                        </li>
+                                                    </ul>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div id="view4" class="tab-pane fade">
+                        There are many variations of passages of Lorem Ipsum available, but the majority have suffered alteration in some form, by injected humour, or randomised words which don't look even slightly believable. If you are going to use a passage of Lorem Ipsum, you need to be sure there isn't anything embarrassing hidden in the middle of text. All the Lorem Ipsum generators on the Internet tend to repeat predefined chunks as necessary, making this the first true generator on the Internet. It uses a dictionary of over 200 Latin words, combined with a handful of model sentence structures, to generate Lorem Ipsum which looks reasonable. The generated Lorem Ipsum is therefore always free from repetition, injected humour, or non-characteristic words etc.
+                    </div>
+                </div>
+            </div>
+            <div class="ProductRelate">
+                @{ Html.RenderAction("ListProductSameBrand", new { id = Model.ProductID });}
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (!User.Identity.IsAuthenticated)
+{
+    @Html.Partial("_LoginPartial")
+}
+
+@section scripts{
+
+@Scripts.Render("~/bundles/slider")
+
+<script>
+    var curLang = '@Request.Cookies["lang"].Value';
+
+    var thumb = $("#productThumb");
+    thumb.elevateZoom({
+        gallery: 'product-gallery',
+        cursor: 'pointer',
+        galleryActiveClass: 'active',
+    });
+
+    var mySwiper = new Swiper('#product-gallery', {
+        pagination: '.swiper-pagination',
+        paginationClickable:true,
+        calculateHeight:true,
+        slidesPerView: 5,
+        direction: 'vertical'
+    });
+
+    var vmComment = new Vue({
+        el: '#user-comment',
+        data: {
+            isAddNewComment: false,
+            listComment: null,
+            userComment: @Html.Raw(Json.Encode(Model.Comment)),
+            sortOrder:0,
+            currentPage:1,
+            totalPages: @Math.Ceiling((double)Model.CommentSummary.TotalRating/ViewBag.CommentPerPage),
+        },
+        created: function () {
+            this.GetListComment();
+            @if(User.Identity.IsAuthenticated)
+            {
+                @:this.GetUserComment();
+            }
+        },
+        filters: {
+        },
+        computed: {
+            btnCommentText: function () {
+                if (this.isAddNewComment) {
+                    return '@Html.Raw(Resource.Close)';
+                }
+                else {
+                    if(this.userComment.Id === 0){
+                        return '@Html.Raw(Resource.WriteYourComment)';
+                    }
+                    else{
+                        return '@Html.Raw(Resource.EditYourComment)';
+                    }
+                }
+            }
+        },
+        methods: {
+            GetListComment: function () {
+                var xhr = new XMLHttpRequest();
+                var self = this;
+                xhr.open('GET', "/Product/GetListComment/@ViewBag.ProductId"+ "?page=" + this.currentPage + "&sortOrder=" + this.sortOrder);
+                xhr.onload = function () {
+                    var data = JSON.parse(xhr.responseText);
+                    self.listComment = data.listComment;
+                }
+                xhr.send();
+            },
+            GetUserComment: function () {
+                var xhr = new XMLHttpRequest();
+                var self = this;
+                xhr.open('GET', "/Product/GetUserComment/@ViewBag.ProductId");
+                xhr.onload = function () {
+                    var data = JSON.parse(xhr.responseText);
+                    self.userComment = data.userComment;
+                }
+                xhr.send();
+            },
+            AddNewComment: function () {
+                this.isAddNewComment = !this.isAddNewComment;
+            },
+            DoneComment: function () {
+                this.isAddNewComment = false;
+                ShowAlertDialog("@Html.Raw(Resource.CommentSuccessMsg)")
+                this.GetListComment();
+                this.GetUserComment();
+            },
+            Upvote: function (comment) {
+                @*if not upvoted yet and now upvote, upvote number + 1*@
+                if (comment.Rate === 1) {
+                    comment.Upvote--;
+                    comment.Rate = 0;
+                }
+                else {
+                    if (comment.Rate === 0) {
+                        comment.Upvote++;
+                    }
+                    else{
+                        comment.Upvote++;
+                        comment.Downvote--;
+                    }
+                    comment.Rate = 1;
+                }
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', "/Product/RateComment/" + comment.Id, true);
+                var formData = new FormData();
+                formData.append("rateUp", "true");
+                xhr.send(formData);
+            },
+            Downvote: function (comment) {
+                if (comment.Rate === 2) {
+                    comment.Downvote--;
+                    comment.Rate = 0;
+                }
+                else {
+                    if (comment.Rate === 0) {
+                        comment.Downvote++;
+                    }
+                    else{
+                        comment.Upvote--;
+                        comment.Downvote++;
+                    }
+                    comment.Rate = 2;
+                }
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST', "/Product/RateComment/" + comment.Id, true);
+                var formData = new FormData();
+                formData.append("rateUp", "false");
+                xhr.send(formData);
+            },
+        },
+        watch:{
+            currentPage:function(){
+                this.GetListComment();
+            },
+            sortOrder:function(){
+                if(this.currentPage === 1){
+                    this.GetListComment();
+                }
+                else{
+                    this.currentPage = 1;
+                }
+            }
+        }
+    });
+
+    $('a#link_to_review').on('shown.bs.tab', function (e) {
+        var that = this;
+        $('html, body').animate({
+            scrollTop: $( $(that).attr('href') ).offset().top
+        }, 500);
+        $('.nav-tabs a[href="#comment"]').tab('show');
+    });
+
+    $(document).ready(function () {
+        $('.productslider').owlCarousel({
+            items: 4,
+            autoPlay: 5000,
+            stopOnHover: true,
+            loop: true,
+            scrollPerPage: true,
+        });
+
+        new WOW().init();
+
+        @if(!User.Identity.IsAuthenticated)
+        {
+            @:$('.datepicker').datetimepicker({ locale: 'vi', format: 'DD/MM/YYYY' });
+                                                }
+    });
+</script>
+}

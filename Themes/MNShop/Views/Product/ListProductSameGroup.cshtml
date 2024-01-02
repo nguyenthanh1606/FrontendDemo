@@ -1,0 +1,26 @@
+﻿@model List<Frontend.Models.ProductBoxViewModel>
+
+<div class="pr-product--other">
+    <h3 class="pr-top_content__title">Các tác phẩm khác có thể phù hợp với bạn</h3>
+    <div class="pr-product--other_list">
+        @foreach (var product in Model)
+        {
+            <div class="pr-product--other_item card-product">
+                <a href="@Url.CustomAction(Store.Service.SystemService.RoutingType.Product, product.ProductID)" class="thumnails-template hover-ef-1">
+                    <div class="thumnails-content thumb-img">
+                        <img src="@product.ImageUrl" class="img-fluid" alt="@product.Title">
+                    </div>
+                </a>
+                <div class="card-product--name text-center">
+                    <a href="@Url.CustomAction(Store.Service.SystemService.RoutingType.Product, product.ProductID)">@product.Title</a>
+                </div>
+                <p class="card-product--author text-center">@product.Value1.RemoveHtml()</p>
+                <p class="card-product--type text-center">
+                    Chất liệu tranh gốc: <span class="color-active">
+                        @product.Value2.RemoveHtml()
+                    </span>
+                </p>
+            </div>
+        }
+    </div>
+</div>

@@ -1,0 +1,21 @@
+﻿
+@{
+    ViewBag.Title = Resource.Advertisement;
+}
+
+<div class="page-title">
+    <div class="title_left">
+        <h3>@Resource.Link</h3>
+    </div>
+    <div class="title_right">
+        <div class="pull-right">
+            @Html.ActionLink(@Resource.Create, "Create", null, new { @class = "btn btn-primary" })
+        </div>
+    </div>
+</div>
+
+<div class="main-content">
+    <div id="list">
+        @{Html.RenderAction("ListLink", "Link");}
+    </div>
+</div>

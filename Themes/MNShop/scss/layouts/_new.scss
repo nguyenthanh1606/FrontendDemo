@@ -1,0 +1,11 @@
+.page-brand {
+  .pr-body {
+    padding-left: 0;
+    flex: 0 0 100%;
+    max-width: 100%;
+    .pr-body_item {
+      flex: 0 0 calc(25% - 20px);
+      max-width: calc(25% - 20px);
+    }
+  }
+}

@@ -1,0 +1,32 @@
+﻿@model Admin.Models.FeedBackViewModel
+
+@{
+    ViewBag.Title = Resource.FeedBack;
+}
+
+<div class="page-title">
+    <div class="title_left">
+        <h3>
+            @Resource.FeedBack
+            <small>@Resource.Detail</small>
+        </h3>
+    </div>
+</div>
+
+<div class="main-content">
+    <div class="form-horizontal">
+        @Html.DisplayForModel()
+
+        <div class="form-group">
+            <div class="col-md-offset-2 col-sm-offset-3 col-md-10 col-sm-9 col-xs-12">
+                @using (Html.BeginForm("MarkAsRead", "Feedback", FormMethod.Post))
+                {
+                    @Html.AntiForgeryToken()
+                    @Html.HiddenFor(m => m.Id)
+                    <button class="btn btn-primary" type="submit">@Resource.MarkAsRead</button>
+                    <a href="@(ViewBag.ReturnUrl ?? @Url.Action("Index"))" class="btn btn-default">@Resource.Skip</a>
+                }
+            </div>
+        </div>
+    </div>
+</div>

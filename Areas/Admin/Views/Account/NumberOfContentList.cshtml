@@ -1,0 +1,38 @@
+﻿@model IEnumerable<Admin.Models.NumberOfContentViewModel>
+
+@if (User.IsInRole("Administrator"))
+{ 
+<table class="table table-hover">
+    <thead class="thead-inverse">
+        <tr>
+            <th class="width-2">@Html.DisplayNameFor(model => model.ID)</th>
+            <th class="width-4">@Html.DisplayNameFor(model => model.UserName)</th>
+            <th class="width-6">@Html.DisplayNameFor(model => model.FullName)</th>
+            <th class="width-4">@Html.DisplayNameFor(model => model.CreatedContents)</th>
+            <th class="width-4">@Html.DisplayNameFor(model => model.DeployedContents)</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.ID</td>
+                <td>@item.UserName</td>
+                <td>@item.FullName</td>
+                <td>@item.CreatedContents</td>
+                <td>@item.DeployedContents</td>
+            </tr>
+        }
+    </tbody>
+</table>
+}
+else
+{
+    <div class="page-title">
+        <div class="title_left">
+            <h3>
+                @Resource.AccessDeniedError
+            </h3>
+        </div>
+    </div>
+}

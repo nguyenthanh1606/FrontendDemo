@@ -1,0 +1,18 @@
+﻿@model List<Frontend.Models.BannerViewModel>
+
+@if (Model.Count() > 0)
+{
+    var first = Model.FirstOrDefault();
+    <section class="about-us about-us--1">
+        <h2 class="home-about_title">@first.AdName</h2>
+        <div class="home-about_content">
+            <div class="home-about_content_thumbnail">
+                <img src="@first.ImageUrl" alt="@first.AdName" class="w-100"/>
+            </div>
+            <div class="home-about_content_desc">
+                @Html.Raw(first.Content)
+                <a href="@first.Url" class="text-uppercase link link-active">@Resource.ReadMore  <i class="fas fa-caret-right"></i></a>
+            </div>
+        </div>
+    </section>
+}

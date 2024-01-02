@@ -1,0 +1,36 @@
+﻿@model IEnumerable<Frontend.Models.ProductBoxViewModel>
+
+<div class="row" style="margin: 0;">
+    @foreach (var product in @Model)
+    {
+        <div class="product col-md-3 col-sm-12">
+            <div class="sup-img">
+                <img src="~/Themes/AnhNhan/Images/NEW.png" alt="">
+            </div>
+            <div class="show-product">
+                <div class="img-product">
+                    <img src="@product.ImageUrl" class="rounded mx-auto d-block" alt="product-1">
+                </div>
+                <div class="detail-product">
+                    <p>@string.Format("{0:n0}", @product.Price) VNĐ</p>
+                    <a href="@Url.CustomAction(Store.Service.SystemService.RoutingType.Product, @product.ProductID)"><span>@product.Title</span></a>
+                </div>
+            </div>
+            <div class="hide-product">
+                <div class="content-product" style="line-height: 1">
+                    <a href="@Url.CustomAction(Store.Service.SystemService.RoutingType.Product, @product.ProductID)"><p class="name-product">@product.Title</p></a>
+                    <span class="price-product">@string.Format("{0:n0}", @product.Price) VNĐ</span><br>
+                    <span>Bảo hành:</span><span style="color: black">12 tháng</span>
+                    <div class="detai-content-product">
+                        <p><b>MÔ TẢ NGẮN</b></p>
+                        @Html.Raw(@product.Summary)
+                    </div>
+                </div>
+                <div class="buy-product">
+                    <span><i>Khuyến mãi: </i></span><span style="color: #1370a0;">Tặng chuột Logitech thời trang</span>
+                    <button type="submit" onclick="AddToCartAjax(@product.ProductID, AddToCartSuccess);" class="btn btn-danger button btn-cart"><strong>MUA NGAY</strong></button>
+                </div>
+            </div>
+        </div>
+    }
+</div>

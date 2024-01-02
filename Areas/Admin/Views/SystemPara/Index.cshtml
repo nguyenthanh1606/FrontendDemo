@@ -1,0 +1,68 @@
+﻿@model IEnumerable<Admin.Models.SysParaViewModel>
+
+@{
+    ViewBag.Title = Resource.ParametersSystem;
+}
+
+<div class="page-title">
+    <div class="title_left">
+        <h3>
+            @Resource.ParametersSystem
+        </h3>
+    </div>
+</div>
+
+<div class="main-content">
+    @if (!String.IsNullOrEmpty(ViewBag.MessageAlert))
+    {
+        <div class="alert alert-success fade in">
+            <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+            <span>@ViewBag.MessageAlert</span>
+        </div>
+    }
+
+    <table class="table table-hover">
+        <thead class="thead-inverse">
+            <tr>
+                <th class="width-1">
+                    @Html.DisplayNameFor(model => model.ID)
+                </th>
+                <th class="width-5">
+                    @Resource.ParamenterName
+                </th>
+                <th class="width-8">
+                    @Resource.ParameterValue
+                </th>
+                @*<th class="width-3">
+                    @Resource.Description
+                </th>*@
+                <th class="width-3">@Resource.Action</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ID)
+                    </td>
+                    <td>
+                        @Html.DisplayFor(modelItem => item.ParaName)
+                    </td>
+                    <td>
+                        @Html.Raw(item.ParaValue)
+                    </td>
+                    @*<td>
+                        @Html.Raw(item.Description)
+                    </td>*@
+                    <td>
+                        <a href="@Url.Action("Edit", new { id = item.ID })" class="btn btn-default">
+                            <i class="fa fa-pencil" aria-hidden="true"></i> @Resource.Edit
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

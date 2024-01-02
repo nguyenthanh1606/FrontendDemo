@@ -1,0 +1,15 @@
+﻿@model Frontend.Models.ContentBoxViewModel
+
+<div class="news-img">
+    <a href="@Url.CustomAction(Store.Service.SystemService.RoutingType.Content, Model.ContentID)">
+        <img src="@Model.PictureUrl"/>
+    </a>
+</div>
+<div class="news-info">
+    <div class="news-tit">
+        <a href="@Url.CustomAction(Store.Service.SystemService.RoutingType.Content, Model.ContentID)">@Model.Headline</a>
+    </div>
+    <div class="news-summary">
+        @Model.Summary.RemoveHtml().Truncate(200)
+    </div>
+</div>

@@ -1,0 +1,49 @@
+﻿@model Admin.Models.ProductGroupAddPopupViewModel
+
+@using PagedList.Mvc;
+
+
+<div class="container-fluid">
+    <div class="form-horizontal row">
+        <div class="clearfix col-lg-12">
+            <table class="table table-hover">
+                <thead class="thead-inverse">
+                    <tr>
+                        <th class="col-lg-1">
+                            @Html.CheckBox("checkAll")
+                        </th>
+                        <th class="col-lg-11">
+                            @Resource.ProductGroup
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.listProductGroups)
+                    {
+                        <tr>
+                            <td>
+                                @Html.CheckBox(string.Format("{0}", @item.GroupID), new { @class = "checkbox", id = @item.GroupID })
+                            </td>
+                            <td>
+                                <label for="@item.GroupID">@item.Title</label>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <div class="pull-left">
+                @string.Format(Resource.PaginationTxt, Model.listProductGroups.PageCount < Model.listProductGroups.PageNumber ? 0 : Model.listProductGroups.PageNumber, @Model.listProductGroups.PageCount)
+            </div>
+            <div class="pull-right">
+                @Html.PagedListPager(Model.listProductGroups, page => Url.Action("ListProductGroupAddPopup",
+            new { page, @Model.StartWith, @Model.RemoveProductGroups, @Model.UpdateTargetId }),
+            PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() { HttpMethod = "POST", InsertionMode = System.Web.Mvc.Ajax.InsertionMode.Replace, UpdateTargetId = "listProductGroups" }))
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+

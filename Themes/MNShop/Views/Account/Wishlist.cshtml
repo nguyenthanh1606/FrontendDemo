@@ -1,0 +1,65 @@
+﻿@model IEnumerable<Frontend.Models.WishlistViewModel>
+@using Store.Service.Helper.ExtensionMethod
+
+@{
+    ViewBag.Title = Resource.Wishlist;
+}
+
+<div class="page_image_title" style="background-image:url(@Html.BannerImageLinkOnly(5, Request.Cookies["lang"].Value));">
+    <h3>
+        @Resource.Wishlist
+    </h3>
+</div>
+<div class="breadcum_main">
+    <div class="container">
+        @Html.Breadcrumb(Frontend.Infrastructure.Utility.BreadcrumbType.Custom, customMenuName: Resource.Wishlist, customUrl: Url.Action("Wishlist", "Account"), htmlAttributes: new { @class = "breadcrumb" })
+    </div>
+</div>
+
+<div class="container account-account">
+    <aside class="account-side-menu">
+        @Html.Partial("_AccountLayoutMenu")
+    </aside>
+    <button type="button" class="btn-toggle-menu" id="btn-toggle-menu" data-toggle="show"><i class="fa fa-chevron-right"></i></button>
+
+    <div class="account-body">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th class="col-xs-2">@Resource.Image</th>
+                    <th class="col-xs-6">@Resource.Product</th>
+                    <th class="col-xs-2">@Resource.Price</th>
+                    <th class="col-xs-2">@Resource.Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>
+                            <div class="product_image_wishlist">
+                                <a href="@Url.CustomAction(Store.Service.SystemService.RoutingType.Product, item.ProductId)">
+                                    <img src="@item.ProductDetails.ImageUrl" class="img-thumbnail cart-thumbnail" />
+                                </a>
+                            </div>
+                        </td>
+                        <td>
+                            <a href="@Url.CustomAction(Store.Service.SystemService.RoutingType.Product, item.ProductId)">@item.ProductDetails.Title</a>
+                        </td>
+                        <td>
+                            <b>@item.ProductDetails.Price.ToString("N0")</b>
+                            @if (item.ProductDetails.OriginalPrice.HasValue)
+                            {
+                                <span class="price-old">@item.ProductDetails.OriginalPrice.Value.ToString("N0")</span>
+                            }
+                        </td>
+                        <td>
+                            <button type="button" onclick="AddToCartAjax(@item.ProductId,AddToCartSuccess);" class="btn btn-primary"><span><i class="fa fa-shopping-cart"></i></span></button>
+                            <button type="button" data-toggle="tooltip" class="btn btn-danger" title="@Resource.RemoveFromWishlist" onclick="RemoveFromWishlistAjax(@item.ProductId, RemoveFromWishlistSuccess);"><i class="fa fa-times"></i></button>
+                        </td>
+                    </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>

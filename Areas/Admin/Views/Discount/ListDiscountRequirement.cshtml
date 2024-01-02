@@ -1,0 +1,104 @@
+﻿@model IList<Admin.Models.DiscountRequirementViewModel>
+@using Store.Service.ProductServices;
+@using Store.Service.Helper;
+@using Admin.Models;
+
+<div class="form-horizontal">
+    <table class="table table-hover">
+        <thead class="thead-inverse">
+            <tr>
+                <th class="width-6">
+                    @Resource.DiscountRequirement
+                </th>
+                <th class="width-10">
+                    @Resource.Value
+                </th>
+                <th class="width-4">
+                    @Resource.Action
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var model in Model)
+            {
+                <tr>
+                    <td colspan="3">
+                        @using (Ajax.BeginForm("EditDiscountRequirement", new AjaxOptions { HttpMethod = "POST", OnFailure = "alert(failed to update)" }))
+                        {
+                            @Html.ValidationSummary(true)
+                            @Html.AntiForgeryToken()
+                            @Html.HiddenFor(modelItem => model.DiscountID)
+                            @Html.HiddenFor(modelItem => model.RequiredType)
+                            
+                            
+                            <div class="col-md-3">
+                                @Html.DisplayFor(modelItem => model.RequiredTypeName)
+                            </div>
+                           
+                            <div class="col-md-7">
+                                @{
+                            DiscountRequirementType type = (DiscountRequirementType)model.RequiredType;
+                                    if (type == DiscountRequirementType.CustomerHadSpentAmount)
+                                    {
+                                    <div>
+                                        @Html.LabelFor(modelItem => model.amount, new { @class = "control-label col-md-4 col-sm-4 col-xs-12" })
+                                        <div class="col-md-8">
+                                            <div class='input-group'>
+                                                @Html.TextBoxFor(modelItem => model.amount, new { @class = "form-control col-md-8 col-sm-8 col-xs-12" })
+                                                <span class="input-group-addon">
+                                                    <span class="">đ</span>
+                                                </span>
+                                            </div>
+                                            @Html.ValidationMessageFor(modelItem => model.amount)
+                                        </div>
+                                    </div>
+                                    }
+                                    else if (type == DiscountRequirementType.CustomerHaveProductsInCart)
+                                    {
+                                    <div>
+                                        @Html.LabelFor(modelItem => model.products, new { @class = "control-label col-md-4 col-sm-4 col-xs-12" })
+                                        <div class="col-md-8 col-sm-8">
+                                            <div class='input-group'>
+                                                @Html.TextBoxFor(modelItem => model.products, new { @class = "form-control col-md-8 col-sm-8 col-xs-12", @onchange = "UpdateProductNames($(this), 'itemProductNames')" })
+                                                <a onclick="return DiscountRequirementPopup('@Html.IdFor(modelItem => model.products)')" class="btn btn-primary input-group-addon">@Resource.AddProduct</a>
+                                            </div>
+                                            
+                                            @Html.ValidationMessageFor(modelItem => model.products)
+                                        </div>
+                                        <h5 class="col-lg-12" id="itemProductNames">
+                                            @ViewBag.ProductNames
+                                        </h5>
+                                    </div>
+                                    }
+                                }
+
+                            </div>
+                          
+                            <div class="col-md-2 pull-right">
+                                <div class="btn-group pull-right">
+                                    <button type="submit" class="btn btn-default">
+                                        <i class="fa fa-pencil" aria-hidden="true"></i> @Resource.Save
+                                    </button>
+                                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                        <span class="caret"></span>
+                                        <span class="sr-only">Toggle Dropdown</span>
+                                    </button>
+
+                                    <ul class="dropdown-menu btn-dropdown-menu" role="menu">
+                                        <li>
+                                            @Ajax.FontawsomeActionLink("fa fa-trash-o", @Resource.Delete, "DeleteDiscountRequirement", 
+                                            new { id = @model.ID, DiscountID = @model.DiscountID },
+                                            new AjaxOptions { UpdateTargetId = "listDiscountRequirement", InsertionMode = InsertionMode.Replace, HttpMethod = "Post" })
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <hr />
+</div>

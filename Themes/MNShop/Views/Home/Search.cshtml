@@ -1,0 +1,37 @@
+﻿
+@{
+    ViewBag.Title = @Resource.SearchResult;
+}
+
+@section css{
+<link href="~/Content/css/jquery-ui.css" rel="stylesheet" />
+}
+
+@using Store.Service.SystemService
+@model Frontend.Models.SearchViewModel
+
+<div class="page_image_title" style="background-image:url(@Model.ProductGroup.BannerUrl);">
+    <h3>
+        @Resource.Search
+    </h3>
+</div>
+<div class="breadcum_main">
+    <div class="container">
+        @Html.Breadcrumb(Frontend.Infrastructure.Utility.BreadcrumbType.Custom, customMenuName:Resource.Search, htmlAttributes:new { @class = "breadcrumb" })
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div id="column-left" class="col-sm-3 col-md-3 col-lg-3 col-xs-12">
+            @{Html.RenderPartial("_ProductCategory", Model.ListCategory);}
+        </div>
+        <div id="content" class="col-sm-9 category_page other_page">
+            @{Html.RenderPartial("_ProductList", Model);}
+        </div>
+    </div>
+</div>
+
+@section scripts{
+
+}

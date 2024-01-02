@@ -1,0 +1,196 @@
+﻿@model Admin.Models.ReportViewModels
+@using Store.Service.ProductServices;
+@{
+    ViewBag.Title = string.Format(Resource.ReportTitlePlaceholder, "");
+}
+
+<div class="page-title">
+    <div class="title_left">
+        <h3>@string.Format(Resource.ReportTitlePlaceholder, "")</h3>
+    </div>
+    <div class="title_right">
+        <div class="pull-right" id="report_type">
+            @Html.DropDownList("Type", ViewBag.ListReportType as SelectList, new { @class = "form-control form-control-inline", v_model = "type" })
+            @Html.DropDownList("Year", ViewBag.ListYear as SelectList, new { @class = "form-control form-control-inline", v_model = "year" })
+            <select name="Month" class="form-control form-control-inline" v-model.number="month" v-show="type == @((int)ReportType.ByMonth)">
+                <option v-for="m in listMonth" v-bind:value="m">{{'Tháng ' + m}}</option>
+            </select>
+            <select name="Quarter" class="form-control form-control-inline" v-model.number="quarter" v-show="type == @((int)ReportType.ByQuarter)">
+                <option v-for="q in listQuarter" v-bind:value="q">{{'Quý ' + q}}</option>
+            </select>
+
+        </div>
+    </div>
+</div>
+
+<div class="main-content" id="charts_area">
+    <div id="chart_error">
+        @*<p>@Resource.ChartFailedMsg</p>*@
+    </div>
+    <div id="charts_container">
+        <div id="chart_div"></div>
+        <div id="table_div"></div>
+    </div>
+</div>
+
+@section scripts{
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script>
+        var vmReport = new Vue({
+            el:"#report_type",
+            data:{
+                type:'@((int)Model.Type)',
+                month:@Model.Month,
+                year:@Model.Year,
+                quarter:@Model.Quater,
+                data:null,
+                chart: null,
+                table: null,
+                options:null,
+                listMonth:@Html.Raw(Json.Encode(ViewBag.ListMonth)),
+                doneLoadGoogle:false,
+                url:null,
+            },
+            methods:{
+                InitChart:function(){
+                    this.doneLoadGoogle = true;
+                    this.DrawCharts();
+                },
+                AddBlankColumns:function(type, time){
+                    var result = [];
+                    var blank = type == '@((int)ReportType.ByMonth)' ? '' : time;
+                    for(var i = time; i < time + 5; i++){
+                        result.push([blank, -1]);
+                    }
+
+                    return result;
+                },
+                DrawCharts:function(){
+                    if(this.doneLoadGoogle){
+                        var self = this;
+                        var data = this.data;
+                        var options = this.options;
+                        if(!data){
+                            data = new google.visualization.DataTable();
+                        }
+
+                        if(!this.chart){
+                            this.chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
+                            google.visualization.events.addListener(this.chart, 'error', function () {
+                                $('#charts_area').addClass("chart_failed");
+                            });
+                            google.visualization.events.addListener(this.chart, 'ready', function () {
+                                $('#charts_area').removeClass("chart_failed");
+                            });
+                        }else{
+                            this.chart.clearChart();
+                        }
+
+                        if(!this.table){
+                            this.table = new google.visualization.Table(document.getElementById('table_div'));
+                        }else{
+                            this.table.clearChart();
+                        }
+
+                        var submitData = { type: self.type, month: self.month, year: self.year, quarter: self.quarter };
+                        $.ajax({
+                            url: self.url,
+                            type: 'GET',
+                            data: submitData,
+                            success: function (response) {
+                                options.hAxis.viewWindow = null;
+                                switch(self.type){
+                                    case "@((int)ReportType.ByMonth)":
+                                        data.addColumn('string', '@Html.Raw(Resource.Date)');
+                                        data.addColumn('number', '@Html.Raw(Resource.Total)');
+                                        options.hAxis.title = '@Html.Raw(Resource.Date)';
+                                        break;
+                                    case "@((int)ReportType.ByQuarter)":
+                                        data.addColumn('number', '@Html.Raw(Resource.Week)');
+                                        data.addColumn('number', '@Html.Raw(Resource.Total)');
+                                        options.hAxis.title = '@Html.Raw(Resource.Week)';
+                                        break;
+                                    case "@((int)ReportType.ByYear)":
+                                        data.addColumn('number', '@Html.Raw(Resource.Month)');
+                                        data.addColumn('number', '@Html.Raw(Resource.Total)');
+                                        options.hAxis.title = '@Html.Raw(Resource.Month)';
+                                        break;
+                                }
+
+                                jQuery.each(response.list, function(index, item) {
+                                    if(self.type == '@((int)ReportType.ByMonth)')
+                                        data.addRow([item.Time + '/' +self.month + '/' + self.year, item.Total]);
+                                    else
+                                        data.addRow([item.Time, item.Total]);
+                                });
+
+                                self.chart.draw(data, self.options)
+                                self.table.draw(data, { width: '100%', height: '100%' });
+                                ChangeUrl(submitData);
+                            },
+                        });
+                    }
+                }
+            },
+            created:function(){
+                this.url = '@Url.Action("GetProceedsReport")';
+                this.options = {
+                    title: '@Html.Raw(string.Format(Resource.ReportTitlePlaceholder, Resource.Proceed.ToLower()))',
+                    hAxis: {
+                        title: '@Html.Raw(Resource.Date)',
+                    },
+                    vAxis: {
+                        title: '@Html.Raw(Resource.Total)',
+                    },
+                    bar: { groupWidth: "20%"},
+                    animation: {
+                        startup: true,
+                        duration: 500
+                    },
+                    height: 300
+                };
+            },
+            computed:{
+                listQuarter:function(){
+                    var self = this;
+                    var result = [];
+                    if(self.listMonth.indexOf(1) != -1 || self.listMonth.indexOf(2) != -1 || self.listMonth.indexOf(3) != -1){
+                        result.push(1);
+                    }
+                    if(self.listMonth.indexOf(4) != -1 || self.listMonth.indexOf(5) != -1 || self.listMonth.indexOf(6) != -1){
+                        result.push(2);
+                    }
+                    if(self.listMonth.indexOf(7) != -1 || self.listMonth.indexOf(8) != -1 || self.listMonth.indexOf(9) != -1){
+                        result.push(3);
+                    }
+                    if(self.listMonth.indexOf(10) != -1 || self.listMonth.indexOf(11) != -1 || self.listMonth.indexOf(12) != -1){
+                        result.push(4);
+                    }
+                    if(result){
+                        self.quarter = result[0];
+                    }
+                    return result;
+                },
+                
+            },
+            watch:{
+                type:function(newType){
+                    this.url = '@Url.Action("GetProceedsReport")';
+                    this.DrawCharts();
+                },
+                month:function(newMonth){
+                    this.DrawCharts();
+                },
+                quarter:function(newQuarter){
+                    this.DrawCharts();
+                },
+                year:function(newYear){
+                    this.DrawCharts();
+                }
+            }
+        });
+
+        google.charts.load('current', { packages: ['corechart', 'line', 'table','bar'], 'language': '@Request.Cookies["lang"].Value.Substring(0, 2)' });
+        google.charts.setOnLoadCallback(vmReport.InitChart);
+    </script>
+}

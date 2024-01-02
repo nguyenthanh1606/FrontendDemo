@@ -1,0 +1,375 @@
+﻿@model Admin.Models.ProductGroupViewModel
+@using Store.Service.ProductServices
+@{
+    string[] listAdvanceProperties = ViewBag.ListAdvanceProp;
+}
+
+@Html.HiddenFor(m => m.GroupID)
+<div id="productGroup">
+    <div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.Title))? "advanceProp" : "")">
+        @Html.LabelFor(model => model.Title, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+        <div class="col-md-10 col-sm-9 col-xs-12">
+            @Html.TextBoxFor(model => model.Title, new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.Title, "")
+        </div>
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.FriendlyUrl, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+        <div class="col-md-10 col-sm-9 col-xs-12" v-show="!isEditUrl">
+            <div class="input-group">
+                <input type="text" class="form-control" readonly v-model="currentUrl">
+                <div class="input-group-btn">
+                    <button class="btn btn-default" type="button" v-on:click="isEditUrl = true">@Resource.EditFriendlyUrl</button>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-10 col-sm-9 col-xs-12" v-show="isEditUrl">
+            <div class="input-group">
+                @Html.TextBoxFor(model => model.FriendlyUrl, new { @class = "form-control", v_model = "friendlyUrl" })
+                <div class="input-group-btn">
+                    <button class="btn btn-primary" type="button" v-on:click="saveUrl()">@Resource.Save</button>
+                    <button class="btn btn-default" type="button" v-on:click="cancelEdit()">@Resource.Cancel</button>
+                </div>
+            </div>
+            <span>@Html.ValidationMessageFor(model => model.FriendlyUrl)</span>
+            @Html.HiddenFor(m => m.OriginalUrl)
+        </div>
+    </div>
+
+    <div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.Description))? "advanceProp" : "")">
+        @Html.LabelFor(model => model.Description, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+        <div class="col-md-10 col-sm-9 col-xs-12">
+            @Html.TextAreaFor(model => model.Description, new { @class = "form-control ck_editor" })
+            @Html.ValidationMessageFor(model => model.Description, "")
+        </div>
+    </div>
+    <div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.ShowOnMainMenu))? "advanceProp" : "")">
+        @Html.LabelFor(model => model.ShowOnMainMenu, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+        <div class="col-md-10 col-sm-9 col-xs-12">
+            <label class="checkbox-inline">
+                @Html.RadioButtonFor(model => model.ShowOnMainMenu, false)@Resource.Invisible
+            </label>
+            <label class="checkbox-inline">
+                @Html.RadioButtonFor(model => model.ShowOnMainMenu, true)@Resource.Visible
+            </label>
+        </div>
+    </div>
+    <div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.ShowOnBottomMenu))? "advanceProp" : "")">
+        @Html.LabelFor(model => model.ShowOnBottomMenu, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+        <div class="col-md-10 col-sm-9 col-xs-12">
+            <label class="checkbox-inline">
+                @Html.RadioButtonFor(model => model.ShowOnBottomMenu, false)@Resource.Invisible
+            </label>
+            <label class="checkbox-inline">
+                @Html.RadioButtonFor(model => model.ShowOnBottomMenu, true)@Resource.Visible
+            </label>
+        </div>
+    </div>
+    <div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.ShowOnHome))? "advanceProp" : "")">
+        @Html.LabelFor(model => model.ShowOnHome, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+        <div class="col-md-10 col-sm-9 col-xs-12">
+            <label class="checkbox-inline">
+                @Html.RadioButtonFor(model => model.ShowOnHome, false)@Resource.Invisible
+            </label>
+            <label class="checkbox-inline">
+                @Html.RadioButtonFor(model => model.ShowOnHome, true)@Resource.Visible
+            </label>
+        </div>
+    </div>
+    <div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.GroupParentID))? "advanceProp" : "")">
+        @Html.LabelFor(model => model.GroupParentID, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+        <div class="col-md-10 col-sm-9 col-xs-12">
+            @Html.DropDownListFor(model => model.GroupParentID, new SelectList(@ViewBag.GroupsParent, "Key", "Value"),
+            string.Format(Resource.SelectParentPlaceHolder, Resource.ProductGroup.ToLower()), new { @class = "form-control ddl_select2", onchange = "ChangeParrentGroup(this)" })
+            @Html.ValidationMessageFor(model => model.GroupParentID)
+        </div>
+    </div>
+
+    <div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.Priority))? "advanceProp" : "")">
+        @Html.LabelFor(model => model.Priority, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+        <div class="col-md-10 col-sm-9 col-xs-12">
+            @Html.TextBoxFor(model => model.Priority, new { @class = "form-control" })
+            @Html.ValidationMessageFor(m => m.Priority)
+        </div>
+    </div>
+    <div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.ImageUrl))? "advanceProp" : "")">
+        @Html.LabelFor(model => model.ImageUrl, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+        <div class="col-md-10 col-sm-9 col-xs-12">
+            @Html.FilesManagerTextboxFor(model => model.ImageUrl, new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.ImageUrl)
+        </div>
+    </div>
+    <div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.BannerUrl))? "advanceProp" : "")">
+        @Html.LabelFor(model => model.BannerUrl, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+        <div class="col-md-10 col-sm-9 col-xs-12">
+            @Html.FilesManagerTextboxFor(model => model.BannerUrl, new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.BannerUrl)
+        </div>
+    </div>
+    <div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.IconUrl))? "advanceProp" : "")">
+        @Html.LabelFor(model => model.IconUrl, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+        <div class="col-md-10 col-sm-9 col-xs-12">
+            @Html.FilesManagerTextboxFor(model => model.IconUrl, new { @class = "form-control" })
+            @Html.ValidationMessageFor(model => model.IconUrl)
+        </div>
+    </div>
+    <div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.ListParentProperties))? "advanceProp" : "")">
+        @Html.LabelFor(model => model.ListParentProperties, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+        <div class="col-md-10 col-sm-9 col-xs-12" id="parentAttr">
+            <table class="table table-bordered" id="property-table">
+                <thead class="thead-blue">
+                    <tr>
+                        <th class="width-8">@Html.LabelFor(m => m.ProductGroupProperties.FirstOrDefault().Title)</th>
+                        <th class="width-5">@Html.LabelFor(m => m.ProductGroupProperties.FirstOrDefault().Type)</th>
+                        <th class="width-2">@Html.LabelFor(m => m.ProductGroupProperties.FirstOrDefault().Priority)</th>
+                        <th class="width-1">@Html.LabelFor(m => m.ProductGroupProperties.FirstOrDefault().AllowFilter)</th>
+                        <th class="width-4">@Resource.Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr is="group-property-item" v-for="(groupProperty,index) in listGroupParentProperty"
+                        :group="groupProperty" :index="index" :property-type="propertyType"
+                        :property-per-page="propertyPerPage" :property-prototype="propertyPrototype"
+                        :is-parent-prop="true" v-on:delete-row="DeleteRow(index)"></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="form-group @(listAdvanceProperties.Contains(Html.NameOf(m => m.ProductGroupProperties))? "advanceProp" : "")">
+        @Html.LabelFor(model => model.ProductGroupProperties, new { @class = "control-label col-md-2 col-sm-3 col-xs-12" })
+        <div class="col-md-10 col-sm-9 col-xs-12">
+            <button type="button" class="btn btn-primary" v-on:click="isAddingNewGroupProperty = true">@Resource.AddNewRow</button>
+        </div>
+        <div class="col-md-10 col-sm-9 col-xs-12 col-md-offset-2 col-sm-offset-3">
+            <table class="table table-bordered table-centered" id="property-table">
+                <thead class="thead-blue">
+                    <tr>
+                        <th class="width-8">@Html.LabelFor(m => m.ProductGroupProperties.FirstOrDefault().Title)</th>
+                        <th class="width-5">@Html.LabelFor(m => m.ProductGroupProperties.FirstOrDefault().Type)</th>
+                        <th class="width-2">@Html.LabelFor(m => m.ProductGroupProperties.FirstOrDefault().Priority)</th>
+                        <th class="width-1">@Html.LabelFor(m => m.ProductGroupProperties.FirstOrDefault().AllowFilter)</th>
+                        <th class="width-4">@Resource.Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-show="isAddingNewGroupProperty">
+                        <td>
+                            <input v-model="newGroupProperty.Title" class="form-control" />
+                        </td>
+                        <td>
+                            <select v-model="newGroupProperty.Type" class="form-control">
+                                <option v-for="option in propertyType" v-bind:value="option.Id">{{option.Name}}</option>
+                            </select>
+                        </td>
+                        <td>
+                            <input type="number" v-model.number="newGroupProperty.Priority" class="form-control" />
+                        </td>
+                        <td style="text-align: center;vertical-align: middle;">
+                            <input type="checkbox" v-model="newGroupProperty.AllowFilter" class="checkbox-inline" value="true" />
+                        </td>
+                        <td>
+                            <button type="button" class="btn btn-primary" v-on:click="AddNewGroupProperty()">@Resource.Save</button>
+                            <button type="button" class="btn btn-default" v-on:click="isAddingNewGroupProperty = false">@Resource.Cancel</button>
+                        </td>
+                    </tr>
+                    <tr is="group-property-item" v-for="(groupProperty,index) in listGroupProperty"
+                        :group="groupProperty" :index="index" :property-type="propertyType"
+                        :property-per-page="propertyPerPage" :property-prototype="propertyPrototype"
+                        :is-parent-prop="false" v-on:delete-row="DeleteRow(index)"></tr>
+                </tbody>
+            </table>
+            @Html.ValidationMessageFor(model => model.ProductGroupProperties)
+        </div>
+    </div>
+
+</div>
+
+
+<div id="divModal" class="modal fade" role="dialog"></div>
+
+<script type="text/x-template" id="groupProperty-template">
+    <tr v-if="isEditing">
+        <td>
+            <input v-model="group.Title" class="form-control" required />
+        </td>
+        <td>
+            <select v-model="group.Type" class="form-control">
+                <option v-for="option in propertyType" v-bind:value="option.Id">{{option.Name}}</option>
+            </select>
+        </td>
+        <td>
+            <input type="number" v-model.number="group.Priority" class="form-control" />
+        </td>
+        <td style="text-align: center;vertical-align: middle;">
+            <input type="checkbox" v-model="group.AllowFilter" class="checkbox-inline" value="true" />
+        </td>
+        <td>
+            <button class="btn btn-primary" type="button" v-on:click="SaveGroupProperty()">@Resource.Save</button>
+            <button class="btn btn-default" type="button" v-on:click="CancelGroupPropertyEdit()">@Resource.Cancel</button>
+        </td>
+    </tr>
+    <tr v-else>
+        <td>
+            {{group.Title}}
+        </td>
+        <td>
+            {{parentTypeName}}
+        </td>
+        <td>
+            {{group.Priority}}
+        </td>
+        <td style="text-align: center;vertical-align: middle;">
+            <input type="checkbox" v-model="group.AllowFilter" class="checkbox-inline" value="true" disabled />
+        </td>
+        <td>
+            <div class="modal fade" role="dialog" tabindex="-1" v-bind:id="isParentProp? 'modalParentProperties' + index : 'modalProperties' + index">
+                <div class="modal-dialog modal-lg" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">@Resource.ProductProperty</h4>
+                        </div>
+
+                        <div class="modal-body">
+
+                            <div class="form-horizontal">
+                                <div class="form-group clearfix">
+                                    <div class="col-md-6 col-sm-6 col-xs-12">
+                                        <label class="control-label">@Resource.PropertyName</label>
+                                        <input class="form-control" v-model="filterTitle" />
+                                    </div>
+                                    <div class="col-md-6 col-sm-6 col-xs-12">
+                                        <label class="control-label">{{group.Type === @((int)ProductGroupPropertiesType.Color)? '@Resource.ColorCode' : '@Resource.Note'}}</label>
+                                        <input class="form-control" v-model="filterNote" />
+                                    </div>
+                                </div>
+                                <div>
+                                    <button type="button" class="btn btn-primary" v-on:click="isAddingNewProperty = true">@Resource.AddNewRow</button>
+                                </div>
+                                <table class="table table-bordered table-centered">
+                                    <thead class="thead-blue">
+                                        <tr>
+                                            <th class="width-5">@Html.DisplayNameFor(m => m.ListParentProperties.FirstOrDefault().ListProductProperty.FirstOrDefault().Title)</th>
+                                            <th class="width-4">{{group.Type === @((int)ProductGroupPropertiesType.Color)? '@Resource.ColorCode' : '@Resource.Note'}}</th>
+                                            <th class="width-2">@Html.DisplayNameFor(m => m.ListParentProperties.FirstOrDefault().ListProductProperty.FirstOrDefault().Priority)</th>
+                                            <th class="width-5">@Html.DisplayNameFor(m => m.ListParentProperties.FirstOrDefault().ListProductProperty.FirstOrDefault().PictureUrl)</th>
+                                            <th class="width-4">@Resource.Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-show="isAddingNewProperty">
+                                            <td>
+                                                <input v-model="newProperty.Title" class="form-control" />
+                                            </td>
+                                            <td>
+                                                <input v-model="newProperty.Note" class="form-control" v-if="group.Type === @((int)ProductGroupPropertiesType.Color)" type="color" />
+                                                <input v-model="newProperty.Note" class="form-control" v-else />
+                                            </td>
+                                            <td>
+                                                <input v-model="newProperty.Priority" class="form-control" />
+                                            </td>
+                                            <td>
+                                                <div class="input-group">
+                                                    <input v-model="newProperty.PictureUrl" class="form-control" />
+                                                    <span class="input-group-btn">
+                                                        <button title="@Resource.OpenFilesManager" class="btn btn-default" v-on:click="OpenVueElf(newProperty)" type="button">...</button>
+                                                    </span>
+                                                </div>
+                                            </td>
+                                            <td>
+                                                <button type="button" class="btn btn-primary" v-on:click="AddNewProperty()">@Resource.Save</button>
+                                                <button type="button" class="btn btn-default" v-on:click="isAddingNewProperty = false">@Resource.Cancel</button>
+                                            </td>
+                                        </tr>
+                                        <tr is="property-item" v-for="(property, j) in pagedData" :property="property"
+                                            :index="j" :parent-index="index" :group="group" v-on:delete-row="DeleteRow(index)"
+                                            v-on:delete-property-row="DeletePropertyRow(j)"></tr>
+                                    </tbody>
+                                </table>
+                                <ul class="pagination">
+                                    <li v-for="pageNumber in totalPages" v-bind:class="{active:currentPage === pageNumber }" v-show="Math.abs(pageNumber - currentPage) < 3 || pageNumber === totalPages || pageNumber === 1">
+                                        <a v-bind:href="'#modalProperties' + index" v-on:click="currentPage = pageNumber">{{pageNumber}}</a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-primary" data-dismiss="modal">@Resource.Save</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button v-if="isParentProp" type="button" class="btn btn-default" data-toggle="modal" data-target="'#modalParentProperties' + index">
+                @Resource.AddProperties
+            </button>
+            <div v-else>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-default" data-toggle="modal" v-bind:data-target="'#modalProperties' + index">
+                        @Resource.ManageProperties
+                    </button>
+                    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                        <span class="caret"></span>
+                        <span class="sr-only">Toggle Dropdown</span>
+                    </button>
+
+                    <ul class="dropdown-menu btn-dropdown-menu" role="menu">
+                        <li>
+                            <button type="button" v-on:click="isEditing=true" class="btn btn-default btn-block">
+                                <i class="fa fa-pencil" aria-hidden="true"></i> @Resource.Edit
+                            </button>
+                        </li>
+                        <li>
+                            <button type="button" v-on:click="$emit('delete-row')" class="btn btn-danger btn-block">
+                                <i class="fa fa-trash-o" aria-hidden="true"></i> @Resource.Delete
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </td>
+    </tr>
+</script>
+
+<script type="text/x-template" id="property-template">
+    <tr>
+        <td>
+            <input v-model="tempValue.Title" class="form-control" v-if="isEditing" />
+            <span v-else>{{property.Title}}</span>
+        </td>
+        <td>
+            <div v-if="isEditing">
+                <input v-model="tempValue.Note" class="form-control" v-if="group.Type === @((int)ProductGroupPropertiesType.Color)" type="color" />
+                <input v-model="tempValue.Note" class="form-control" readonly v-else />
+            </div>
+            <div v-else>
+                <input v-model="property.Note" class="form-control" disabled v-if="group.Type === @((int)ProductGroupPropertiesType.Color)" type="color" />
+                <span v-else>{{property.Note}}</span>
+            </div>
+        </td>
+        <td>
+            <input v-model="tempValue.Priority" class="form-control" v-if="isEditing" />
+            <span v-else>{{property.Priority}}</span>
+        </td>
+        <td>
+            <div class="input-group" v-if="isEditing">
+                <input v-model="tempValue.PictureUrl" class="form-control" />
+                <span class="input-group-btn">
+                    <button title="@Resource.OpenFilesManager" class="btn btn-default" v-on:click="OpenVueElf(index)" type="button">...</button>
+                </span>
+            </div>
+            <span v-else>{{property.PictureUrl}}</span>
+        </td>
+        <td>
+            <div v-if="isEditing">
+                <button class="btn btn-primary" type="button" v-on:click="SaveProperty()">@Resource.Save</button>
+                <button class="btn btn-default" type="button" v-on:click="isEditing = false">@Resource.Cancel</button>
+            </div>
+            <div v-else>
+                <button type="button" class="btn btn-primary" v-on:click="isEditing = true">@Resource.Edit</button>
+                <button type="button" class="btn btn-default" v-on:click="$emit('delete-property-row')">@Resource.Delete</button>
+            </div>
+        </td>
+    </tr>
+</script>

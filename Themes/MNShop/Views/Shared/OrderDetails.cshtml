@@ -1,0 +1,158 @@
+﻿@model Frontend.Models.CustomerOrderViewModel
+@using Store.Service.Helper.ExtensionMethod
+@{
+    ViewBag.Title = Resource.MyOrder;
+}
+
+<div class="breadcum_main">
+    <div class="container">
+        @Html.Breadcrumb(Frontend.Infrastructure.Utility.BreadcrumbType.Custom, customMenuName: Resource.MyOrder, customUrl: Url.Action("MyOrders", "Account"), htmlAttributes: new { @class = "breadcrumb" })
+    </div>
+</div>
+
+<div class="container account-account">
+    <aside class="account-side-menu">
+        @if(User.Identity.IsAuthenticated)
+        {
+            Html.RenderPartial("_AccountLayoutMenu");
+        }
+    </aside>
+    <button type="button" class="btn-toggle-menu" id="btn-toggle-menu" data-toggle="show"><i class="fa fa-chevron-right"></i></button>
+
+    <div class="account-body">
+        <div class="Co_LC_Ce">
+            <div class="clearfix">
+                <h4 class="title_item3 pull-left">@Resource.OrderStatus</h4>
+            </div>
+            <div>
+                <ul class="list-unstyled">
+                    <li><strong>@Resource.OrderStatus:</strong> @Model.Status.GetDescription()</li>
+                    @if (@Model.Status != Store.Service.ProductServices.OrderStatus.Cancel)
+                    {
+                        <li><strong>@Resource.PaymentStatus:</strong> @Model.PaymentStatus.GetDescription()</li>
+                        <li><strong>@Resource.ShippingStatus:</strong> @Model.ShippingStatus.GetDescription()</li>
+                    }
+                    else
+                    {
+                        <li><strong>@Resource.CancelOrderReason:</strong> @Model.CancelReason.GetDescription()</li>
+                    }
+                </ul>
+            </div>
+        </div>
+        <div class="Co_LC_Ce">
+            <div class="clearfix">
+                <h4 class="title_item3 pull-left">@Resource.OrderInfo</h4>
+            </div>
+            <div>
+                <ul class="list-style-none">
+                    <li><strong>@Resource.OrderDate:</strong> @Model.OrderDate.Value.ToShortDateString()</li>
+                    <li><strong>@Resource.ShippingAddress:</strong> @Model.AddressReceive</li>
+                    <li><strong>@Resource.ReceiverName:</strong> @Model.ReceiverName</li>
+                    <li><strong>@Resource.ReceiverPhone:</strong> @Model.ReceiverPhone</li>
+                    <li><strong>@Resource.PaymentMethod:</strong> @Model.PaymentType.GetDescription()</li>
+                    @*<li><strong>@Resource.ShippingMethod:</strong> @Model.ShippingMethod.GetDescription()</li>*@
+                </ul>
+            </div>
+        </div>
+        <div class="Co_LC_Ce">
+            <div class="clearfix">
+                <h4 class="title_item3 pull-left">@Resource.MyOrder</h4>
+            </div>
+            <div>
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th class="col-xs-4">@Resource.Title</th>
+                            <th class="col-xs-2">@Resource.Price</th>
+                            <th class="col-xs-1">@Resource.Quantity</th>
+                            <th class="col-xs-3">@Resource.Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var order in Model.OrderCart)
+                        {
+                            <tr>
+                                <td>
+                                    <a href="/@order.FriendlyUrl">@order.Title</a>
+                                    <div>
+                                        <ul class="pull-right list-style-none">
+                                            @foreach (var property in order.ListProperties)
+                                            {
+                                                <li>@property.Item1: <strong>@property.Item2</strong><br /></li>
+                                            }
+                                        </ul>
+                                    </div>
+                                </td>
+                                <td>@string.Format("{0:n0}", order.Price) VNĐ</td>
+                                <td>@order.Quantity</td>
+                                <td>@string.Format("{0:n0}", order.Price * order.Quantity) VNĐ</td>
+                            </tr>
+                        }
+                        <tr>
+                            <td colspan="3" class="text-right">@Html.DisplayNameFor(m => m.Subtotal)</td>
+                            <td>@string.Format("{0:n0}", Model.Subtotal)</td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" class="text-right">@Html.DisplayNameFor(m => m.Discount)</td>
+                            <td>@string.Format("{0:n0}", Model.Discount ?? 0)</td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" class="text-right">@Html.DisplayNameFor(m => m.ShippingFee)</td>
+                            <td>Chưa tính</td>
+                        </tr>
+                        <tr>
+                            <td colspan="3" class="text-right">@Html.DisplayNameFor(m => m.Total)</td>
+                            <td>@string.Format("{0:n0}", Model.Total)</td>
+                        </tr>
+                    </tbody>
+                </table>
+                @if (Model.Status != Store.Service.ProductServices.OrderStatus.Cancel)
+                {
+                    <button type="submit" class="btn btn-danger pull-right" data-toggle="modal" data-target="#order-cancel-confirmation">@Resource.CancelOrder</button>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (Model.Status != Store.Service.ProductServices.OrderStatus.Cancel)
+{
+    <div id="order-cancel-confirmation" class="modal" tabindex="-1" role="dialog" aria-labelledby="order-cancel-confirmation-title">
+        <div class="modalOut">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+                        <h4 class="modal-title">@Resource.CancelOrder #@Model.OrderID</h4>
+                    </div>
+                    @using (Html.BeginForm("CancelOrder", "Account", new { id = Model.OrderID }, FormMethod.Post, null))
+                {
+                <div class="modal-body">
+                    @Html.AntiForgeryToken()
+                    <div class="form-group">
+                        <label class="control-label" for="CancelReason">@Resource.Reason</label>
+                        @Html.DropDownList("CancelReason", ViewBag.CancelOrderReasons as SelectList, string.Format(Resource.SelectPlaceHolder, Resource.Reason), new { @class = "form-control" })
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label" for="Note">@Resource.Note</label>
+                        @Html.TextArea("Note", "", 5, 5, new { @class = "form-control" })
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">@Resource.PleaseReadCancelPolicyMsg</label>
+                        <div class="well">
+                            @ViewBag.CancelPolicy
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <span class="btn btn-default" data-dismiss="modal">@Resource.NotCancel</span>
+                    <button type="submit" class="btn btn-danger pull-right">
+                        @Resource.Acccept
+                    </button>
+                </div>
+                }
+                </div>
+            </div>
+        </div>
+    </div>
+}

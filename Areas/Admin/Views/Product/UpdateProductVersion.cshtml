@@ -1,0 +1,33 @@
+﻿@model Admin.Models.ProductVersionViewModel
+
+@using (Ajax.BeginForm("UpdateProductVersion", "Product",
+                new AjaxOptions { HttpMethod = "Post", InsertionMode = InsertionMode.Replace, UpdateTargetId = "product_version",
+                    OnComplete = "HideModal('#divModal');",
+                    OnFailure = string.Format("ShowAlertDialog({0})", Resource.UnknowErrorMessage)
+                }))
+{
+    <div class="modal-dialog modal-lg" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+
+        <!-- Modal content-->
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">@string.Format(Resource.UpdatePlaceholder, Resource.ProductVersion.ToLower())</h4>
+            </div>
+
+            <div class="modal-body">
+                <div class="form-horizontal">
+                    @Html.AntiForgeryToken()
+                    @Html.ValidationSummary(true)
+
+                    @Html.EditorForModel()
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="submit" class="btn btn-primary">@Resource.Update</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal">@Resource.Cancel</button>
+            </div>
+        </div>
+    </div>
+}

@@ -1,0 +1,77 @@
+﻿@model PagedList.IPagedList<Admin.Models.ProductAdsViewModel>
+@using PagedList.Mvc
+@using Store.Service.Helper.ExtensionMethod;
+
+@Styles.Render("~/Content/pagedList")
+
+<table class="table table-hover">
+    <thead class="thead-inverse">
+        <tr>
+            <th class="width-2">@Html.DisplayNameFor(model => model.FirstOrDefault().ProductAdID)</th>
+            <th class="width-5">@Html.DisplayNameFor(model => model.FirstOrDefault().AdName)</th>
+            <th class="width-5">@Html.DisplayNameFor(model => model.FirstOrDefault().Url)</th>
+            <th class="width-3">@Html.DisplayNameFor(model => model.FirstOrDefault().Status)</th>
+            <th class="width-5">@Resource.Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.ProductAdID</td>
+                <td>@item.AdName</td>
+                <td>@item.Url</td>
+                <td>@item.Status.GetDescription()</td>
+                <td>
+                    <div class="btn-group">
+                        <a href="@Url.Action("EditProductAds", new { productAdsID = item.ProductAdID })" class="btn btn-default">
+                            <i class="fa fa-pencil" aria-hidden="true"></i> @Resource.Edit
+                        </a>
+                        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                            <span class="caret"></span>
+                            <span class="sr-only">Toggle Dropdown</span>
+                        </button>
+
+                        <ul class="dropdown-menu btn-dropdown-menu" role="menu">
+                            <li>
+                                <a href="@Url.Action("DetailProductAds", new { productAdsID = item.ProductAdID })">
+                                    <i class="fa fa-eye" aria-hidden="true"></i> @Resource.View
+                                </a>
+                            </li>
+                            @if (item.Status != Store.Service.ProductServices.ProductAdStatus.Deploying)
+                            {
+                                <li>
+                                    <a href="@Url.Action("DeleteProductAds", new { productAdsID = item.ProductAdID })">
+                                        <i class="fa fa-trash-o" aria-hidden="true"></i> @Resource.Delete
+                                    </a>
+                                </li>
+                            }
+                        </ul>
+                    </div>
+                    @if (item.Status != Store.Service.ProductServices.ProductAdStatus.Deploying)
+                    {
+                        <a href="@Url.Action("PublishProductAds", new { productAdsID = item.ProductAdID })" class="btn btn-default">
+                            <i class="fa fa-share-square-o" aria-hidden="true"></i> @Resource.Publish
+                        </a>
+                    }
+                    else
+                    {
+                        <a href="@Url.Action("PausePublishProductAds", new { productAdsID = item.ProductAdID })" class="btn btn-default">
+                            <i class="fa fa-share-square-o" aria-hidden="true"></i> @Resource.Pause
+                        </a>
+                    }
+                </td>
+
+            </tr>
+        }
+    </tbody>
+</table>
+
+<div class="pull-left">
+    @string.Format(Resource.PaginationTxt, Model.PageCount < Model.PageNumber ? 0 : Model.PageNumber, @Model.PageCount)
+</div>
+<div class="pull-right">
+    @Html.PagedListPager(Model, page => Url.Action("ListAd",
+        new { page, status = ViewBag.Status }),
+        PagedListRenderOptions.EnableUnobtrusiveAjaxReplacing(new AjaxOptions() { HttpMethod = "GET", UpdateTargetId = "list" }))
+</div>

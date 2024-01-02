@@ -1,0 +1,20 @@
+﻿@model List<Frontend.Models.ProductBoxViewModel>
+
+<div class="row related_list">
+    @foreach (var product in Model)
+    {
+        <a href="@Url.CustomAction(Store.Service.SystemService.RoutingType.Product, product.ProductID)">
+            <div class="product" style="border-right: 0; border-top: 0">
+                <div>
+                    <div class="img-product">
+                        <img src="@product.ImageUrl" class="rounded mx-auto d-block" alt="product-1">
+                    </div>
+                    <div class="detail-product">
+                        <p>@string.Format("{0:n0}", product.Price) VNĐ</p>
+                        <span>@product.Title</span>
+                    </div>
+                </div>
+            </div>
+        </a>
+    }
+</div>

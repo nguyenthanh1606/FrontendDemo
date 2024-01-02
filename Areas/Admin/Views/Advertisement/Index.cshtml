@@ -1,0 +1,49 @@
+﻿@model Admin.Models.AdFilterViewModel
+@{
+    ViewBag.Title = Resource.Advertisement;
+}
+
+<div class="page-title">
+    <div class="title_left">
+        <h3>@Resource.Advertisement</h3>
+    </div>
+    <div class="title_right">
+        <div class="pull-right">
+            @Html.ActionLink(@Resource.CreateNewAd, "Create", null, new { @class = "btn btn-primary" })
+        </div>
+    </div>
+</div>
+
+<div class="main-content">
+    @using (Ajax.BeginForm("ListAd", "Advertisement", new AjaxOptions { InsertionMode = InsertionMode.Replace, UpdateTargetId = "list", HttpMethod = "Get" }, new { id = "filter_div" }))
+    {
+        <div class="form-group clearfix">
+            <div class="col-md-6 col-sm-6 col-xs-12">
+                <label class="control-label">@Resource.AdItemsForStatus</label>
+                @Html.DropDownListFor(m => m.Status, new SelectList(ViewBag.ListStatus, "Value", "Text"), @Resource.All, new { @class = "form-control" })
+            </div>
+        </div>
+    }
+
+    <div id="list">
+        @{Html.RenderAction("ListAd", "Advertisement", new { status = ViewBag.Status, page = ViewBag.Page });}
+    </div>
+</div>
+@section scripts{
+    <script>
+        $('#Status').change(function () {
+            $('#filter_div').submit();
+        });
+
+        $('#filter_div').submit(function () {
+            ChangeUrl({ Status: $('#Status').val() });
+        });
+
+        $(document).ready(function () {
+            $('select').select2({
+                theme: "bootstrap",
+                language: '@Request.Cookies["lang"].Value.Substring(0, 2)'
+            });
+        });
+    </script>
+}

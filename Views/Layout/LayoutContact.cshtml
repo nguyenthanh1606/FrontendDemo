@@ -1,0 +1,98 @@
+﻿@model Frontend.Models.LayoutContactViewModel
+
+@{
+    ViewBag.Title = Model.Group.Title;
+}
+
+<div class="wrapper">
+    @Html.Breadcrumb(Frontend.Infrastructure.BreadcrumbType.Group, @Model.Group.GroupID)
+
+    <h1 class="site-title">@Model.Group.Title</h1>
+    <div class="google_map">
+        @Html.Raw(Model.Map)
+    </div>
+    <div class="contact-info-area row">
+        <div class="col-md-4">
+            <div class="contact-title">
+                <div class="site-icon">
+                    <i class="fa fa-home" aria-hidden="true"></i>
+                </div>
+                <h6 class="contact-name">@Resource.Address</h6>
+            </div>
+            <div class="contact-value">
+                @Model.Address
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="contact-title">
+                <div class="site-icon">
+                    <i class="fa fa-phone" aria-hidden="true"></i>
+                </div>
+                <h6 class="contact-name">@Resource.Phone</h6>
+                <div class="contact-value-inline">
+                    @Model.Phone
+                </div>
+            </div>
+            <div class="contact-title">
+                <div class="site-icon">
+                    <i class="fa fa-fax" aria-hidden="true"></i>
+                </div>
+                <h6 class="contact-name">Fax</h6>
+                <div class="contact-value-inline">
+                    @Model.Fax
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="contact-title">
+                <div class="site-icon">
+                    <i class="fa fa-envelope" aria-hidden="true"></i>
+                </div>
+                <h6 class="contact-name">@Resource.Email</h6>
+            </div>
+            <div class="contact-value">
+                @Model.Email
+            </div>
+        </div>
+    </div>
+    <div class="contact-form row">
+        <h2 class="site-title">@Resource.ContactUs</h2>
+        @using (Html.BeginForm())
+        {
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>@Resource.Name</label>
+                    @Html.TextArea("Name", null, new { @class = "site-input" })
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>@Resource.Email</label>
+                    @Html.TextArea("Email", null, new { @class = "site-input" })
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-group">
+                    <label>@Resource.Phone</label>
+                    @Html.TextArea("Phone", null, new { @class = "site-input" })
+                </div>
+            </div>
+            <div class="col-md-12">
+                <div class="form-group">
+                    <label>@Resource.Content</label>
+                    @Html.TextArea("Content",null, 3, 10, new { @class = "site-input" })
+                </div>
+            </div>
+            <div class="col-md-12 form-bottom">
+                <button class="toolBtn site-button-blue">
+                    @Resource.Send <i class="fa fa-envelope" aria-hidden="true"></i>
+                </button>
+                <button class="toolBtn site-button-gray">
+                    @Resource.Delete <i class="fa fa-trash-o" aria-hidden="true"></i>
+                </button>
+            </div>
+        }
+    </div>
+</div>
+
+

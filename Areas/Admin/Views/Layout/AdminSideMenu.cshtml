@@ -1,0 +1,179 @@
+﻿
+<div class="menu_section">
+    <h3>@Resource.Content</h3>
+    <ul class="nav side-menu">
+        <li>
+            <a href="@Url.Action("Index", "Home")">
+                <i class="fa fa-tachometer"></i>@Resource.Dashboard
+            </a>
+        </li>
+
+        <li>
+            <a><i class="fa fa-shopping-bag"></i>@Resource.Product<span class="fa fa-chevron-down"></span></a>
+            <ul class="nav child_menu">
+                <li>
+                    @Html.ActionLink(@Resource.ProductList, "Index", "Product")
+                </li>
+                <li>
+                    @Html.ActionLink(@Resource.ProductGroup, "Index", "ProductGroup")
+                </li>
+                <li>
+                    @Html.ActionLink(@Resource.Brand, "Index", "Brand")
+                </li>
+            </ul>
+        </li>
+        <li>
+            <a><i class="fa fa-truck"></i>@Resource.Sale<span class="fa fa-chevron-down"></span></a>
+            <ul class="nav child_menu">
+                <li>
+                    @Html.ActionLink(@Resource.Orders, "Index", "Order")
+                </li>
+                <li>
+                    @Html.ActionLink(@Resource.Discount, "Index", "Discount")
+                </li>
+                <li>
+                    @Html.ActionLink(@Resource.Report, "Index", "Report")
+                </li>
+            </ul>
+        </li>
+        <li>
+            <a><i class="fa fa-object-group"></i>@Resource.Groups<span class="fa fa-chevron-down"></span></a>
+            <ul class="nav child_menu">
+                <li>
+                    @Html.ActionLink(@Resource.GroupList, "Index", "Groups")
+                </li>
+            </ul>
+        </li>
+        <li>
+            <a><i class="fa fa-share-square-o"></i>@Resource.Contents<span class="fa fa-chevron-down"></span></a>
+            <ul class="nav child_menu">
+                <li>
+                    @Html.ActionLink(@Resource.WaitingContents, "Waiting", "Content")
+                </li>
+                <li>
+                    @Html.ActionLink(@Resource.PublishedContents, "PublishedContent", "Content")
+                </li>
+            </ul>
+        </li>
+        <li>
+            <a><i class="fa fa-picture-o"></i>@Resource.Advertisement<span class="fa fa-chevron-down"></span></a>
+            <ul class="nav child_menu">
+                <li>
+                    @Html.ActionLink(@Resource.AdList, "Index", "Advertisement")
+                </li>
+                <li>
+                    @Html.ActionLink(@Resource.PublishedAds, "DeployedAd", "Advertisement")
+                </li>
+                <li>
+                    @Html.ActionLink(@Resource.CreateNewAd, "Create", "Advertisement")
+                </li>
+            </ul>
+        </li>
+        <li>
+            <a><i class="fa fa-television"></i>@Resource.Interface<span class="fa fa-chevron-down"></span></a>
+            <ul class="nav child_menu">
+                <li>
+                    @Html.ActionLink(@Resource.Menu, "Index", "Menu")
+                </li>
+                @*<li>
+                        @Html.ActionLink(@Resource.Theme, "Theme", "SystemPara")
+                    </li>*@
+
+            </ul>
+        </li>
+        <li>
+            <a><i class="fa fa-cubes"></i>@Resource.Other<span class="fa fa-chevron-down"></span></a>
+            <ul class="nav child_menu">
+                @*<li>
+                        @Html.ActionLink(@Resource.LinkToPage, "Index", "Link")
+                    </li>*@
+                <li>
+                    @Html.ActionLink(@Resource.EmailPromote, "Index", "EmailAds")
+                </li>
+                <li>
+                    @Html.ActionLink(@Resource.FeedBack, "Index", "FeedBack")
+                </li>
+                <li>
+                    @Html.ActionLink(@Resource.ListOfCities, "Index", "City")
+                </li>
+                <li>
+                    @Html.ActionLink(@ResourceAdmin.ListOfDistrict, "Index", "District")
+                </li>
+                <li>
+                    @Html.ActionLink(@Resource.ListOfAreas, "Index", "Area")
+                </li>
+                <li>
+                    @Html.ActionLink(@Resource.ShowroomList, "Index", "SaleSystem")
+                </li>
+                <li>
+                    @Html.ActionLink(@ResourceAdmin.BankAccount, "Index", "BankAccount")
+                </li>
+            </ul>
+        </li>
+    </ul>
+</div>
+
+<div class="menu_section">
+    <h3>@Resource.System</h3>
+    <ul class="nav side-menu">
+        <li>
+            <a><i class="fa fa-users"></i>@Resource.Authorize<span class="fa fa-chevron-down"></span></a>
+            <ul class="nav child_menu">
+                <li>
+                    @Html.ActionLink(@Resource.AccountList, "Index", "Account")
+                </li>
+                @*<li>
+                        @Html.ActionLink(@Resource.Authorize, "Index", "Authorize")
+                    </li>
+                    <li>
+                        @Html.ActionLink(@Resource.NumberOfContents, "NumberOfContent", "Account")
+                    </li>*@
+            </ul>
+        </li>
+        <li>
+            <a><i class="fa fa-cogs"></i>@Resource.System<span class="fa fa-chevron-down"></span></a>
+            <ul class="nav child_menu">
+                @*<li>
+                        @Html.ActionLink(@Resource.Settings, "DetailSettings", "SystemPara")
+                    </li>*@
+                <li>
+                    @Html.ActionLink(@Resource.ParametersSystem, "Index", "SystemPara")
+                </li>
+                @*<li>
+                        <a>
+                            @Resource.ConfigDisplay
+                            <span class="fa fa-chevron-down"></span>
+                        </a>
+                        <ul class="nav child_menu">
+                            <li class="sub_menu">
+                                @Html.ActionLink(string.Format(Resource.PropertyPlaceholder, Resource.Groups), "ConfigGroupDisplay", "SystemPara")
+                            </li>
+                            <li>
+                                @Html.ActionLink(string.Format(Resource.PropertyPlaceholder, Resource.Content), "ConfigContentDisplay", "SystemPara")
+                            </li>
+                            <li>
+                                @Html.ActionLink(string.Format(Resource.PropertyPlaceholder, Resource.ProductGroup), "ConfigProductGroupDisplay", "SystemPara")
+                            </li>
+                        </ul>
+                    </li>*@
+            </ul>
+        </li>
+        @*<li>
+                <a><i class="fa fa-envelope-o"></i>@Resource.MailBox<span class="fa fa-chevron-down"></span></a>
+                <ul class="nav child_menu">
+                    <li>
+                        @Html.ActionLink(@Resource.Inbox, "Index", "Mail")
+                    </li>
+                    <li>
+                        @Html.ActionLink(@Resource.SentMail, "SentMail", "Mail")
+                    </li>
+                </ul>
+            </li>*@
+        <li>
+            <a href="@Url.Action("Index", "Home", new { Area = "" })" target="_blank">
+                <i class="fa fa-home"></i> @Resource.MainPage
+                <span class="label label-success pull-right">@Resource.Link</span>
+            </a>
+        </li>
+    </ul>
+</div>

@@ -1,0 +1,34 @@
+﻿@model Frontend.Models.CustomerAddressViewModel
+@{
+    ViewBag.Title = string.Format(Resource.UpdatePlaceholder, Resource.Address);
+}
+<div class="wrapper">
+    <div class="index_middle">
+
+        <div class="Co_LC_L">
+            <div class="left_block">
+                @Html.Partial("_AccountLayoutMenu")
+            </div>
+        </div>
+        <div class="Co_LC_Ce">
+            <div class="clearfix">
+                <h4 class="title_item3 pull-left">@string.Format(Resource.UpdatePlaceholder, Resource.Address)</h4>
+            </div>
+            <div>
+                @using (Html.BeginForm("EditAddress", "Account"))
+                {
+                    <div class="form-horizontal">
+                        @Html.AntiForgeryToken()
+                        @Html.EditorForModel()
+                        <div class="form-group">
+                            <div class="pull-right">
+                                <input type="submit" value='@Resource.Save' class="btn btn-primary" />
+                                @Html.ActionLink(Resource.Skip, "Info", null, new { @class = "btn btn-default" })
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

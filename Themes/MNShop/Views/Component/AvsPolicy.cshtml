@@ -1,0 +1,29 @@
+﻿@model List<Frontend.Models.BannerViewModel>
+
+@{
+    var firstItem = Model.FirstOrDefault();
+}
+@if (Model.Any())
+{
+    <div class="container home-about">
+        <h2 class="home-about_title text-center">@firstItem.AdName</h2>
+        <div class="text-center m-auto w-80">
+            <p>
+                @firstItem.Content.RemoveHtml()
+            </p>
+        </div>
+        <div class="text-center">
+            <a href="@firstItem.Url" class="text-uppercase link link-active">XEM GIỚI THIỆU VỀ MN ARTGIFTS  <i class="fas fa-caret-right"></i></a>
+        </div>
+        <div class="home-about--list">
+            @foreach (var item in Model.Skip(1))
+            {
+                <div class="home-about--item">
+                    <img src="@item.ImageUrl">
+                    <h4 class="home-about--item_title text-center">@item.AdName</h4>
+                    <p class="text-center">@item.Content.RemoveHtml() </p>
+                </div>
+            }
+        </div>
+    </div>
+}
