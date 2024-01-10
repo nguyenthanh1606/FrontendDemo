@@ -28,11 +28,13 @@
     },
     sumMoney: function () {
       var key1 = "Price";
+      var key3 = "CustomPrice";
       var key2 = "Quantity";
       var self = this;
-      if (self.cart !== null) {
+        if (self.cart !== null) {
+
         return self.cart.reduce(function (total, item) {
-          return total + item[key1] * item[key2];
+            return total + item[key3] * item[key2];
         }, 0);
       } else {
         return 0;

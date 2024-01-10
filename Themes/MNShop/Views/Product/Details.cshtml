@@ -140,19 +140,20 @@ new AjaxOptions { HttpMethod = "POST", OnSuccess = "vmProduct.SelectVersionSucce
                 {
                     @Html.HiddenFor(m => m.ProductID)
                     @Html.AntiForgeryToken()
-                    <div class="product-card">
+            <div class="product-card">
 
 
-                        @Html.TextBox("Quantity", 1, new { name = "Quantity", @class = "form-control text-center d-none" })
+                @Html.TextBox("Quantity", 1, new { name = "Quantity", @class = "form-control text-center d-none" })
+                <input type="text" v-model="priceSelected.price[selectedDG]" name="CustomPrice" class="form-control text-center d-none">
 
-                        <div class="product-card--price">
-                            <span>Giá thành phẩm</span>
-                            <h3>@string.Format("{0:n0}", "{{ priceSelected.price[selectedDG] }}") <span>VNĐ</span></h3>
-                        </div>
-                        <button class="text-uppercase btn btn-1" id="mySizeChart" onclick="AddToCart(AddToCartSuccess)">
-                            Đặt in
-                        </button>
-                    </div>
+                <div class="product-card--price">
+                    <span>Giá thành phẩm</span>
+                    <h3>@string.Format("{0:n0}", "{{ priceSelected.price[selectedDG] }}") <span>VNĐ</span></h3>
+                </div>
+                <button class="text-uppercase btn btn-1" id="mySizeChart" onclick="AddToCart(AddToCartSuccess)">
+                    Đặt in
+                </button>
+            </div>
                 }
 
 

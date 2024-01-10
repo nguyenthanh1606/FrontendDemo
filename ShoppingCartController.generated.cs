@@ -275,16 +275,17 @@ namespace Frontend.Controllers
         public T4MVC_ShoppingCartController() : base(Dummy.Instance) { }
 
         [NonAction]
-        partial void AddToCartOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, int productId, string[] properties, int quantity);
+        partial void AddToCartOverride(T4MVC_System_Web_Mvc_ActionResult callInfo, int productId, string[] properties, int quantity, int customPrice);
 
         [NonAction]
-        public override System.Web.Mvc.ActionResult AddToCart(int productId, string[] properties, int quantity)
+        public override System.Web.Mvc.ActionResult AddToCart(int productId, string[] properties, int quantity, int customPrice)
         {
             var callInfo = new T4MVC_System_Web_Mvc_ActionResult(Area, Name, ActionNames.AddToCart);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "productId", productId);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "properties", properties);
             ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "quantity", quantity);
-            AddToCartOverride(callInfo, productId, properties, quantity);
+            ModelUnbinderHelpers.AddRouteValues(callInfo.RouteValueDictionary, "customPrice", customPrice);
+            AddToCartOverride(callInfo, productId, properties, quantity, customPrice);
             return callInfo;
         }
 

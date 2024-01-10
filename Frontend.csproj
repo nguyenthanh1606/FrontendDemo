@@ -1875,6 +1875,12 @@
     <Content Include="Themes\MNShop\images\banner-page.jpg" />
     <Content Include="Themes\MNShop\images\banner.jpg" />
     <Content Include="Themes\MNShop\images\icons\arrow_down.svg" />
+    <Content Include="Themes\MNShop\images\icons\cart-1.svg" />
+    <Content Include="Themes\MNShop\images\icons\cart-2.svg" />
+    <Content Include="Themes\MNShop\images\icons\cart-3.svg" />
+    <Content Include="Themes\MNShop\images\icons\cart-4.svg" />
+    <Content Include="Themes\MNShop\images\icons\cart-5.svg" />
+    <Content Include="Themes\MNShop\images\icons\cart-6.svg" />
     <Content Include="Themes\MNShop\images\icons\cart.svg" />
     <Content Include="Themes\MNShop\images\icons\fb.png" />
     <Content Include="Themes\MNShop\images\icons\i-call.png" />

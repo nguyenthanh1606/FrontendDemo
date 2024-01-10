@@ -50,6 +50,7 @@ namespace Frontend.Models
 
         [DisplayResource(Name = "Price", ResourceType = typeof(Resource))]
         public int Price { get; set; }
+        public int CustomPrice { get; set; }
         public int OriginalPrice { get; set; }
         [DisplayResource(Name = "Quantity", ResourceType = typeof(Resource))]
         [Range(1, int.MaxValue)]

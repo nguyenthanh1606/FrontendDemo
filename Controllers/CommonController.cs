@@ -16,6 +16,12 @@ namespace Frontend.Controllers
         }
 
         // GET: Common
+        public virtual JsonResult GetCity()
+        {
+            var listCity = _generalService.GetAllCity().Where(t => t.Value1.Trim() == "1").Select(o => new { Value = o.Id, Text = o.Type + " " + o.Name });
+            return Json(listCity, JsonRequestBehavior.AllowGet);
+        }
+
         public virtual JsonResult GetDistrict(int id = 0)
         {
             var listDistrict = _generalService.GetDistrictForCity(id).Select(o => new { Value = o.Id, Text = o.Type + " " + o.Name });

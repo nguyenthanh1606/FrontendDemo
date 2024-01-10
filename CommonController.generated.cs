@@ -72,6 +72,7 @@ namespace Frontend.Controllers
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         public class ActionNamesClass
         {
+            public readonly string GetCity = "GetCity";
             public readonly string GetDistrict = "GetDistrict";
             public readonly string GetWard = "GetWard";
         }
@@ -79,6 +80,7 @@ namespace Frontend.Controllers
         [GeneratedCode("T4MVC", "2.0"), DebuggerNonUserCode]
         public class ActionNameConstants
         {
+            public const string GetCity = "GetCity";
             public const string GetDistrict = "GetDistrict";
             public const string GetWard = "GetWard";
         }
@@ -118,6 +120,17 @@ namespace Frontend.Controllers
     public partial class T4MVC_CommonController : Frontend.Controllers.CommonController
     {
         public T4MVC_CommonController() : base(Dummy.Instance) { }
+
+        [NonAction]
+        partial void GetCityOverride(T4MVC_System_Web_Mvc_JsonResult callInfo);
+
+        [NonAction]
+        public override System.Web.Mvc.JsonResult GetCity()
+        {
+            var callInfo = new T4MVC_System_Web_Mvc_JsonResult(Area, Name, ActionNames.GetCity);
+            GetCityOverride(callInfo);
+            return callInfo;
+        }
 
         [NonAction]
         partial void GetDistrictOverride(T4MVC_System_Web_Mvc_JsonResult callInfo, int id);

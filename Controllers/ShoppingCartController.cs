@@ -81,7 +81,7 @@ namespace Frontend.Controllers
         /// <param name="quantity"></param>
         /// <returns></returns>
         [HttpPost, ValidateAntiForgeryToken]
-        public virtual ActionResult AddToCart(int productId, string[] properties, int quantity = 1)
+        public virtual ActionResult AddToCart(int productId, string[] properties, int quantity = 1, int customPrice = 0)
         {
             var product = _productService.Get(productId);
             if (product.Status != (int)ProductStatus.StopSelling && quantity > 0)
@@ -96,7 +96,8 @@ namespace Frontend.Controllers
                 {
                     ProductVersionID = version.ProductVersionID,
                     Quantity = quantity,
-                    CartId = ShoppingCartHelper.GetCartId()
+                    CartId = ShoppingCartHelper.GetCartId(),
+                    CustomPrice = customPrice,
                 };
                 int? newId = _shoppingCartService.AddToCart(cart);
                 if (newId.HasValue)
